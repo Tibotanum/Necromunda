@@ -1,6 +1,5 @@
 package necromunda;
 
-
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,8 +11,8 @@ import java.util.Observer;
 import java.util.Set;
 
 import necromunda.Fighter.State;
-import necromunda.Gang.Phase;
 import necromunda.MaterialFactory.MaterialIdentifier;
+import necromunda.Necromunda.Phase;
 import necromunda.Necromunda.SelectionMode;
 import weapons.Ammunition;
 import weapons.RangeCombatWeapon;
@@ -22,6 +21,7 @@ import weapons.WebPistol;
 import weapons.RangeCombatWeapon.WeaponType;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.bounding.BoundingBox;
@@ -59,6 +59,8 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -69,11 +71,12 @@ import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Quad;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.system.AppSettings;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 
-public class Necromunda3dProvider extends SimpleApplication implements Observer, ActionListener, AnalogListener {
+public class Necromunda3dProvider extends SimpleApplication implements Observer {
 	public static final float MAX_COLLISION_NORMAL_ANGLE = 0.05f;
 	public static final float MAX_SLOPE = 0.05f;
 	public static final float NOT_TOUCH_DISTANCE = 0.01f;
@@ -84,7 +87,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private FighterNode selectedFighterNode;
 	private List<FighterNode> validTargetFighterNodes;
 	private List<FighterNode> fighterNodes;
-	
+
 	private RigidBodyControl buildingsControl;
 	private Line currentPath;
 	private ClimbPath currentClimbPath;
@@ -97,32 +100,37 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private boolean physicsTickLock1;
 	private boolean physicsTickLock2;
 	private List<FighterNode> targetedFighterNodes;
-	
-	private List<FighterNode> validSustainedFireTargetFighterNodes;	
+
+	private List<FighterNode> validSustainedFireTargetFighterNodes;
 
 	private List<Node> buildingNodes;
 	private List<Ladder> ladders;
 
 	private BitmapText statusMessage;
-	
+
 	private MaterialFactory materialFactory;
 
 	public Necromunda3dProvider(Necromunda game) {
 		this.game = game;
-		
+
 		fighterNodes = new ArrayList<FighterNode>();
 
 		buildingNodes = new ArrayList<Node>();
 
 		templateNodes = new ArrayList<TemplateNode>();
-		
+
 		templateRemovers = new ArrayList<TemplateRemover>();
-		
+
 		targetedFighterNodes = new ArrayList<FighterNode>();
-		
+
 		validSustainedFireTargetFighterNodes = new ArrayList<FighterNode>();
-		
+
 		validTargetFighterNodes = new ArrayList<FighterNode>();
+
+		AppSettings settings = new AppSettings(false);
+		settings.setTitle("Necromunda");
+		settings.setSettingsDialogImage("/Textures/Splashscreen01.png");
+		setSettings(settings);
 	}
 
 	@Override
@@ -130,11 +138,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		BulletAppState bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
 
+		ScreenshotAppState screenshotAppState = new ScreenshotAppState();
+		stateManager.attach(screenshotAppState);
+
 		assetManager.registerLocator("", ClasspathLocator.class.getName());
-		assetManager.registerLoader("com.jme3.material.plugins.NeoTextureMaterialLoader","tgr");
-		
+		assetManager.registerLoader("com.jme3.material.plugins.NeoTextureMaterialLoader", "tgr");
+
 		materialFactory = new MaterialFactory(assetManager);
-		
+
 		Node tableNode = createTableNode();
 		rootNode.attachChild(tableNode);
 
@@ -151,7 +162,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			physicsSpace.enableDebug(assetManager);
 		}
 
-		physicsSpace.add(buildingsControl);
+		physicsSpace.add(buildingsNode);
 		physicsSpace.addCollisionListener(new PhysicsCollisionListenerImpl());
 		physicsSpace.addTickListener(new PhysicsTickListenerImpl());
 
@@ -180,72 +191,47 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		initStatusMessage();
 
 		TextureKey key0 = new TextureKey("Textures/sky_top_bottom.PNG", true);
-        key0.setGenerateMips(true);
-        key0.setAsCube(true);
-        Texture tex0 = assetManager.loadTexture(key0);
+		key0.setGenerateMips(true);
+		key0.setAsCube(true);
+		Texture tex0 = assetManager.loadTexture(key0);
 
-        TextureKey key1 = new TextureKey("Textures/sky_left.PNG", true);
-        key1.setGenerateMips(true);
-        key1.setAsCube(true);
-        Texture tex1 = assetManager.loadTexture(key1);
+		TextureKey key1 = new TextureKey("Textures/sky_left.PNG", true);
+		key1.setGenerateMips(true);
+		key1.setAsCube(true);
+		Texture tex1 = assetManager.loadTexture(key1);
 
-        TextureKey key2 = new TextureKey("Textures/sky_right.PNG", true);
-        key2.setGenerateMips(true);
-        key2.setAsCube(true);
-        Texture tex2 = assetManager.loadTexture(key2);
+		TextureKey key2 = new TextureKey("Textures/sky_right.PNG", true);
+		key2.setGenerateMips(true);
+		key2.setAsCube(true);
+		Texture tex2 = assetManager.loadTexture(key2);
 
-        TextureKey key3 = new TextureKey("Textures/sky_front.PNG", true);
-        key3.setGenerateMips(true);
-        key3.setAsCube(true);
-        Texture tex3 = assetManager.loadTexture(key3);
+		TextureKey key3 = new TextureKey("Textures/sky_front.PNG", true);
+		key3.setGenerateMips(true);
+		key3.setAsCube(true);
+		Texture tex3 = assetManager.loadTexture(key3);
 
-        TextureKey key4 = new TextureKey("Textures/sky_back.PNG", true);
-        key4.setGenerateMips(true);
-        key4.setAsCube(true);
-        Texture tex4 = assetManager.loadTexture(key4);
+		TextureKey key4 = new TextureKey("Textures/sky_back.PNG", true);
+		key4.setGenerateMips(true);
+		key4.setAsCube(true);
+		Texture tex4 = assetManager.loadTexture(key4);
 
-		Geometry sky = (Geometry)SkyFactory.createSky(assetManager, tex1, tex2, tex3, tex4, tex0, tex0);
-		//Fix bug which sometimes culls the skybox
+		Geometry sky = (Geometry) SkyFactory.createSky(assetManager, tex1, tex2, tex3, tex4, tex0, tex0);
+		// Fix bug which sometimes culls the skybox
 		sky.setLocalScale(100);
 		rootNode.attachChild(sky);
 
-		Sphere rock = new Sphere(32, 32, 2f, false, true);
-		rock.setTextureMode(Sphere.TextureMode.Projected);
-		
-		//Cylinder rock = new Cylinder(4, 32, 1, 1, false, true);
-
-		Geometry shiny_rock = new Geometry("Shiny rock", rock);
-		//shiny_rock.setLocalScale(100);
-		shiny_rock.setQueueBucket(Bucket.Sky);
-        shiny_rock.setCullHint(Spatial.CullHint.Never);
-        
-        /*Material mat_lit = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat_lit.setTexture("ColorMap", assetManager.loadTexture("Textures/sky_sphere.PNG"));
-		shiny_rock.setMaterial(mat_lit);*/
-		
-		/*Material mat_lit = new Material(assetManager, "Common/MatDefs/Misc/Sky.j3md");
-        mat_lit.setTexture("Texture", assetManager.loadTexture("Textures/sky_sphere.png"));
-        mat_lit.setVector3("NormalScale", Vector3f.UNIT_XYZ);
-        mat_lit.setBoolean("SphereMap", true);
-		shiny_rock.setMaterial(mat_lit);*/
-		
-		Node rockNode = new Node("Rock");
-		rockNode.setQueueBucket(Bucket.Sky);
-		rockNode.attachChild(shiny_rock);
-		rockNode.move(0, 0, 0);
-		rockNode.rotateUpTo(new Vector3f(0, 0, -1));
-		//rootNode.attachChild(rockNode);
+		MouseListener mouseListener = new MouseListener();
 
 		inputManager.addMapping("leftClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		inputManager.addMapping("rightClick", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addListener(this, "leftClick");
-		inputManager.addListener(this, "rightClick");
+		inputManager.addListener(mouseListener, "leftClick");
+		inputManager.addListener(mouseListener, "rightClick");
 
 		inputManager.addMapping("Move_Left", new MouseAxisTrigger(MouseInput.AXIS_X, true));
 		inputManager.addMapping("Move_Right", new MouseAxisTrigger(MouseInput.AXIS_X, false));
-		inputManager.addMapping("Move_Up", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-		inputManager.addMapping("Move_Down", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
-		inputManager.addListener(this, "Move_Left", "Move_Right", "Move_Up", "Move_Down");
+		inputManager.addMapping("Move_Up", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
+		inputManager.addMapping("Move_Down", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+		inputManager.addListener(mouseListener, "Move_Left", "Move_Right", "Move_Up", "Move_Down");
 
 		KeyboardListener keyboardListener = new KeyboardListener();
 
@@ -263,7 +249,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		inputManager.addMapping("Cycle", new KeyTrigger(KeyInput.KEY_Y));
 		inputManager.addListener(keyboardListener, "Cycle");
-		
+
 		inputManager.addMapping("Yes", new KeyTrigger(KeyInput.KEY_Y));
 		inputManager.addListener(keyboardListener, "Yes");
 
@@ -275,7 +261,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		inputManager.addMapping("NextPhase", new KeyTrigger(KeyInput.KEY_N));
 		inputManager.addListener(keyboardListener, "NextPhase");
-		
+
 		inputManager.addMapping("No", new KeyTrigger(KeyInput.KEY_N));
 		inputManager.addListener(keyboardListener, "No");
 
@@ -309,7 +295,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 			Vector3f origin = building.getOrigin();
 			float rotationAngle = building.getRotationAngle();
-			
+
 			Node buildingNode = new Node("buildingNode");
 			buildingNodes.add(buildingNode);
 			buildingNode.attachChild(model);
@@ -323,14 +309,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	}
 
 	private void createLadders() {
-		Material selectedBaseMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
-		
+		Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
+
 		for (Node buildingNode : buildingNodes) {
 			Vector3f vector1 = new Vector3f(-3.5f, 0, 4.5f);
-			Ladder ladder1 = new Ladder(vector1, selectedBaseMaterial);
+			Ladder ladder1 = new Ladder(vector1, selectedMaterial);
 
 			Vector3f vector2 = new Vector3f(-3.5f, 3.5f, 4.5f);
-			Ladder ladder2 = new Ladder(vector2, selectedBaseMaterial);
+			Ladder ladder2 = new Ladder(vector2, selectedMaterial);
 
 			ladder1.setPeer(ladder2);
 			ladder2.setPeer(ladder1);
@@ -347,9 +333,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		inputManager.deleteMapping("FLYCAM_Up");
 		inputManager.deleteMapping("FLYCAM_Down");
 
-		inputManager.addMapping("FLYCAM_Up", new MouseAxisTrigger(MouseInput.AXIS_Y, true), new KeyTrigger(KeyInput.KEY_UP));
+		inputManager.addMapping("FLYCAM_Up", new MouseAxisTrigger(MouseInput.AXIS_Y, true), new KeyTrigger(KeyInput.KEY_DOWN));
 
-		inputManager.addMapping("FLYCAM_Down", new MouseAxisTrigger(MouseInput.AXIS_Y, false), new KeyTrigger(KeyInput.KEY_DOWN));
+		inputManager.addMapping("FLYCAM_Down", new MouseAxisTrigger(MouseInput.AXIS_Y, false), new KeyTrigger(KeyInput.KEY_UP));
 
 		inputManager.addListener(getFlyByCamera(), "FLYCAM_Up", "FLYCAM_Down");
 	}
@@ -386,23 +372,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			else {
 				setBaseNormal(fighterNode);
 			}
-			
-			Node figureNode = (Node)fighterNode.getChild("figureNode");
-			
-			List<Spatial> children = new ArrayList<Spatial>(figureNode.getChildren());
-			
-			if (children != null) {
-				Iterator<Spatial> iterator = children.iterator();
-				
-				while (iterator.hasNext()) {
-					Spatial child = iterator.next();
-					
-					if (child.getName().equals("symbol")) {
-						figureNode.detachChild(child);
-					}
-				}
-			}
-			
+
+			Node figureNode = (Node) fighterNode.getChild("figureNode");
+			figureNode.detachChildNamed("symbol");
+
 			if (fighter.isPinned()) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_PINNED));
 			}
@@ -415,14 +388,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			else if (fighter.isComatose()) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_COMATOSE));
 			}
-			
+
 			Ladder nearestLadder = getNearestLadder(fighterNode.getLocalTranslation(), fighter.getBaseRadius());
-			
+
 			if (nearestLadder != null) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_LADDER));
 			}
 		}
-		
+
 		if (currentTemplateNode != null) {
 			colouriseBasesUnderTemplate(currentTemplateNode);
 		}
@@ -431,19 +404,19 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			colouriseBasesUnderTemplate(templateNode);
 		}
 	}
-	
+
 	private Node getObjectsNode() {
-		return (Node)rootNode.getChild("objectsNode");
+		return (Node) rootNode.getChild("objectsNode");
 	}
-	
+
 	private Node getBuildingsNode() {
-		return (Node)rootNode.getChild("buildingsNode");
+		return (Node) rootNode.getChild("buildingsNode");
 	}
-	
+
 	private Node getTableNode() {
-		return (Node)rootNode.getChild("tableNode");
+		return (Node) rootNode.getChild("tableNode");
 	}
-	
+
 	private void colouriseBasesUnderTemplate(TemplateNode templateNode) {
 		List<FighterNode> fighterNodesUnderTemplate = getFighterNodesUnderTemplate(templateNode, fighterNodes);
 
@@ -452,20 +425,182 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		}
 	}
 
-	
+	private void executeKeyboardAction(String name) {
+		Necromunda.setStatusMessage("");
+		Fighter selectedFighter = game.getSelectedFighter();
 
-	@Override
-	public void onAction(String name, boolean isPressed, float tpf) {
-		if (isPressed) {
-			Necromunda.setStatusMessage("");
+		if (name.equals("NextPhase")) {
+			tearDownCurrentPath();
+			game.setSelectionMode(SelectionMode.SELECT);
+			game.nextPhase();
+		}
+		else if (name.equals("EndTurn")) {
+			tearDownCurrentPath();
+			game.setSelectionMode(SelectionMode.SELECT);
+			game.endTurn();
+			turnStarted();
+		}
+		else if (selectedFighter == null) {
+			Necromunda.setStatusMessage("You must select a fighter first.");
+		}
+		else {
+			if (game.getSelectionMode().equals(SelectionMode.SELECT) && game.getCurrentGang().getGangMembers().contains(selectedFighterNode.getFighter())) {
+				if (name.equals("Break") && game.getPhase().equals(Phase.MOVEMENT)) {
+					if (selectedFighter.isPinned()) {
+						Necromunda.setStatusMessage("This ganger can not break the web.");
+					}
+					else {
+						if (selectedFighter.isWebbed()) {
+							int webRoll = Utils.rollD6();
 
-			executeAction(name);
+							if ((webRoll + selectedFighter.getStrength()) >= 9) {
+								selectedFighter.setWebbed(false);
+								Necromunda.appendToStatusMessage("This ganger has broken the web.");
+							}
+							else {
+								WebPistol.dealWebDamageTo(selectedFighter);
+							}
+						}
+						else {
+							Necromunda.setStatusMessage("This ganger is not webbed.");
+						}
+					}
+				}
+				else if (name.equals("Move") && game.getPhase().equals(Phase.MOVEMENT)) {
+					if (selectedFighter.canMove() && !selectedFighter.hasRun()) {
+						if (!selectedFighter.hasMoved()) {
+							selectedFighter.setIsGoingToRun(false);
+						}
 
-			game.updateStatus();
+						game.setSelectionMode(SelectionMode.MOVE);
+						setUpMovement();
+					}
+					else {
+						Necromunda.setStatusMessage("This ganger cannot move.");
+					}
+				}
+				else if (name.equals("Run") && game.getPhase().equals(Phase.MOVEMENT)) {
+					if (selectedFighter.canRun() && !selectedFighter.hasMoved()) {
+						if (!selectedFighter.hasRun()) {
+							selectedFighter.setIsGoingToRun(true);
+						}
+
+						game.setSelectionMode(SelectionMode.MOVE);
+						setUpMovement();
+					}
+					else {
+						Necromunda.setStatusMessage("This ganger cannot run.");
+					}
+				}
+				else if (name.equals("Shoot") && game.getPhase().equals(Phase.SHOOTING)) {
+					if (selectedFighter.canShoot()) {
+						if (!selectedFighter.getWeapons().isEmpty()) {
+							RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
+
+							if (weapon == null) {
+								weapon = (RangeCombatWeapon) selectedFighter.getWeapons().get(0);
+								selectedFighter.setSelectedRangeCombatWeapon(weapon);
+							}
+
+							if (weapon.isBroken()) {
+								Necromunda.setStatusMessage("The selected weapon is broken.");
+							}
+							else if (!weapon.isEnabled()) {
+								Necromunda.setStatusMessage("The selected weapon is disabled.");
+							}
+							else if (weapon.isMoveOrFire() && selectedFighter.hasMoved()) {
+								Necromunda.setStatusMessage("The selected weapon cannot be fired after moving.");
+							}
+							else {
+								weapon.resetNumberOfShots();
+
+								game.setSelectionMode(SelectionMode.TARGET);
+
+								updateValidTargetFighterNodes();
+
+								setUpTargeting();
+							}
+						}
+						else {
+							Necromunda.setStatusMessage("This ganger has no weapons.");
+						}
+					}
+					else {
+						Necromunda.setStatusMessage("This ganger cannot shoot.");
+					}
+				}
+				else if (name.equals("Cycle")) {
+					List<Weapon> weapons = selectedFighter.getWeapons();
+
+					if (!weapons.isEmpty()) {
+						RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
+
+						if (weapon == null) {
+							weapon = (RangeCombatWeapon) selectedFighter.getWeapons().get(0);
+						}
+						else {
+							int index = weapons.indexOf(weapon);
+
+							if (index < weapons.size() - 1) {
+								weapon = (RangeCombatWeapon) weapons.get(index + 1);
+							}
+							else {
+								weapon = (RangeCombatWeapon) selectedFighter.getWeapons().get(0);
+							}
+						}
+
+						selectedFighter.setSelectedRangeCombatWeapon(weapon);
+					}
+					else {
+						Necromunda.setStatusMessage("This ganger has no weapons.");
+					}
+				}
+				else if (name.equals("Mode")) {
+					RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
+
+					if (weapon != null) {
+						List<Ammunition> ammunitions = weapon.getAmmunitions();
+
+						int index = ammunitions.indexOf(weapon.getCurrentAmmunition());
+
+						if (index == -1) {
+							weapon.setCurrentAmmunition(ammunitions.get(0));
+						}
+						else {
+							if (index < ammunitions.size() - 1) {
+								weapon.setCurrentAmmunition(ammunitions.get(index + 1));
+							}
+							else {
+								weapon.setCurrentAmmunition(ammunitions.get(0));
+							}
+						}
+					}
+					else {
+						Necromunda.setStatusMessage("No weapon selected.");
+					}
+				}
+			}
+			else if (name.equals("Climb") && game.getSelectionMode().equals(SelectionMode.MOVE)) {
+				Ladder nearestLadder = getNearestLadder(currentPath.getOrigin(), selectedFighter.getBaseRadius());
+
+				if (nearestLadder == null) {
+					Necromunda.setStatusMessage("There is no ladder in reach.");
+				}
+				else {
+					game.setSelectionMode(SelectionMode.CLIMB);
+					Vector3f currentPathOrigin = currentPath.getOrigin();
+					tearDownCurrentPath();
+					currentClimbPath = new ClimbPath(currentPathOrigin.clone());
+					Vector3f nearestLadderCollisionPoint = getLadderCollisionPoint(nearestLadder);
+					currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
+					selectedFighterNode.setLocalTranslation(getLadderCollisionPoint(nearestLadder.getPeer()));
+					currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
+				}
+			}
 		}
 	}
-	
-	private void executeAction(String name) {
+
+	private void executeMouseAction(String name) {
 		if (name.equals("leftClick")) {
 			onLeftClick();
 		}
@@ -491,36 +626,38 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			target();
 		}
 	}
-	
+
 	private void deploy() {
 		Vector3f contactPoint = getSceneryCollisionPoint();
 
 		List<FighterNode> fighterNodesWithinDistance = getFighterNodesWithinDistance(selectedFighterNode, NOT_TOUCH_DISTANCE);
 
 		if ((contactPoint != null) && (selectedFighterNode != null) && hasValidPosition(selectedFighterNode) && fighterNodesWithinDistance.isEmpty()) {
-			game.objectDeployed();
+			game.fighterDeployed();
 		}
 	}
-	
+
 	private void select() {
 		if (selectedFighterNode != null) {
 			deselectFighter();
 		}
-		
+
 		FighterNode fighterNodeUnderCursor = getFighterNodeUnderCursor();
-		
+
 		if (fighterNodeUnderCursor != null) {
 			selectFighter(fighterNodeUnderCursor);
 		}
 	}
-	
+
 	private void move() {
-		if (hasValidPosition(selectedFighterNode) && currentPath.isValid() && (getFighterNodesWithinDistance(selectedFighterNode, NOT_TOUCH_DISTANCE).isEmpty())) {
+		if (hasValidPosition(selectedFighterNode) && currentPath.isValid()
+				&& (getFighterNodesWithinDistance(selectedFighterNode, NOT_TOUCH_DISTANCE).isEmpty())) {
 			List<FighterNode> fighterNodesWithinDistance = getFighterNodesWithinDistance(selectedFighterNode, Necromunda.RUN_SPOT_DISTANCE);
 			List<FighterNode> hostileFighterNodesWithinDistance = getHostileFighterNodesFrom(fighterNodesWithinDistance);
-			List<FighterNode> hostileFighterNodesWithinDistanceAndWithLineOfSight = getFighterNodesWithLineOfSightFrom(selectedFighterNode, hostileFighterNodesWithinDistance);
-			
-			if (selectedFighterNode.getFighter().isGoingToRun() && (! hostileFighterNodesWithinDistanceAndWithLineOfSight.isEmpty())) {
+			List<FighterNode> hostileFighterNodesWithinDistanceAndWithLineOfSight = getFighterNodesWithLineOfSightFrom(selectedFighterNode,
+					hostileFighterNodesWithinDistance);
+
+			if (selectedFighterNode.getFighter().isGoingToRun() && (!hostileFighterNodesWithinDistanceAndWithLineOfSight.isEmpty())) {
 				Necromunda.setStatusMessage("You cannot run so close to an enemy fighter.");
 			}
 			else {
@@ -528,7 +665,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			}
 		}
 	}
-	
+
 	private void climb() {
 		if (hasValidPosition(selectedFighterNode) && (getFighterNodesWithinDistance(selectedFighterNode, NOT_TOUCH_DISTANCE).isEmpty())) {
 			if (currentClimbPath.getLength() <= game.getSelectedFighter().getRemainingMovementDistance()) {
@@ -539,14 +676,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			}
 		}
 	}
-	
+
 	private void target() {
 		Fighter selectedFighter = game.getSelectedFighter();
 		RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
 
-		if (! weapon.isTargeted()) {
+		if (!weapon.isTargeted()) {
 			weapon.trigger();
-			
+
 			fireTemplate(currentTemplateNode);
 
 			removeTargetingFacilities();
@@ -555,49 +692,49 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		}
 		else {
 			FighterNode fighterNodeUnderCursor = getFighterNodeUnderCursor();
-			
+
 			if (fighterNodeUnderCursor == null) {
 				return;
 			}
 
-			if (! getHostileFighterNodesFrom(fighterNodes).contains(fighterNodeUnderCursor)) {
+			if (!getHostileFighterNodesFrom(fighterNodes).contains(fighterNodeUnderCursor)) {
 				Necromunda.setStatusMessage("This fighter is not hostile.");
 				return;
 			}
-			
+
 			List<Collidable> collidables = getBoundingVolumes();
-			
+
 			if (currentTemplateNode != null) {
 				collidables.removeAll(currentTemplateNode.getBoundingSpheres());
 			}
-			
+
 			collidables.add(getBuildingsNode());
 			boolean hasLineOfSight = hasLineOfSight(selectedFighterNode, fighterNodeUnderCursor, collidables);
 
-			if (! currentLineOfSight.isValid() || ! hasLineOfSight || isPhysicsLocked()) {
+			if (!currentLineOfSight.isValid() || !hasLineOfSight || isPhysicsLocked()) {
 				Necromunda.setStatusMessage("Object out of sight.");
 				return;
 			}
-			
-			if (validSustainedFireTargetFighterNodes.isEmpty() && (! validTargetFighterNodes.contains(fighterNodeUnderCursor))) {
+
+			if (validSustainedFireTargetFighterNodes.isEmpty() && (!validTargetFighterNodes.contains(fighterNodeUnderCursor))) {
 				Necromunda.setStatusMessage("This fighter is not the nearest target.");
 				return;
 			}
-			
+
 			boolean targetAdded = addTarget(fighterNodeUnderCursor);
-			
+
 			if (targetAdded) {
 				weapon.targetAdded();
 			}
-			
+
 			if (weapon.getNumberOfShots() > 0) {
 				return;
 			}
-			
+
 			fireTargetedWeapon(weapon);
-			
+
 			removeTargetingFacilities();
-			
+
 			targetedFighterNodes.clear();
 			validSustainedFireTargetFighterNodes.clear();
 		}
@@ -615,7 +752,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
 			removeTargetingFacilities();
 		}
-		
+
 		game.setSelectionMode(SelectionMode.SELECT);
 
 		deselectFighter();
@@ -625,41 +762,36 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		List<Collidable> collidables = new ArrayList<Collidable>();
 		collidables.add(getObjectsNode());
 		CollisionResult closestCollision = Utils.getNearestCollisionFrom(cam.getLocation(), cam.getDirection(), collidables);
-		
-		FighterNode fighterNodeUnderCursor;
 
-		if (closestCollision == null) {
-			fighterNodeUnderCursor = null;
-		}
-		else {
+		FighterNode fighterNodeUnderCursor = null;
+
+		if (closestCollision != null) {
 			Geometry geometry = closestCollision.getGeometry();
-			FighterNode fighterNode = (FighterNode)getParent(geometry, "fighterNode");
-	
-			fighterNodeUnderCursor = fighterNode;
+			fighterNodeUnderCursor = (FighterNode) getParent(geometry, "fighterNode");
 		}
-		
+
 		return fighterNodeUnderCursor;
 	}
-	
+
 	private void updateValidTargetFighterNodes() {
 		validTargetFighterNodes.clear();
 		List<FighterNode> visibleHostileFighterNodes = getFighterNodesWithLineOfSightFrom(selectedFighterNode, getHostileFighterNodesFrom(fighterNodes));
-		
+
 		boolean normalFighterNodeFound = false;
-		
-		while ((! normalFighterNodeFound) && (! visibleHostileFighterNodes.isEmpty())) {
+
+		while ((!normalFighterNodeFound) && (!visibleHostileFighterNodes.isEmpty())) {
 			FighterNode fighterNode = getNearestFighterNodeFrom(selectedFighterNode, visibleHostileFighterNodes);
 			Fighter fighter = fighterNode.getFighter();
-			
+
 			if (fighter.isNormal() || fighter.isPinned()) {
 				normalFighterNodeFound = true;
 			}
-			
+
 			validTargetFighterNodes.add(fighterNode);
 			visibleHostileFighterNodes.remove(fighterNode);
 		}
 	}
-	
+
 	private boolean addTarget(FighterNode fighterNode) {
 		if (validSustainedFireTargetFighterNodes.isEmpty()) {
 			addFirstTarget(fighterNode);
@@ -669,16 +801,16 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			return addSubsequentTarget(fighterNode);
 		}
 	}
-	
+
 	private void addFirstTarget(FighterNode fighterNode) {
 		targetedFighterNodes.add(fighterNode);
-		
+
 		List<FighterNode> sustainedFireNeighbours = getFighterNodesWithinDistance(getFighterNodeUnderCursor(), Necromunda.SUSTAINED_FIRE_RADIUS);
-		
+
 		validSustainedFireTargetFighterNodes.add(fighterNode);
 		validSustainedFireTargetFighterNodes.addAll(sustainedFireNeighbours);
 	}
-	
+
 	private boolean addSubsequentTarget(FighterNode fighterNode) {
 		if (validSustainedFireTargetFighterNodes.contains(fighterNode)) {
 			targetedFighterNodes.add(fighterNode);
@@ -713,7 +845,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		currentClimbPath = null;
 	}
-	
+
 	private void removeTargetingFacilities() {
 		rootNode.detachChildNamed("currentLineOfSightBoxNode");
 		rootNode.detachChildNamed("currentLineOfSightLine");
@@ -725,10 +857,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		currentLineOfSight = null;
 		currentLineOfSightBoxNode = null;
-		
+
 		removeCurrentWeaponTemplate();
 	}
-	
+
 	private void removeCurrentWeaponTemplate() {
 		rootNode.detachChildNamed("currentTemplateNode");
 		currentTemplateNode = null;
@@ -801,9 +933,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		}
 
 		abortClimbing();
-		
+
 		deselectFighter();
-		
+
 		game.setSelectionMode(SelectionMode.SELECT);
 	}
 
@@ -840,7 +972,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 	private Vector3f getHalfExtentsOf(FighterNode fighterNode) {
 		GhostControl control = fighterNode.getGhostControl();
-		CylinderCollisionShape shape = (CylinderCollisionShape)control.getCollisionShape();
+		CylinderCollisionShape shape = (CylinderCollisionShape) control.getCollisionShape();
 		Vector3f halfExtents = shape.getHalfExtents();
 
 		return halfExtents;
@@ -849,15 +981,16 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private void selectFighter(FighterNode fighterNode) {
 		Fighter fighter = fighterNode.getFighter();
 
-		if (fighter.getGang() == game.getCurrentGang()) {
-			game.setSelectedFighter(fighter);
-			game.updateStatus();
-		}
+		/*
+		 * if (fighter.getGang() == game.getCurrentGang()) {
+		 * game.setSelectedFighter(fighter); }
+		 */
+
+		game.setSelectedFighter(fighter);
 	}
 
 	private void deselectFighter() {
 		game.setSelectedFighter(null);
-		game.updateStatus();
 	}
 
 	private void setBaseSelected(Node model) {
@@ -876,11 +1009,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	}
 
 	private boolean hasValidPosition(FighterNode fighterNode) {
-		/*for (FighterNode otherFighterNode : fighterNodes) {
-			System.out.println(otherFighterNode + ", " + otherFighterNode.isPositionValid());
-		}*/
-
-		if (! fighterNode.isPositionValid() || isPhysicsLocked()) {
+		if (!fighterNode.isPositionValid() || isPhysicsLocked()) {
 			System.out.println("Position invalid...");
 			return false;
 		}
@@ -907,10 +1036,11 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		guiFont = assetManager.loadFont("Interface/Fonts/Default.fnt");
 		BitmapText crosshair = new BitmapText(guiFont, false);
 		crosshair.setSize(guiFont.getCharSet().getRenderedSize() * 2);
-		//crosshairs
+		// crosshairs
 		crosshair.setText("+");
-		//center
-		crosshair.setLocalTranslation(settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2, settings.getHeight() / 2 + crosshair.getLineHeight() / 2, 0);
+		// center
+		crosshair.setLocalTranslation(settings.getWidth() / 2 - guiFont.getCharSet().getRenderedSize() / 3 * 2, settings.getHeight() / 2
+				+ crosshair.getLineHeight() / 2, 0);
 		guiNode.attachChild(crosshair);
 	}
 
@@ -922,53 +1052,21 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		guiNode.attachChild(statusMessage);
 	}
 
-	@Override
-	public void onAnalog(String name, float value, float tpf) {
-		Vector3f nearestIntersection = getSceneryCollisionPoint();
-
-		if (nearestIntersection == null) {
-			return;
-		}
-
-		if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
-			setUpMovement();
-		}
-		else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
-			setUpTargeting();
-		}
-		else if (game.getSelectionMode().equals(SelectionMode.DEPLOY)) {
-			if (selectedFighterNode == null) {
-				selectedFighterNode = new FighterNode("fighterNode", game.getSelectedFighter(), materialFactory);
-				
-				getPhysicsSpace().add(selectedFighterNode.getGhostControl());
-				getObjectsNode().attachChild(selectedFighterNode);
-				fighterNodes.add(selectedFighterNode);
-				
-				game.updateStatus();
-			}
-
-			selectedFighterNode.setLocalTranslation(nearestIntersection);
-			lockPhysics();
-		}
-
-		updateModels();
-	}
-	
 	private boolean hasLineOfSight(FighterNode source, FighterNode target, List<Collidable> collidables) {
 		Vector3f sourceUpTranslation = new Vector3f(0, source.getFighter().getBaseRadius() * 1.5f, 0);
 		Vector3f targetUpTranslation = new Vector3f(0, target.getFighter().getBaseRadius() * 1.5f, 0);
-		
+
 		Vector3f sourceLocation = source.getLocalTranslation().add(sourceUpTranslation);
 		Vector3f targetLocation = target.getLocalTranslation().add(targetUpTranslation);
-		
+
 		Vector3f direction = targetLocation.subtract(sourceLocation);
-		
+
 		CollisionResult closestCollision = Utils.getNearestCollisionFrom(sourceLocation, direction, collidables);
-		
+
 		if (closestCollision != null) {
 			float distanceToTarget = direction.length();
 			float distanceToCollisionPoint = closestCollision.getContactPoint().subtract(sourceLocation).length();
-			
+
 			if (distanceToCollisionPoint >= distanceToTarget) {
 				return true;
 			}
@@ -980,14 +1078,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			return true;
 		}
 	}
-	
+
 	private List<Collidable> getBoundingVolumes() {
 		List<Collidable> boundingVolumes = new ArrayList<Collidable>();
-		
+
 		for (TemplateNode templateNode : templateNodes) {
 			boundingVolumes.addAll(templateNode.getBoundingSpheres());
 		}
-		
+
 		return boundingVolumes;
 	}
 
@@ -1019,38 +1117,40 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			return null;
 		}
 	}
-	
+
 	private class PhysicsCollisionListenerImpl implements PhysicsCollisionListener {
 
 		@Override
 		public void collision(PhysicsCollisionEvent event) {
 			Spatial a = event.getNodeA();
 			Spatial b = event.getNodeB();
-			
+
 			Spatial selectedCollisionShapeNode = null;
 
 			if (selectedFighterNode != null) {
 				selectedCollisionShapeNode = selectedFighterNode.getChild("collisionShapeNode");
 			}
-			
+
 			Spatial targetedCollisionShapeNode = null;
-			
+
 			FighterNode fighterNodeUnderCursor = getFighterNodeUnderCursor();
-			
+
 			if (fighterNodeUnderCursor != null) {
 				targetedCollisionShapeNode = fighterNodeUnderCursor.getChild("collisionShapeNode");
 			}
-			
-			if ((a == selectedCollisionShapeNode) && (b.getName().equals("buildingsNode"))
-					|| (b == selectedCollisionShapeNode) && (a.getName().equals("buildingsNode"))) {
+
+			if ((a == selectedCollisionShapeNode) && (b.getName().equals("buildingsNode")) || (b == selectedCollisionShapeNode)
+					&& (a.getName().equals("buildingsNode"))) {
 				selectedFighterNode.setPositionValid(false);
 			}
-			else if ((a == selectedCollisionShapeNode) && (b.getName().equals("collisionShapeNode"))
-					|| (b == selectedCollisionShapeNode) && (a.getName().equals("collisionShapeNode"))) {
+			else if ((a == selectedCollisionShapeNode) && (b.getName().equals("collisionShapeNode")) || (b == selectedCollisionShapeNode)
+					&& (a.getName().equals("collisionShapeNode"))) {
 				selectedFighterNode.setPositionValid(false);
 			}
-			else if ((b.getName().equals("currentLineOfSightBoxNode") && ((a.getName().equals("collisionShapeNode") && (a != selectedCollisionShapeNode) && (a != targetedCollisionShapeNode)))
-					|| (a.getName().equals("currentLineOfSightBoxNode")) && ((b.getName().equals("collisionShapeNode") && (b != selectedCollisionShapeNode) && (b != targetedCollisionShapeNode))))) {
+			else if ((b.getName().equals("currentLineOfSightBoxNode")
+					&& ((a.getName().equals("collisionShapeNode") && (a != selectedCollisionShapeNode) && (a != targetedCollisionShapeNode))) || (a.getName()
+					.equals("currentLineOfSightBoxNode"))
+					&& ((b.getName().equals("collisionShapeNode") && (b != selectedCollisionShapeNode) && (b != targetedCollisionShapeNode))))) {
 				if (currentLineOfSight != null) {
 					currentLineOfSight.setValid(false);
 				}
@@ -1067,8 +1167,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 					currentPath.setValid(false);
 				}
 			}
-			else if ((a.getName().equals("currentPathBoxNode")) && (b.getName().equals("buildingsNode"))
-					|| (b.getName().equals("currentPathBoxNode")) && (a.getName().equals("buildingsNode"))) {
+			else if ((a.getName().equals("currentPathBoxNode")) && (b.getName().equals("buildingsNode")) || (b.getName().equals("currentPathBoxNode"))
+					&& (a.getName().equals("buildingsNode"))) {
 				if (currentPath != null) {
 					currentPath.setValid(false);
 				}
@@ -1092,204 +1192,65 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		}
 	}
 
+	private class MouseListener implements ActionListener, AnalogListener {
+		public void onAction(String name, boolean isPressed, float tpf) {
+			if (isPressed) {
+				Necromunda.setStatusMessage("");
+
+				executeMouseAction(name);
+
+				game.updateStatus();
+			}
+		}
+
+		public void onAnalog(String name, float value, float tpf) {
+			if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
+				setUpMovement();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
+				setUpTargeting();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY)) {
+				Vector3f nearestIntersection = getSceneryCollisionPoint();
+
+				if (nearestIntersection == null) {
+					return;
+				}
+
+				if (selectedFighterNode == null) {
+					selectedFighterNode = new FighterNode("fighterNode", game.getSelectedFighter(), materialFactory);
+
+					getPhysicsSpace().add(selectedFighterNode.getGhostControl());
+					getObjectsNode().attachChild(selectedFighterNode);
+					fighterNodes.add(selectedFighterNode);
+
+					game.updateStatus();
+				}
+
+				selectedFighterNode.setLocalTranslation(nearestIntersection);
+				lockPhysics();
+			}
+
+			updateModels();
+		}
+	}
+
 	private class KeyboardListener implements ActionListener {
 
 		@Override
 		public void onAction(String name, boolean isPressed, float tpf) {
 			if (isPressed) {
-				executeAction(name);
+				executeKeyboardAction(name);
 			}
 
 			game.updateStatus();
 		}
-		
-		private void executeAction(String name) {
-			Necromunda.setStatusMessage("");
-			Fighter selectedFighter = game.getSelectedFighter();
-			
-			if (name.equals("NextPhase")) {
-				if (selectedFighterNode != null) {
-					tearDownCurrentPath();
-					game.setSelectionMode(SelectionMode.SELECT);
-				}
-
-				game.nextPhase();
-			}
-			else if (name.equals("EndTurn")) {
-				if (selectedFighterNode != null) {
-					tearDownCurrentPath();
-					game.setSelectionMode(SelectionMode.SELECT);
-					deselectFighter();
-				}
-
-				game.endTurn();
-				turnStarted();
-			}
-			else if (selectedFighter == null) {
-				Necromunda.setStatusMessage("You must select a fighter first.");
-			}
-			else {
-				if (game.getSelectionMode().equals(SelectionMode.SELECT)) {
-					if (name.equals("Break") && game.getPhase().equals(Phase.MOVEMENT)) {
-						if (selectedFighter.isPinned()) {
-							Necromunda.setStatusMessage("This ganger can not break the web.");
-						}
-						else {
-							if (selectedFighter.isWebbed()) {
-								int webRoll = Utils.rollD6();
-	
-								if ((webRoll + selectedFighter.getStrength()) >= 9) {
-									selectedFighter.setWebbed(false);
-									Necromunda.appendToStatusMessage("This ganger has broken the web.");
-								}
-								else {
-									WebPistol.dealWebDamageTo(selectedFighter);
-								}
-							}
-							else {
-								Necromunda.setStatusMessage("This ganger is not webbed.");
-							}
-						}
-					}
-					else if (name.equals("Move") && game.getPhase().equals(Phase.MOVEMENT)) {
-						if (selectedFighter.canMove() && !selectedFighter.hasRun()) {
-							if (! selectedFighter.hasMoved()) {
-								selectedFighter.setIsGoingToRun(false);
-							}
-	
-							game.setSelectionMode(SelectionMode.MOVE);
-							setUpMovement();
-						}
-						else {
-							Necromunda.setStatusMessage("This ganger cannot move.");
-						}
-					}
-					else if (name.equals("Run") && game.getPhase().equals(Phase.MOVEMENT)) {
-						if (selectedFighter.canRun() && !selectedFighter.hasMoved()) {
-							if (! selectedFighter.hasRun()) {
-								selectedFighter.setIsGoingToRun(true);
-							}
-	
-							game.setSelectionMode(SelectionMode.MOVE);
-							setUpMovement();
-						}
-						else {
-							Necromunda.setStatusMessage("This ganger cannot run.");
-						}
-					}
-					else if (name.equals("Shoot") && game.getPhase().equals(Phase.SHOOTING)) {
-						if (selectedFighter.canShoot()) {
-							if (! selectedFighter.getWeapons().isEmpty()) {
-								RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
-	
-								if (weapon == null) {
-									weapon = (RangeCombatWeapon)selectedFighter.getWeapons().get(0);
-									selectedFighter.setSelectedRangeCombatWeapon(weapon);
-								}
-	
-								if (weapon.isBroken()) {
-									Necromunda.setStatusMessage("The selected weapon is broken.");
-								}
-								else if (! weapon.isEnabled()) {
-									Necromunda.setStatusMessage("The selected weapon is disabled.");
-								}
-								else if (weapon.isMoveOrFire() && selectedFighter.hasMoved()) {
-									Necromunda.setStatusMessage("The selected weapon cannot be fired after moving.");
-								}
-								else {
-									weapon.resetNumberOfShots();
-									
-									game.setSelectionMode(SelectionMode.TARGET);
-									
-									updateValidTargetFighterNodes();
-									
-									setUpTargeting();
-								}
-							}
-							else {
-								Necromunda.setStatusMessage("This ganger has no weapons.");
-							}
-						}
-						else {
-							Necromunda.setStatusMessage("This ganger cannot shoot.");
-						}
-					}
-					else if (name.equals("Cycle")) {
-						List<Weapon> weapons = selectedFighter.getWeapons();
-	
-						if (! weapons.isEmpty()) {
-							RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
-	
-							if (weapon == null) {
-								weapon = (RangeCombatWeapon)selectedFighter.getWeapons().get(0);
-							}
-							else {
-								int index = weapons.indexOf(weapon);
-	
-								if (index < weapons.size() - 1) {
-									weapon = (RangeCombatWeapon)weapons.get(index + 1);
-								}
-								else {
-									weapon = (RangeCombatWeapon)selectedFighter.getWeapons().get(0);
-								}
-							}
-	
-							selectedFighter.setSelectedRangeCombatWeapon(weapon);
-						}
-						else {
-							Necromunda.setStatusMessage("This ganger has no weapons.");
-						}
-					}
-					else if (name.equals("Mode")) {
-						RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
-	
-						if (weapon != null) {
-							List<Ammunition> ammunitions = weapon.getAmmunitions();
-	
-							int index = ammunitions.indexOf(weapon.getCurrentAmmunition());
-							
-							if (index == -1) {
-								weapon.setCurrentAmmunition(ammunitions.get(0));
-							}
-							else {
-								if (index < ammunitions.size() - 1) {
-									weapon.setCurrentAmmunition(ammunitions.get(index + 1));
-								}
-								else {
-									weapon.setCurrentAmmunition(ammunitions.get(0));
-								}
-							}
-						}
-						else {
-							Necromunda.setStatusMessage("No weapon selected.");
-						}
-					}
-				}
-				else if (name.equals("Climb") && game.getSelectionMode().equals(SelectionMode.MOVE)) {
-					Ladder nearestLadder = getNearestLadder(currentPath.getOrigin(), selectedFighter.getBaseRadius());
-	
-					if (nearestLadder == null) {
-						Necromunda.setStatusMessage("There is no ladder in reach.");
-					}
-					else {
-						game.setSelectionMode(SelectionMode.CLIMB);
-						Vector3f currentPathOrigin = currentPath.getOrigin();
-						tearDownCurrentPath();
-						currentClimbPath = new ClimbPath(currentPathOrigin.clone());
-						Vector3f nearestLadderCollisionPoint = getLadderCollisionPoint(nearestLadder);
-						currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
-						selectedFighterNode.setLocalTranslation(getLadderCollisionPoint(nearestLadder.getPeer()));
-						currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
-					}
-				}
-			}
-		}
 	}
-	
+
 	private class TemplateRemover {
 		private TemplateNode temporaryWeaponTemplate;
 		private int timer;
-		
+
 		public TemplateRemover(TemplateNode temporaryWeaponTemplate) {
 			this.temporaryWeaponTemplate = temporaryWeaponTemplate;
 			this.timer = 2000;
@@ -1346,7 +1307,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 					}
 				}
 
-				if (! reliableMates.isEmpty() || fighter instanceof Leader) {
+				if (!reliableMates.isEmpty() || fighter instanceof Leader) {
 					if (fighter.unpinByInitiative()) {
 						Necromunda.appendToStatusMessage(String.format("%s unpins by initiative.", fighter));
 					}
@@ -1360,7 +1321,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			}
 		}
 	}
-	
+
 	private void turnStarted() {
 		unpinFighters();
 		removeTemplates();
@@ -1368,28 +1329,28 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		applyTemplateEffects();
 		removeTemplateTrails();
 	}
-	
+
 	private void removeTemplates() {
 		Iterator<TemplateNode> it = templateNodes.iterator();
-		
+
 		while (it.hasNext()) {
 			TemplateNode templateNode = it.next();
-			
+
 			if (templateNode.isTemplateToBeRemoved()) {
 				it.remove();
 				rootNode.detachChild(templateNode);
 			}
 		}
 	}
-	
+
 	private void moveTemplates() {
 		for (TemplateNode templateNode : templateNodes) {
 			if (templateNode.isTemplateMoving()) {
 				float distance = templateNode.getDriftDistance();
 				float angle = templateNode.getDriftAngle();
-				
+
 				Vector3f start = templateNode.getLocalTranslation().clone();
-				
+
 				List<Collidable> collidables = new ArrayList<Collidable>();
 				collidables.add(getBuildingsNode());
 				templateNode.moveAndCollide(distance, angle, collidables);
@@ -1397,14 +1358,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			}
 		}
 	}
-	
+
 	private void applyTemplateEffects() {
 		for (TemplateNode templateNode : templateNodes) {
-			List<FighterNode> affectedFighterNodes = getFighterNodesUnderTemplate(templateNode, fighterNodes);			
+			List<FighterNode> affectedFighterNodes = getFighterNodesUnderTemplate(templateNode, fighterNodes);
 			templateNode.dealDamageTo(affectedFighterNodes);
 		}
 	}
-	
+
 	private void removeTemplateTrails() {
 		for (TemplateNode templateNode : templateNodes) {
 			templateNode.removeTrail();
@@ -1436,9 +1397,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		float slope = FastMath.abs(nearestIntersection.getY() - objectPosition.getY());
 
-	 	if (slope > MAX_SLOPE) {
-	 		return;
-	 	}
+		if (slope > MAX_SLOPE) {
+			return;
+		}
 
 		if (currentPath == null) {
 			currentPath = new Line(objectPosition.clone(), nearestIntersection);
@@ -1503,7 +1464,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 					removeTargetingFacilities();
 					return;
 				}
-				
+
 				updateCurrentLineOfSight();
 				updateCurrentLineOfSightLine();
 				updateCurrentLineOfSightBox();
@@ -1517,7 +1478,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			if (currentTemplateNode == null) {
 				currentTemplateNode = TemplateNode.createTemplateNode(assetManager, currentAmmunition);
 			}
-			
+
 			Vector3f lineOfSightVector = line.getDirection().subtract(line.getOrigin());
 			lineOfSightVector = lineOfSightVector.normalize();
 
@@ -1542,8 +1503,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	}
 
 	private void updateCurrentLineOfSight() {
-		Vector3f sourceCenter = selectedFighterNode.getLocalTranslation().add(Vector3f.UNIT_Y);
-		Vector3f targetCenter = getFighterNodeUnderCursor().getLocalTranslation().add(Vector3f.UNIT_Y);
+		Vector3f sourceCenter = selectedFighterNode.getChild("collisionShapeNode").getWorldTranslation().clone();
+		Vector3f targetCenter = getFighterNodeUnderCursor().getChild("collisionShapeNode").getWorldTranslation().clone();
 
 		if (currentLineOfSight == null) {
 			currentLineOfSight = new Line(sourceCenter, targetCenter);
@@ -1555,7 +1516,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	}
 
 	private void updateCurrentLineOfSightLine() {
-		Geometry lineGeometry = (Geometry)rootNode.getChild("currentLineOfSightLine");
+		Geometry lineGeometry = (Geometry) rootNode.getChild("currentLineOfSightLine");
 
 		Vector3f start = currentLineOfSight.getOrigin();
 		Vector3f end = currentLineOfSight.getDirection();
@@ -1568,7 +1529,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			rootNode.attachChild(lineGeometry);
 		}
 		else {
-			com.jme3.scene.shape.Line line = (com.jme3.scene.shape.Line)lineGeometry.getMesh();
+			com.jme3.scene.shape.Line line = (com.jme3.scene.shape.Line) lineGeometry.getMesh();
 			line.updatePoints(start, end);
 		}
 	}
@@ -1605,7 +1566,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private float getLineLength(Line line) {
 		return line.getOrigin().distance(line.getDirection());
 	}
-	
+
 	private PhysicsSpace getPhysicsSpace() {
 		return stateManager.getState(BulletAppState.class).getPhysicsSpace();
 	}
@@ -1618,49 +1579,49 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private boolean isPhysicsLocked() {
 		return !physicsTickLock1 || !physicsTickLock2;
 	}
-	
+
 	private List<FighterNode> getHostileFighterNodesFrom(List<FighterNode> fighterNodes) {
 		List<FighterNode> hostileFighterNodes = new ArrayList<FighterNode>();
-		
+
 		for (FighterNode fighterNode : fighterNodes) {
 			Fighter fighter = fighterNode.getFighter();
-			
+
 			if (game.getHostileGangers().contains(fighter)) {
 				hostileFighterNodes.add(fighterNode);
 			}
 		}
-		
+
 		return hostileFighterNodes;
 	}
-	
+
 	private List<FighterNode> getFighterNodesWithLineOfSightFrom(FighterNode source, List<FighterNode> fighterNodes) {
 		List<FighterNode> fighterNodesWithLineOfSight = new ArrayList<FighterNode>();
-		
+
 		List<Collidable> collidables = getBoundingVolumes();
 		collidables.add(getBuildingsNode());
-		
+
 		for (FighterNode fighterNode : fighterNodes) {
 			if (hasLineOfSight(source, fighterNode, collidables)) {
 				fighterNodesWithLineOfSight.add(fighterNode);
 			}
 		}
-		
+
 		return fighterNodesWithLineOfSight;
 	}
-	
+
 	private FighterNode getNearestFighterNodeFrom(FighterNode source, List<FighterNode> fighterNodes) {
 		float nearestDistance = Float.MAX_VALUE;
 		FighterNode nearestFighterNode = null;
-		
+
 		for (FighterNode fighterNode : fighterNodes) {
 			float distance = source.getLocalTranslation().distance(fighterNode.getLocalTranslation());
-			
+
 			if (distance < nearestDistance) {
 				nearestDistance = distance;
 				nearestFighterNode = fighterNode;
 			}
 		}
-		
+
 		return nearestFighterNode;
 	}
 
@@ -1684,12 +1645,12 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		return otherFighterNodes;
 	}
-		
+
 	private List<FighterNode> getFighterNodesUnderTemplate(TemplateNode templateNode, List<FighterNode> fighterNodes) {
 		List<FighterNode> fighterNodesUnderTemplate = new ArrayList<FighterNode>();
 
 		for (FighterNode fighterNode : fighterNodes) {
-			CylinderCollisionShape shape = (CylinderCollisionShape)fighterNode.getGhostControl().getCollisionShape();
+			CylinderCollisionShape shape = (CylinderCollisionShape) fighterNode.getGhostControl().getCollisionShape();
 			Vector3f halfExtents = shape.getHalfExtents();
 			Vector3f localTranslation = fighterNode.getLocalTranslation().clone();
 			Fighter fighter = fighterNode.getFighter();
@@ -1706,53 +1667,53 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 		return fighterNodesUnderTemplate;
 	}
-	
+
 	private void fireTargetedWeapon(RangeCombatWeapon weapon) {
 		weapon.trigger();
-		
+
 		Iterator<FighterNode> targetedFighterNodesIterator = targetedFighterNodes.iterator();
-		
+
 		while (targetedFighterNodesIterator.hasNext()) {
 			FighterNode fighterNode = targetedFighterNodesIterator.next();
-			
+
 			float distance = fighterNode.getLocalTranslation().distance(selectedFighterNode.getLocalTranslation());
-			
+
 			if (distance > weapon.getMaximumRange()) {
 				Necromunda.appendToStatusMessage("Object out of range.");
 				targetedFighterNodesIterator.remove();
 				continue;
 			}
-			
+
 			Fighter selectedFighter = game.getSelectedFighter();
-			
+
 			int targetHitRoll = 7 - selectedFighter.getBallisticSkill() - weapon.getRangeModifier(distance);
-			
+
 			if (targetHitRoll >= 10) {
 				Necromunda.appendToStatusMessage(String.format("You need a %s to hit - impossible!", targetHitRoll));
 				targetedFighterNodesIterator.remove();
 				continue;
 			}
-			
+
 			Necromunda.appendToStatusMessage(String.format("Target hit roll is %s.", targetHitRoll));
-			
+
 			int hitRoll = Utils.rollD6();
-			
+
 			if ((targetHitRoll > 6) && (hitRoll == 6)) {
 				targetHitRoll -= 3;
 				hitRoll = Utils.rollD6();
 			}
-			
+
 			if ((hitRoll < targetHitRoll) || (hitRoll <= 1)) {
 				Necromunda.appendToStatusMessage(String.format("Rolled a %s and missed...", hitRoll));
 				shotHasMissed(weapon.isScattering());
 				targetedFighterNodesIterator.remove();
 				continue;
 			}
-			
+
 			Necromunda.appendToStatusMessage(String.format("Rolled a %s and hit!", hitRoll));
-			
+
 			fireAtTarget(hitRoll);
-			
+
 			targetedFighterNodesIterator.remove();
 		}
 	}
@@ -1760,7 +1721,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 	private void fireAtTarget(int hitRoll) {
 		Fighter selectedFighter = game.getSelectedFighter();
 		RangeCombatWeapon weapon = selectedFighter.getSelectedRangeCombatWeapon();
-		
+
 		weapon.hitRoll(hitRoll);
 
 		if (currentTemplateNode != null) {
@@ -1771,29 +1732,29 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			applyShotToTargets(weapon);
 		}
 	}
-	
+
 	private void shotHasMissed(boolean isScattering) {
 		if (currentTemplateNode != null) {
 			boolean hasEffect = true;
-			
+
 			if (isScattering) {
 				List<Collidable> collidables = new ArrayList<Collidable>();
 				collidables.add(getBuildingsNode());
 				hasEffect = currentTemplateNode.scatter(getLineLength(currentLineOfSight), collidables);
 			}
-			
+
 			if (hasEffect) {
 				fireTemplate(currentTemplateNode);
 			}
-			
+
 			queueTemplateNodeForRemoval(currentTemplateNode);
 		}
 	}
-	
+
 	private void queueTemplateNodeForRemoval(TemplateNode templateNode) {
 		templateNodes.add(templateNode);
 
-		if (! currentTemplateNode.isTemplatePersistent()) {
+		if (!currentTemplateNode.isTemplatePersistent()) {
 			templateNode.setName("temporaryTemplateNode");
 			TemplateRemover templateRemover = new TemplateRemover(templateNode);
 			templateRemovers.add(templateRemover);
@@ -1802,38 +1763,38 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			templateNode.setName("persistentTemplateNode");
 		}
 	}
-	
+
 	private void applyShotToTargets(RangeCombatWeapon weapon) {
 		List<FighterNode> affectedFighterNodes = new ArrayList<FighterNode>();
-		
+
 		FighterNode affectedFighterNode = targetedFighterNodes.get(0);
 		affectedFighterNodes.add(affectedFighterNode);
-		
+
 		if (weapon.getAdditionalTargetRange() > 0) {
 			List<FighterNode> fighterNodesWithinRange = getFighterNodesWithinDistance(affectedFighterNode, weapon.getAdditionalTargetRange());
 			List<FighterNode> visibleFighterNodes = getFighterNodesWithLineOfSightFrom(selectedFighterNode, fighterNodesWithinRange);
-			
+
 			affectedFighterNodes.addAll(visibleFighterNodes);
 		}
-		
+
 		pinFighters(affectedFighterNodes);
-		
+
 		for (FighterNode fighterNode : affectedFighterNodes) {
 			Fighter fighter = fighterNode.getFighter();
 			weapon.dealDamageTo(fighter);
 		}
 	}
-	
+
 	private void fireTemplate(TemplateNode templateNode) {
 		List<FighterNode> affectedFighterNodes = getFighterNodesUnderTemplate(templateNode, fighterNodes);
 		pinFighters(affectedFighterNodes);
 		templateNode.dealDamageTo(affectedFighterNodes);
 	}
-	
+
 	private void pinFighters(List<FighterNode> fighterNodes) {
 		for (FighterNode fighterNode : fighterNodes) {
 			Fighter fighter = fighterNode.getFighter();
-			
+
 			if (fighter.isNormal()) {
 				fighter.setState(State.PINNED);
 			}
@@ -1847,8 +1808,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 		statusText.append(string);
 
 		if (game.getSelectedFighter() != null) {
-			Fighter ganger = (Fighter)game.getSelectedFighter();
-			statusText.append(String.format("%s, %s, %sFlesh Wounds: %s\n", ganger.getName(), ganger.getState(), (ganger.isWebbed() ? "Webbed, " : ""), ganger.getFleshWounds()));
+			Fighter ganger = (Fighter) game.getSelectedFighter();
+			statusText.append(String.format("%s, %s, %sFlesh Wounds: %s\n", ganger.getName(), ganger.getState(), (ganger.isWebbed() ? "Webbed, " : ""), ganger
+					.getFleshWounds()));
 
 			RangeCombatWeapon weapon = ganger.getSelectedRangeCombatWeapon();
 
@@ -1872,8 +1834,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 			statusText.append("\n");
 		}
 
-		if (game.getCurrentGang() != null) {
-			statusText.append(game.getCurrentGang().getPhase().toString());
+		if (game.getPhase() != null) {
+			statusText.append(game.getPhase().toString());
 		}
 		else {
 			statusText.append(" ");
@@ -1884,14 +1846,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer,
 
 	@Override
 	public void simpleUpdate(float tpf) {
-		int millis = (int)(tpf * 1000);
-		
+		int millis = (int) (tpf * 1000);
+
 		Iterator<TemplateRemover> it = templateRemovers.iterator();
-		
+
 		while (it.hasNext()) {
 			TemplateRemover templateRemover = it.next();
 			templateRemover.setTimer(templateRemover.getTimer() - millis);
-			
+
 			if (templateRemover.getTimer() < 0) {
 				templateRemover.remove();
 				it.remove();

@@ -14,8 +14,6 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import necromunda.Gang.Phase;
-
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
@@ -29,6 +27,24 @@ public class Necromunda extends Observable {
 		REROLL
 	}
 	
+	public enum Phase {
+		MOVEMENT("Movement"),
+		SHOOTING("Shooting"),
+		HAND_TO_HAND("Hand to Hand"),
+		RECOVERY("Recovery");
+		
+		private String literal;
+		
+		private Phase(String literal) {
+			this.literal = literal;
+		}
+
+		@Override
+		public String toString() {
+			return literal;
+		}
+	}
+	
 	public static final float RUN_SPOT_DISTANCE = 8;
 	public static final float UNPIN_BY_INITIATIVE_DISTANCE = 2;
 	public static final float SUSTAINED_FIRE_RADIUS = 4;
@@ -39,12 +55,13 @@ public class Necromunda extends Observable {
 	private List<Gang> gangs;
 	private List<Building> buildings;
 	private Fighter selectedFighter;
+	private LinkedList<Fighter> deployQueue;
 	private SelectionMode selectionMode;
 	private Gang currentGang;
 	private int turn;
-	private JFrame necromundaFrame;
+	private Phase phase;
 	
-	private LinkedList<Fighter> deployQueue;
+	private JFrame necromundaFrame;
 	
 	public static final int[][] STRENGTH_RESISTANCE_MAP = {
 		{4, 5, 6, 6, 7, 7, 7, 7, 7, 7},
@@ -118,24 +135,19 @@ public class Necromunda extends Observable {
 		necromundaFrame.setResizable(false);
 		necromundaFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		necromundaFrame.setLocationRelativeTo(null);
-		necromundaFrame.setLayout(new BoxLayout(necromundaFrame.getContentPane(), BoxLayout.PAGE_AXIS));
 		necromundaFrame.add(gangGenerationPanel);
 		necromundaFrame.setVisible(true);
 	}
 	
-	public void objectDeployed() {
+	public void fighterDeployed() {
 		selectedFighter = deployQueue.poll();
 		
 		if (selectedFighter == null) {
 			currentGang = gangs.get(0);
 			currentGang.turnStarted();
 			selectionMode = SelectionMode.SELECT;
+			phase = Phase.MOVEMENT;
 		}
-	}
-	
-	public List<Fighter> getVisibleObjects(Vector3f sourceCoordinate, List<? extends Fighter> objectsToCheck) {
-		List<Fighter> objectsWithLineOfSight = new ArrayList<Fighter>();
-		return objectsWithLineOfSight;
 	}
 	
 	public void endTurn() {
@@ -152,6 +164,8 @@ public class Necromunda extends Observable {
 		selectedFighter = null;
 		
 		selectionMode = SelectionMode.SELECT;
+		
+		phase = Phase.MOVEMENT;
 	}
 	
 	private Gang getNextGang() {
@@ -169,9 +183,9 @@ public class Necromunda extends Observable {
 	}
 	
 	public void nextPhase() {
-		switch (currentGang.getPhase()) {
+		switch (phase) {
 			case MOVEMENT:
-				currentGang.setPhase(Phase.SHOOTING);
+				phase = Phase.SHOOTING;
 				break;
 			case SHOOTING:
 			case HAND_TO_HAND:
@@ -240,6 +254,14 @@ public class Necromunda extends Observable {
 	public int getTurn() {
 		return turn;
 	}
+	
+	public Phase getPhase() {
+		return phase;
+	}
+
+	public void setPhase(Phase phase) {
+		this.phase = phase;
+	}
 
 	public static String getStatusMessage() {
 		return statusMessage;
@@ -256,10 +278,6 @@ public class Necromunda extends Observable {
 		else {
 			Necromunda.statusMessage = String.format("%s %s", Necromunda.statusMessage, statusMessage);
 		}
-	}
-	
-	public Phase getPhase() {
-		return currentGang.getPhase();
 	}
 	
 	public List<Fighter> getHostileGangers() {
