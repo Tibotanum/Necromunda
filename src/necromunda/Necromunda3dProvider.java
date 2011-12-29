@@ -105,6 +105,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private List<Node> buildingNodes;
 	private List<Ladder> ladders;
+	private Ladder currentLadder;
+	private List<Ladder> currentLadders;
 
 	private BitmapText statusMessage;
 
@@ -149,6 +151,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		Node tableNode = createTableNode();
 		rootNode.attachChild(tableNode);
 
+		ladders = new ArrayList<Ladder>();
+		
 		Node buildingsNode = createBuildings();
 
 		CollisionShape sceneShape = CollisionShapeFactory.createMeshShape(buildingsNode);
@@ -267,10 +271,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		inputManager.addMapping("EndTurn", new KeyTrigger(KeyInput.KEY_E));
 		inputManager.addListener(keyboardListener, "EndTurn");
-
-		ladders = new ArrayList<Ladder>();
-
-		createLadders();
+		
+		createLadderLines();
 	}
 
 	private Node createTableNode() {
@@ -303,29 +305,27 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			buildingNode.rotate(0, rotationAngle, 0);
 
 			buildingsNode.attachChild(buildingNode);
+			
+			//Create ladders
+			Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
+			
+			List<Ladder> ladders = Ladder.createLaddersFrom("assets/Building" + building.getIdentifier() + ".ladder", selectedMaterial);
+			
+			for (Ladder ladder : ladders){
+				this.ladders.add(ladder);
+				buildingNode.attachChild(ladder.getLineNode());
+			}
 		}
 
 		return buildingsNode;
 	}
-
-	private void createLadders() {
-		Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
-
-		for (Node buildingNode : buildingNodes) {
-			Vector3f vector1 = new Vector3f(-3.5f, 0, 4.5f);
-			Ladder ladder1 = new Ladder(vector1, selectedMaterial);
-
-			Vector3f vector2 = new Vector3f(-3.5f, 3.5f, 4.5f);
-			Ladder ladder2 = new Ladder(vector2, selectedMaterial);
-
-			ladder1.setPeer(ladder2);
-			ladder2.setPeer(ladder1);
-
-			ladders.add(ladder1);
-			ladders.add(ladder2);
-
-			buildingNode.attachChild(ladder1.getLineNode());
-			buildingNode.attachChild(ladder2.getLineNode());
+	
+	private void createLadderLines() {
+		for (Ladder ladder : ladders) {
+			com.jme3.scene.shape.Line lineShape = new com.jme3.scene.shape.Line(Vector3f.ZERO, Vector3f.UNIT_Y);
+			Geometry lineGeometry = new Geometry("line", lineShape);
+			lineGeometry.setMaterial(materialFactory.createMaterial(MaterialFactory.MaterialIdentifier.SELECTED));
+			ladder.getLineNode().attachChild(lineGeometry);
 		}
 	}
 
@@ -388,10 +388,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			else if (fighter.isComatose()) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_COMATOSE));
 			}
+			
+			List<Ladder> laddersInReach = getLaddersInReach(fighterNode.getLocalTranslation(), fighter.getBaseRadius());
 
-			Ladder nearestLadder = getNearestLadder(fighterNode.getLocalTranslation(), fighter.getBaseRadius());
-
-			if (nearestLadder != null) {
+			if (!laddersInReach.isEmpty()) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_LADDER));
 			}
 		}
@@ -580,24 +580,52 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 					}
 				}
 			}
-			else if (name.equals("Climb") && game.getSelectionMode().equals(SelectionMode.MOVE)) {
-				Ladder nearestLadder = getNearestLadder(currentPath.getOrigin(), selectedFighter.getBaseRadius());
-
-				if (nearestLadder == null) {
-					Necromunda.setStatusMessage("There is no ladder in reach.");
+			else if (name.equals("Climb")) {
+				if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
+					currentLadders = getLaddersInReach(currentPath.getOrigin(), selectedFighter.getBaseRadius());
+	
+					if (currentLadders.isEmpty()) {
+						Necromunda.setStatusMessage("There is no ladder in reach.");
+					}
+					else {
+						currentLadder = currentLadders.get(0);
+						game.setSelectionMode(SelectionMode.CLIMB);
+						climbLadder(currentLadder);
+					}
 				}
-				else {
-					game.setSelectionMode(SelectionMode.CLIMB);
-					Vector3f currentPathOrigin = currentPath.getOrigin();
-					tearDownCurrentPath();
-					currentClimbPath = new ClimbPath(currentPathOrigin.clone());
-					Vector3f nearestLadderCollisionPoint = getLadderCollisionPoint(nearestLadder);
-					currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
-					selectedFighterNode.setLocalTranslation(getLadderCollisionPoint(nearestLadder.getPeer()));
-					currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
+				else if (game.getSelectionMode().equals(SelectionMode.CLIMB)) {
+					int ladderIndex = currentLadders.indexOf(currentLadder);
+					
+					if (ladderIndex < currentLadders.size() - 1) {
+						ladderIndex += 1;
+					}
+					else {
+						ladderIndex = 0;
+					}
+					
+					currentLadder = currentLadders.get(ladderIndex);
+					climbLadder(currentLadder);
 				}
 			}
 		}
+	}
+	
+	private void climbLadder(Ladder ladder) {
+		Vector3f currentPathOrigin;
+		
+		if (currentPath != null) {
+			currentPathOrigin = currentPath.getOrigin();
+			tearDownCurrentPath();
+		}
+		else {
+			currentPathOrigin = currentClimbPath.getStart().clone();
+		}
+		
+		currentClimbPath = new ClimbPath(currentPathOrigin.clone());
+		Vector3f nearestLadderCollisionPoint = getLadderCollisionPoint(ladder);
+		currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(currentPathOrigin));
+		selectedFighterNode.setLocalTranslation(getLadderCollisionPoint(ladder.getPeer()));
+		currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
 	}
 
 	private void executeMouseAction(String name) {
@@ -1270,25 +1298,19 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			this.timer = timer;
 		}
 	}
-
-	private Ladder getNearestLadder(Vector3f origin, float baseRadius) {
-		float distance = Float.MAX_VALUE;
-		Ladder nearestLadder = null;
-
-		for (Ladder ladder : ladders) {
-			float tempDistance = ladder.getWorldStart().distance(origin);
-
-			if (tempDistance < distance) {
-				distance = tempDistance;
-				nearestLadder = ladder;
+	
+	private List<Ladder> getLaddersInReach(Vector3f origin, float baseRadius) {
+		List<Ladder> ladders = new ArrayList<Ladder>();
+		
+		for (Ladder ladder : this.ladders) {
+			float distance = ladder.getWorldStart().distance(origin);
+			
+			if ((distance - baseRadius) <= MAX_LADDER_DISTANCE) {
+				ladders.add(ladder);
 			}
 		}
-
-		if ((distance - baseRadius) > MAX_LADDER_DISTANCE) {
-			nearestLadder = null;
-		}
-
-		return nearestLadder;
+		
+		return ladders;
 	}
 
 	private void unpinFighters() {
@@ -1308,12 +1330,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				}
 
 				if (!reliableMates.isEmpty() || fighter instanceof Leader) {
-					if (fighter.unpinByInitiative()) {
-						Necromunda.appendToStatusMessage(String.format("%s unpins by initiative.", fighter));
-					}
-					else {
-						Necromunda.appendToStatusMessage(String.format("%s fails to unpin by initiative.", fighter));
-					}
+					fighter.unpinByInitiative();
 				}
 				else {
 					Necromunda.appendToStatusMessage(String.format("%s has no reliable mates around.", fighter));
@@ -1498,6 +1515,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				updateCurrentLineOfSight();
 				updateCurrentLineOfSightLine();
 				updateCurrentLineOfSightBox();
+			}
+			else {
+				removeTargetingFacilities();
 			}
 		}
 	}
