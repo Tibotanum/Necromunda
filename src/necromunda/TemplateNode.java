@@ -101,9 +101,9 @@ public class TemplateNode extends Node {
 	public boolean scatter(float shotDistance, List<Collidable> collidables) {
 		boolean hasEffect = true;
 		int scatterDistance = Utils.rollArtilleryDice();
-		float angle = Utils.rollScatterDice();
+		ScatterDiceRollResult scatterDiceRollResult = Utils.rollScatterDice();
 
-		if ((scatterDistance == 0) && (angle < 0)) {
+		if ((scatterDistance == 0) && (scatterDiceRollResult.isHit())) {
 			ammunition.explode();
 		}
 		else if (scatterDistance == 0) {
@@ -115,7 +115,7 @@ public class TemplateNode extends Node {
 			
 			Necromunda.appendToStatusMessage(String.format("Shot scatters by %s.", scatterDistance));
 
-			moveAndCollide(scatterDistance, angle, collidables);
+			moveAndCollide(scatterDistance, scatterDiceRollResult.getAngle(), collidables);
 		}
 		
 		return hasEffect;
