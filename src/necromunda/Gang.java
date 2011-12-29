@@ -56,21 +56,13 @@ public class Gang implements Serializable {
 	}
 	
 	private String name;
-	private Phase phase;
 	private Set<Fighter> gangMembers;
-	private Set<Fighter> outOfActionGangMembers;
 	public House house;
 	
 	public Gang(String name, House house) {
 		this.name = name;
 		this.house = house;
-		phase = Phase.MOVEMENT;
 		gangMembers = new HashSet<Fighter>();
-		outOfActionGangMembers = new HashSet<Fighter>();
-	}
-	
-	public void setPhase(Phase phase) {
-		this.phase = phase;
 	}
 	
 	public List<Fighter> getHostileGangers(List<Gang> gangs) {
@@ -83,10 +75,6 @@ public class Gang implements Serializable {
 		}
 		
 		return hostileGangers;
-	}
-
-	public Phase getPhase() {
-		return phase;
 	}
 
 	public void addGanger(Fighter ganger) {
@@ -109,14 +97,6 @@ public class Gang implements Serializable {
 	public String toString() {
 		return String.format("%s (%s)", name, house);
 	}
-
-	public Set<Fighter> getOutOfActionGangMembers() {
-		return outOfActionGangMembers;
-	}
-
-	public void setOutOfActionGangMembers(Set<Fighter> outOfActionGangMembers) {
-		this.outOfActionGangMembers = outOfActionGangMembers;
-	}
 	
 	public int getGangRating() {
 		int rating = 0;
@@ -132,8 +112,6 @@ public class Gang implements Serializable {
 		for (Fighter ganger : gangMembers) {
 			ganger.turnStarted();
 		}
-
-		setPhase(Phase.MOVEMENT);
 	}
 	
 	public void turnEnded() {
