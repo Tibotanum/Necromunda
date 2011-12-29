@@ -102,7 +102,7 @@ public abstract class Fighter implements Serializable {
 		weapons = new ArrayList<Weapon>();
 	}
 	
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	/*private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		in.defaultReadObject();
 		List<Weapon> tempWeapons = new ArrayList<Weapon>(weapons);
 		weapons.clear();
@@ -110,7 +110,7 @@ public abstract class Fighter implements Serializable {
 		for (Weapon weapon : tempWeapons) {
 			addWeapon(weapon);
 		}
-	}
+	}*/
 	
 	public void addWeapon(Weapon weapon) {
 		weapons.add(weapon);
@@ -154,7 +154,6 @@ public abstract class Fighter implements Serializable {
 		}
 		else if (tempState.equals(State.OUT_OF_ACTION)) {
 			state = tempState;
-			gang.getOutOfActionGangMembers().add(this);
 		}
 	}
 	
@@ -166,7 +165,6 @@ public abstract class Fighter implements Serializable {
 			
 			if ((fleshWounds >= profile.getWeaponSkill()) && (fleshWounds >= profile.getBallisticSkill())) {
 				state = State.OUT_OF_ACTION;
-				gang.getOutOfActionGangMembers().add(this);
 			}
 			else {
 				state = State.PINNED;
@@ -177,7 +175,6 @@ public abstract class Fighter implements Serializable {
 		}
 		else {
 			state = State.OUT_OF_ACTION;
-			gang.getOutOfActionGangMembers().add(this);
 		}
 	}
 	
@@ -209,7 +206,6 @@ public abstract class Fighter implements Serializable {
 		}
 		else if (tempState.equals(State.OUT_OF_ACTION)) {
 			state = tempState;
-			gang.getOutOfActionGangMembers().add(this);
 		}
 	}
 	
@@ -227,7 +223,6 @@ public abstract class Fighter implements Serializable {
 		}
 		else {
 			setState(State.OUT_OF_ACTION);
-			gang.getOutOfActionGangMembers().add(this);
 		}
 	}
 	
@@ -280,15 +275,15 @@ public abstract class Fighter implements Serializable {
 		}
 	}
 	
-	public boolean unpinByInitiative() {
+	public void unpinByInitiative() {
 		int initiativeRoll = Utils.rollD6();
 		
 		if (initiativeRoll <= profile.getInitiative()) {
 			state = State.NORMAL;
-			return true;
+			Necromunda.appendToStatusMessage(String.format("%s unpins by initiative.", this));
 		}
 		else {
-			return false;
+			Necromunda.appendToStatusMessage(String.format("%s fails to unpin by initiative.", this));
 		}
 	}
 	
