@@ -58,6 +58,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
+import com.jme3.math.Rectangle;
 import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
@@ -81,7 +82,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	public static final float MAX_SLOPE = 0.05f;
 	public static final float NOT_TOUCH_DISTANCE = 0.01f;
 	public static final float MAX_LADDER_DISTANCE = 0.5f;
-	public static final boolean ENABLE_PHYSICS_DEBUG = false;
+	public static final boolean ENABLE_PHYSICS_DEBUG = true;
 	public static final Vector3f GROUND_BUFFER = new Vector3f(0, NOT_TOUCH_DISTANCE, 0);
 	private Necromunda game;
 	private FighterNode selectedFighterNode;
@@ -161,11 +162,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		buildingsNode.addControl(buildingsControl);
 
 		PhysicsSpace physicsSpace = getPhysicsSpace();
-
-		if (ENABLE_PHYSICS_DEBUG) {
-			physicsSpace.enableDebug(assetManager);
-		}
-
 		physicsSpace.add(buildingsNode);
 		physicsSpace.addCollisionListener(new PhysicsCollisionListenerImpl());
 		physicsSpace.addTickListener(new PhysicsTickListenerImpl());
@@ -272,7 +268,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		inputManager.addMapping("EndTurn", new KeyTrigger(KeyInput.KEY_E));
 		inputManager.addListener(keyboardListener, "EndTurn");
 		
-		createLadderLines();
+		if (ENABLE_PHYSICS_DEBUG) {
+			physicsSpace.enableDebug(assetManager);
+			createLadderLines();
+		}
 	}
 
 	private Node createTableNode() {
@@ -663,6 +662,18 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		if ((contactPoint != null) && (selectedFighterNode != null) && hasValidPosition(selectedFighterNode) && fighterNodesWithinDistance.isEmpty()) {
 			game.fighterDeployed();
 		}
+		
+		/*List<Vector3f> pointCloud = selectedFighterNode.getCollisionShapePointCloud();
+		
+		Material material = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
+		
+		for (Vector3f vector : pointCloud) {
+			Quad quad = new Quad(0.01f, 0.01f);
+			Geometry geometry = new Geometry("cloudpoint", quad);
+			geometry.setMaterial(material);
+			geometry.setLocalTranslation(vector);
+			rootNode.attachChild(geometry);
+		}*/
 	}
 
 	private void select() {
@@ -737,9 +748,16 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			}
 
 			collidables.add(getBuildingsNode());
-			boolean hasLineOfSight = hasLineOfSight(selectedFighterNode, fighterNodeUnderCursor, collidables);
+			
+			/*List<FighterNode> otherFighterNodes = new ArrayList<FighterNode>(fighterNodes);
+			otherFighterNodes.remove(selectedFighterNode);
+			otherFighterNodes.remove(fighterNodeUnderCursor);
+			
+			collidables.addAll(otherFighterNodes);*/
+			
+			int numberOfVisiblePoints = getNumberOfVisiblePoints(selectedFighterNode, fighterNodeUnderCursor, collidables);
 
-			if (!currentLineOfSight.isValid() || !hasLineOfSight || isPhysicsLocked()) {
+			if (/*!currentLineOfSight.isValid() ||*/ (numberOfVisiblePoints == 0) || isPhysicsLocked()) {
 				Necromunda.setStatusMessage("Object out of sight.");
 				return;
 			}
@@ -758,8 +776,21 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			if (weapon.getNumberOfShots() > 0) {
 				return;
 			}
+			
+			float visiblePercentage = (float)numberOfVisiblePoints / fighterNodeUnderCursor.getCollisionShapePointCloud().size();
 
-			fireTargetedWeapon(weapon);
+			Necromunda.appendToStatusMessage("Visible percentage: " + (visiblePercentage * 100));
+			
+			int hitModifier = 0;
+			
+			if ((visiblePercentage < 1.0) && (visiblePercentage >= 0.5)) {
+				hitModifier = -1;
+			}
+			else if (visiblePercentage < 0.5) {
+				hitModifier = -2;
+			}
+			
+			fireTargetedWeapon(weapon, hitModifier);
 
 			removeTargetingFacilities();
 
@@ -1079,32 +1110,35 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		statusMessage.setLocalTranslation(10, 120, 0);
 		guiNode.attachChild(statusMessage);
 	}
-
-	private boolean hasLineOfSight(FighterNode source, FighterNode target, List<Collidable> collidables) {
+	
+	private int getNumberOfVisiblePoints(FighterNode source, FighterNode target, List<Collidable> collidables) {
 		Vector3f sourceUpTranslation = new Vector3f(0, source.getFighter().getBaseRadius() * 1.5f, 0);
-		Vector3f targetUpTranslation = new Vector3f(0, target.getFighter().getBaseRadius() * 1.5f, 0);
 
 		Vector3f sourceLocation = source.getLocalTranslation().add(sourceUpTranslation);
-		Vector3f targetLocation = target.getLocalTranslation().add(targetUpTranslation);
-
-		Vector3f direction = targetLocation.subtract(sourceLocation);
-
-		CollisionResult closestCollision = Utils.getNearestCollisionFrom(sourceLocation, direction, collidables);
-
-		if (closestCollision != null) {
-			float distanceToTarget = direction.length();
-			float distanceToCollisionPoint = closestCollision.getContactPoint().subtract(sourceLocation).length();
-
-			if (distanceToCollisionPoint >= distanceToTarget) {
-				return true;
+		
+		List<Vector3f> pointCloud = target.getCollisionShapePointCloud();
+		
+		int numberOfVisiblePoints = 0;
+		
+		for (Vector3f vector : pointCloud) {
+			Vector3f direction = vector.subtract(sourceLocation);
+	
+			CollisionResult closestCollision = Utils.getNearestCollisionFrom(sourceLocation, direction, collidables);
+	
+			if (closestCollision != null) {
+				float distanceToTarget = direction.length();
+				float distanceToCollisionPoint = closestCollision.getContactPoint().subtract(sourceLocation).length();
+	
+				if (distanceToCollisionPoint >= distanceToTarget) {
+					numberOfVisiblePoints++;
+				}
 			}
 			else {
-				return false;
+				numberOfVisiblePoints++;
 			}
 		}
-		else {
-			return true;
-		}
+		
+		return numberOfVisiblePoints;
 	}
 
 	private List<Collidable> getBoundingVolumes() {
@@ -1269,9 +1303,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		public void onAction(String name, boolean isPressed, float tpf) {
 			if (isPressed) {
 				executeKeyboardAction(name);
+				game.updateStatus();
 			}
-
-			game.updateStatus();
 		}
 	}
 
@@ -1523,7 +1556,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	}
 
 	private void updateCurrentLineOfSight() {
-		Vector3f sourceCenter = selectedFighterNode.getChild("collisionShapeNode").getWorldTranslation().clone();
+		Vector3f sourceCenter = selectedFighterNode.getChild("collisionShapeNode").getWorldTranslation().clone().add(0, selectedFighterNode.getCenterToHeadOffset(), 0);
 		Vector3f targetCenter = getFighterNodeUnderCursor().getChild("collisionShapeNode").getWorldTranslation().clone();
 
 		if (currentLineOfSight == null) {
@@ -1621,7 +1654,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		collidables.add(getBuildingsNode());
 
 		for (FighterNode fighterNode : fighterNodes) {
-			if (hasLineOfSight(source, fighterNode, collidables)) {
+			if (getNumberOfVisiblePoints(source, fighterNode, collidables) > 0) {
 				fighterNodesWithLineOfSight.add(fighterNode);
 			}
 		}
@@ -1688,7 +1721,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		return fighterNodesUnderTemplate;
 	}
 
-	private void fireTargetedWeapon(RangeCombatWeapon weapon) {
+	private void fireTargetedWeapon(RangeCombatWeapon weapon, int hitModifier) {
 		weapon.trigger();
 
 		Iterator<FighterNode> targetedFighterNodesIterator = targetedFighterNodes.iterator();
@@ -1706,7 +1739,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 			Fighter selectedFighter = game.getSelectedFighter();
 
-			int targetHitRoll = 7 - selectedFighter.getBallisticSkill() - weapon.getRangeModifier(distance);
+			int targetHitRoll = 7 - selectedFighter.getBallisticSkill() - weapon.getRangeModifier(distance) - hitModifier;
 
 			if (targetHitRoll >= 10) {
 				Necromunda.appendToStatusMessage(String.format("You need a %s to hit - impossible!", targetHitRoll));

@@ -93,12 +93,12 @@ public class FighterNode extends Node {
 		attachChild(base);
 		attachChild(figureNode);
 
-		Node node = new Node("collisionShapeNode");
+		Node collisionShapeNode = new Node("collisionShapeNode");
 		CylinderCollisionShape modelShape = new CylinderCollisionShape(new Vector3f(baseRadius, baseRadius * 1.5f, baseRadius), 1);
 		GhostControl physicsGhostObject = new GhostControl(modelShape);
-		node.addControl(physicsGhostObject);
-		node.move(0, baseRadius * 1.5f, 0);
-		attachChild(node);
+		collisionShapeNode.addControl(physicsGhostObject);
+		collisionShapeNode.move(0, baseRadius * 1.5f, 0);
+		attachChild(collisionShapeNode);
 	}
 	
 	public void attachSymbol(Material material) {
@@ -133,6 +133,58 @@ public class FighterNode extends Node {
 		}
 		
 		return symbolNodes;
+	}
+	
+	public List<Vector3f> getCollisionShapePointCloud() {
+		List<Vector3f> pointCloud = new ArrayList<Vector3f>();
+		
+		float angleAddition = FastMath.TWO_PI / 8;
+		float[] fighterBaseRadiusFragments = new float[5];
+		
+		for (int i = 0; i <= 4; i++) {
+			fighterBaseRadiusFragments[i] = fighter.getBaseRadius() / 4 * i;
+		}
+		
+		List<Vector3f> templateSlice = new ArrayList<Vector3f>();
+		
+		for (float angle = 0; angle < FastMath.TWO_PI; angle += angleAddition) {
+			for (int i = 0; i <= 4; i++) {
+				float radius = fighterBaseRadiusFragments[i];
+				
+				float x = FastMath.cos(angle) * radius;
+				float z = FastMath.sin(angle) * radius;
+				
+				templateSlice.add(new Vector3f(x, 0, z));
+			}
+		}
+		
+		float yOffset = fighter.getBaseRadius() * 1.5f;
+		float yOffsetFragment = yOffset * 2 / 8;
+		
+		for (int i = 0; i <= 8; i++) {
+			List<Vector3f> slice = new ArrayList<Vector3f>();
+			
+			float tempYoffset = yOffset - yOffsetFragment * i;
+			
+			for (Vector3f vector : templateSlice) {
+				Vector3f clone = vector.clone();
+				clone.setY(tempYoffset);
+				slice.add(clone);
+			}
+			
+			pointCloud.addAll(slice);
+		}
+		
+		// Add Node world offset
+		for (Vector3f vector : pointCloud) {
+			vector.addLocal(getChild("collisionShapeNode").getWorldTranslation());
+		}
+		
+		return pointCloud;
+	}
+	
+	public float getCenterToHeadOffset() {
+		return fighter.getBaseRadius() * 1.0f;
 	}
 
 	@Override
