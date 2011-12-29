@@ -1,5 +1,14 @@
 package necromunda;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -9,16 +18,55 @@ import com.jme3.scene.shape.Line;
 public class Ladder {
 	private Ladder peer;
 	private Node lineNode;
-	private Geometry lineGeometry;
-	private Line lineShape;
 	
-	public Ladder(Vector3f origin, Material material) {
+	public Ladder(Vector3f origin) {
 		lineNode = new Node("lineNode");
 		lineNode.setLocalTranslation(origin);
-		lineShape = new Line(Vector3f.ZERO, Vector3f.UNIT_Y);
-		lineGeometry = new Geometry("line", lineShape);
-		lineGeometry.setMaterial(material);
-		//lineNode.attachChild(lineGeometry);
+	}
+	
+	public static List<Ladder> createLaddersFrom(String filename, Material material) {
+		File file = new File(filename);
+		List<Ladder> ladders = new ArrayList<Ladder>();
+
+		try {
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			
+			String line = bufferedReader.readLine();
+			
+			while (line != null) {
+				StringTokenizer tokenizer = new StringTokenizer(line, ",");
+				int index = 0;
+				float[] coordinates = new float[6];
+				
+				while (tokenizer.hasMoreTokens()) {
+					String token = tokenizer.nextToken();
+					coordinates[index] = Float.parseFloat(token);
+					index++;
+				}
+			
+				Ladder ladder1 = new Ladder(new Vector3f(coordinates[0], coordinates[1], coordinates[2]));
+				Ladder ladder2 = new Ladder(new Vector3f(coordinates[3], coordinates[4], coordinates[5]));
+				
+				ladder1.setPeer(ladder2);
+				ladder2.setPeer(ladder1);
+				
+				ladders.add(ladder1);
+				ladders.add(ladder2);
+				
+				line = bufferedReader.readLine();
+			}
+		}
+		catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return ladders;
 	}
 
 	public Ladder getPeer() {
@@ -30,11 +78,11 @@ public class Ladder {
 	}
 	
 	public Vector3f getWorldStart() {
-		return lineNode.getWorldTranslation().add(lineShape.getStart());
+		return lineNode.getWorldTranslation();
 	}
 	
 	public Vector3f getWorldEnd() {
-		return lineNode.getWorldTranslation().add(lineShape.getEnd());
+		return lineNode.getWorldTranslation().add(Vector3f.UNIT_Y);
 	}
 	
 	public float distance(Vector3f point) {
