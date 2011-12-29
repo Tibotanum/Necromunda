@@ -80,9 +80,6 @@ public class Necromunda extends Observable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ToolTipManager toolTipManager = ToolTipManager.sharedInstance();
-		toolTipManager.setDismissDelay(Integer.MAX_VALUE);
-		
 		Necromunda game = Necromunda.getInstance();
 	}
 	
