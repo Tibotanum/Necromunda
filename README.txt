@@ -18,7 +18,7 @@ W, A, S, D:				Move camera
 B:						Attempt to break a web pistol web
 M:						Start regular movement
 R:						Start run movement
-C:						Climb a ladder (during regular movement)
+C:						Climb a ladder (during regular movement; press repeatedly to cycle through ladders if more than one is in reach)
 Y:						Cycle weapons
 O:						Cycle weapon mode
 H:						Start shooting
