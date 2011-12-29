@@ -316,6 +316,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		weaponComboBox.addItemListener(this);
 		
 		weaponProfileStringLabel = new JLabel();
+		updateWeaponString();
 		
 		gangerWeaponList = new JList(new DefaultListModel());
 		gangerWeaponList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
@@ -800,9 +801,13 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		ItemSelectable itemSelectable = e.getItemSelectable();
 		
 		if ((itemSelectable == weaponComboBox) && (e.getStateChange() == ItemEvent.SELECTED)) {
-			Weapon selectedWeapon = (Weapon)weaponComboBox.getSelectedItem();
-			weaponProfileStringLabel.setText(selectedWeapon.getProfileString());
+			updateWeaponString();
 		}
+	}
+	
+	private void updateWeaponString() {
+		Weapon selectedWeapon = (Weapon)weaponComboBox.getSelectedItem();
+		weaponProfileStringLabel.setText(selectedWeapon.getProfileString());
 	}
 	
 	private class FighterListCellRenderer extends DefaultListCellRenderer {
