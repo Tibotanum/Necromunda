@@ -27,22 +27,20 @@ public class Utils {
 	}
 	
 	public static int rollArtilleryDice() {
-		Random random = new Random();
-		int roll = random.nextInt(6) * 2;
+		int roll = FastMath.nextRandomInt(0, 5) * 2;
 		
 		return roll;
 	}
 	
-	public static float rollScatterDice() {
-		Random random = new Random();
-		int roll = random.nextInt(6);
+	public static ScatterDiceRollResult rollScatterDice() {
+		int hitRoll = FastMath.nextRandomInt(1, 6);
+		boolean hit = true;
 		
-		if (roll > 1) {
-			return getRandomAngle(); 
+		if (hitRoll > 2) {
+			hit = false;
 		}
-		else {
-			return -1;
-		}
+		
+		return new ScatterDiceRollResult(hit, getRandomAngle());
 	}
 	
 	public static float getRandomAngle() {
