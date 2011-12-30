@@ -82,7 +82,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	public static final float MAX_SLOPE = 0.05f;
 	public static final float NOT_TOUCH_DISTANCE = 0.01f;
 	public static final float MAX_LADDER_DISTANCE = 0.5f;
-	public static final boolean ENABLE_PHYSICS_DEBUG = true;
+	public static final boolean ENABLE_PHYSICS_DEBUG = false;
 	public static final Vector3f GROUND_BUFFER = new Vector3f(0, NOT_TOUCH_DISTANCE, 0);
 	private Necromunda game;
 	private FighterNode selectedFighterNode;
@@ -308,7 +308,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			//Create ladders
 			Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
 			
-			List<Ladder> ladders = Ladder.createLaddersFrom("assets/Building" + building.getIdentifier() + ".ladder", selectedMaterial);
+			List<Ladder> ladders = Ladder.createLaddersFrom("/Building" + building.getIdentifier() + ".ladder", selectedMaterial);
 			
 			for (Ladder ladder : ladders){
 				this.ladders.add(ladder);
@@ -755,9 +755,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			
 			collidables.addAll(otherFighterNodes);*/
 			
-			int numberOfVisiblePoints = getNumberOfVisiblePoints(selectedFighterNode, fighterNodeUnderCursor, collidables);
+			VisibilityInfo visibilityInfo = getVisibilityInfo(selectedFighterNode, fighterNodeUnderCursor, collidables);
 
-			if (/*!currentLineOfSight.isValid() ||*/ (numberOfVisiblePoints == 0) || isPhysicsLocked()) {
+			if (/*!currentLineOfSight.isValid() ||*/ (visibilityInfo.getNumberOfVisiblePoints() == 0) || isPhysicsLocked()) {
 				Necromunda.setStatusMessage("Object out of sight.");
 				return;
 			}
@@ -777,7 +777,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				return;
 			}
 			
-			float visiblePercentage = (float)numberOfVisiblePoints / fighterNodeUnderCursor.getCollisionShapePointCloud().size();
+			float visiblePercentage = visibilityInfo.getVisiblePercentage();
 
 			Necromunda.appendToStatusMessage("Visible percentage: " + (visiblePercentage * 100));
 			
@@ -1111,7 +1111,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		guiNode.attachChild(statusMessage);
 	}
 	
-	private int getNumberOfVisiblePoints(FighterNode source, FighterNode target, List<Collidable> collidables) {
+	private VisibilityInfo getVisibilityInfo(FighterNode source, FighterNode target, List<Collidable> collidables) {
 		Vector3f sourceUpTranslation = new Vector3f(0, source.getFighter().getBaseRadius() * 1.5f, 0);
 
 		Vector3f sourceLocation = source.getLocalTranslation().add(sourceUpTranslation);
@@ -1138,7 +1138,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			}
 		}
 		
-		return numberOfVisiblePoints;
+		VisibilityInfo visibilityInfo = new VisibilityInfo(numberOfVisiblePoints, pointCloud.size());
+		
+		return visibilityInfo;
 	}
 
 	private List<Collidable> getBoundingVolumes() {
@@ -1654,7 +1656,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		collidables.add(getBuildingsNode());
 
 		for (FighterNode fighterNode : fighterNodes) {
-			if (getNumberOfVisiblePoints(source, fighterNode, collidables) > 0) {
+			if (getVisibilityInfo(source, fighterNode, collidables).getNumberOfVisiblePoints() > 0) {
 				fighterNodesWithLineOfSight.add(fighterNode);
 			}
 		}
