@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -14,6 +18,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Line;
+import com.jme3.system.JmeSystem;
 
 public class Ladder {
 	private Ladder peer;
@@ -25,12 +30,11 @@ public class Ladder {
 	}
 	
 	public static List<Ladder> createLaddersFrom(String filename, Material material) {
-		File file = new File(filename);
+		InputStream is = JmeSystem.class.getResourceAsStream(filename);
 		List<Ladder> ladders = new ArrayList<Ladder>();
 
 		try {
-			FileReader fileReader = new FileReader(file);
-			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
 			
 			String line = bufferedReader.readLine();
 			
