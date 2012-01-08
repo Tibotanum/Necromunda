@@ -2,9 +2,11 @@ package necromunda;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Observable;
 import java.util.Set;
@@ -53,7 +55,7 @@ public class Necromunda extends Observable {
 	private static String statusMessage;
 	
 	private List<Gang> gangs;
-	private List<Building> buildings;
+	private Map<String, List<Building>> maps;
 	private Fighter selectedFighter;
 	private LinkedList<Fighter> deployQueue;
 	private SelectionMode selectionMode;
@@ -88,7 +90,7 @@ public class Necromunda extends Observable {
 		selectionMode = SelectionMode.DEPLOY;
 		turn = 1;
 		statusMessage = "";
-		buildings = createBuildings();
+		maps = createBuildings();
 		
 		deployQueue = new LinkedList<Fighter>();
 		
@@ -110,7 +112,9 @@ public class Necromunda extends Observable {
 		return game;
 	}
 	
-	private List<Building> createBuildings() {
+	private Map<String, List<Building>> createBuildings() {
+		Map<String, List<Building>> maps = new HashMap<String, List<Building>>();
+		
 		List<Building> buildings = new ArrayList<Building>();
 		
 		buildings.add(new Building(FastMath.PI / 4, new Vector3f(8, 0, 8), "01"));
@@ -120,8 +124,20 @@ public class Necromunda extends Observable {
 		buildings.add(new Building(0, new Vector3f(38, 0, 40), "01"));
 		buildings.add(new Building(FastMath.PI / 8 * 3, new Vector3f(8, 0, 24), "02"));
 		buildings.add(new Building(FastMath.PI / 8 * -3, new Vector3f(40, 0, 24), "02"));
+
+		maps.put("Courtyard", buildings);
 		
-		return buildings;
+		buildings = new ArrayList<Building>();
+		
+		buildings.add(new Building(FastMath.PI / 4, new Vector3f(8, 0, 8), "01"));
+		buildings.add(new Building(FastMath.PI / 2, new Vector3f(6, 0, 40), "01"));
+		buildings.add(new Building(0, new Vector3f(24, 0, 22), "03"));
+		buildings.add(new Building(0, new Vector3f(38, 0, 40), "01"));
+		buildings.add(new Building(FastMath.PI / 8 * 3, new Vector3f(8, 0, 24), "02"));
+		
+		maps.put("Steel Quarter", buildings);
+		
+		return maps;
 	}
 	
 	private void initialiseGUI() {
@@ -244,10 +260,6 @@ public class Necromunda extends Observable {
 		this.selectionMode = selectionMode;
 	}
 
-	public List<Building> getBuildings() {
-		return buildings;
-	}
-
 	public int getTurn() {
 		return turn;
 	}
@@ -279,5 +291,9 @@ public class Necromunda extends Observable {
 	
 	public List<Fighter> getHostileGangers() {
 		return currentGang.getHostileGangers(gangs);
+	}
+
+	public Map<String, List<Building>> getMaps() {
+		return maps;
 	}
 }

@@ -30,6 +30,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -38,6 +39,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.ListModel;
 import javax.swing.SpinnerListModel;
@@ -63,9 +65,10 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	JLabel gangerTypeLabel;
 	JComboBox gangerTypeComboBox;
 	JComboBox weaponComboBox;
+	JComboBox mapComboBox;
 	JLabel weaponProfileStringLabel;
 	JList gangerWeaponList;
-	JButton OKButton;
+	JButton okButton;
 	JButton addGangButton;
 	JButton removeGangButton;
 	JButton saveGangButton;
@@ -87,6 +90,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	JLabel gangRatingLabel;
 	JLabel gangRating;
 	
+	JCheckBox invertMouseCheckBox;
+	
 	JTextField movementTextField;
 	JTextField weaponSkillTextField;
 	JTextField ballisticSkillTextField;
@@ -97,6 +102,10 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	JTextField attacksTextField;
 	JTextField leadershipTextField;
 	
+	JTabbedPane tabbedPane;
+	JPanel mainPanel;
+	JPanel optionsPanel;
+	
 	JList gangList;
 	JList gangerList;
 	
@@ -106,8 +115,11 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	List<BasedModelImage> gangerImages;
 	
 	public GangGenerationPanel(final Necromunda game) {
-		BorderLayout layout = new BorderLayout();
-		setLayout(layout);
+		mainPanel = new JPanel();
+		optionsPanel = new JPanel();
+
+		setLayout(new BorderLayout());
+		mainPanel.setLayout(new BorderLayout());
 		
 		gangerImages = new ArrayList<BasedModelImage>();
 		
@@ -376,7 +388,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			}
 		});
 		
-		
+		mapComboBox = new JComboBox(game.getMaps().keySet().toArray());
 		
 		gangList = new JList(new DefaultListModel());
 		gangList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
@@ -469,7 +481,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				        
 						model.addElement(gang);
 						
-						OKButton.getAction().setEnabled(true);
+						okButton.getAction().setEnabled(true);
 					}
 					catch (FileNotFoundException e1) {
 						e1.printStackTrace();
@@ -567,7 +579,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					
 					((DefaultListModel)gangerList.getModel()).addElement(ganger);
 					
-					OKButton.getAction().setEnabled(true);
+					okButton.getAction().setEnabled(true);
 				}
 			}
 		});
@@ -593,9 +605,14 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			}
 		});
 		
-		OKButton = new JButton("OK");
+		okButton = new JButton("OK");
 		OKButtonAction action = new OKButtonAction("OK", game);
-		OKButton.setAction(action);
+		okButton.setAction(action);
+		
+		tabbedPane = new JTabbedPane();
+		
+		invertMouseCheckBox = new JCheckBox("Invert mouse");
+		invertMouseCheckBox.setSelected(true);
 		
 		JPanel panel1 = new JPanel();
 		panel1.setLayout(new GridLayout(0, 4, 5, 5));
@@ -615,6 +632,9 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		panel1.add(removeGangerButton);
 		panel1.add(gangerTypeLabel);
 		panel1.add(gangerTypeComboBox);
+		
+		optionsPanel.add(invertMouseCheckBox);
+		optionsPanel.add(mapComboBox);
 		
 		Box mainBox = Box.createHorizontalBox();
 		mainBox.add(gangerPictureSpinner);
@@ -726,11 +746,18 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		panel2.add(box5);
 		panel2.add(Box.createRigidArea(new Dimension(5, 5)));
 		
-		panel2.add(OKButton);
+		mainPanel.add(panel1, BorderLayout.NORTH);
+		mainPanel.add(mainBox, BorderLayout.CENTER);
+		mainPanel.add(panel2, BorderLayout.SOUTH);
 		
-		add(panel1, BorderLayout.NORTH);
-		add(mainBox, BorderLayout.CENTER);
-		add(panel2, BorderLayout.SOUTH);
+		tabbedPane.add("Gang Creation", mainPanel);
+		tabbedPane.add("Options", optionsPanel);
+		
+		JPanel okButtonPanel = new JPanel();
+		okButtonPanel.add(okButton);
+		
+		add(tabbedPane, BorderLayout.CENTER);
+		add(okButtonPanel, BorderLayout.SOUTH);
 	}
 	
 	private void setDefaultSize(JComponent component) {
@@ -772,6 +799,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			game.commitGeneratedGangs(gangs);
 						
 			final Necromunda3dProvider necromunda3dProvider = new Necromunda3dProvider(game);
+			necromunda3dProvider.setInvertMouse(invertMouseCheckBox.isSelected());
+			necromunda3dProvider.setBuildings(game.getMaps().get(mapComboBox.getSelectedItem()));
 
 			Thread thread = new Thread(new Runnable() {
 

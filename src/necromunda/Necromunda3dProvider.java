@@ -85,6 +85,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	public static final boolean ENABLE_PHYSICS_DEBUG = false;
 	public static final Vector3f GROUND_BUFFER = new Vector3f(0, NOT_TOUCH_DISTANCE, 0);
 	private Necromunda game;
+	
+	private boolean invertMouse;
+	private List<Building> buildings;
+	
 	private FighterNode selectedFighterNode;
 	private List<FighterNode> validTargetFighterNodes;
 	private List<FighterNode> fighterNodes;
@@ -176,7 +180,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		guiNode.detachAllChildren();
 
-		invertMouse();
+		if (invertMouse) {
+			invertMouse();
+		}
 
 		DirectionalLight sun = new DirectionalLight();
 		sun.setDirection(new Vector3f(-0.5f, -1.5f, -1).normalize());
@@ -287,8 +293,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private Node createBuildings() {
 		Node buildingsNode = new Node("buildingsNode");
-
-		for (Building building : game.getBuildings()) {
+		
+		for (Building building : buildings) {
 			Material buildingMaterial = materialFactory.createBuildingMaterial(building.getIdentifier());
 
 			Spatial model = assetManager.loadModel("Building" + building.getIdentifier() + ".mesh.xml");
@@ -414,6 +420,14 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private Node getTableNode() {
 		return (Node) rootNode.getChild("tableNode");
+	}
+
+	public void setInvertMouse(boolean invertMouse) {
+		this.invertMouse = invertMouse;
+	}
+
+	public void setBuildings(List<Building> buildings) {
+		this.buildings = buildings;
 	}
 
 	private void colouriseBasesUnderTemplate(TemplateNode templateNode) {
