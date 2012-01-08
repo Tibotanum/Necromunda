@@ -33,41 +33,43 @@ public class Ladder {
 		InputStream is = JmeSystem.class.getResourceAsStream(filename);
 		List<Ladder> ladders = new ArrayList<Ladder>();
 
-		try {
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
-			
-			String line = bufferedReader.readLine();
-			
-			while (line != null) {
-				StringTokenizer tokenizer = new StringTokenizer(line, ",");
-				int index = 0;
-				float[] coordinates = new float[6];
+		if (is != null) {
+			try {
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is));
 				
-				while (tokenizer.hasMoreTokens()) {
-					String token = tokenizer.nextToken();
-					coordinates[index] = Float.parseFloat(token);
-					index++;
+				String line = bufferedReader.readLine();
+				
+				while (line != null) {
+					StringTokenizer tokenizer = new StringTokenizer(line, ",");
+					int index = 0;
+					float[] coordinates = new float[6];
+					
+					while (tokenizer.hasMoreTokens()) {
+						String token = tokenizer.nextToken();
+						coordinates[index] = Float.parseFloat(token);
+						index++;
+					}
+				
+					Ladder ladder1 = new Ladder(new Vector3f(coordinates[0], coordinates[1], coordinates[2]));
+					Ladder ladder2 = new Ladder(new Vector3f(coordinates[3], coordinates[4], coordinates[5]));
+					
+					ladder1.setPeer(ladder2);
+					ladder2.setPeer(ladder1);
+					
+					ladders.add(ladder1);
+					ladders.add(ladder2);
+					
+					line = bufferedReader.readLine();
 				}
-			
-				Ladder ladder1 = new Ladder(new Vector3f(coordinates[0], coordinates[1], coordinates[2]));
-				Ladder ladder2 = new Ladder(new Vector3f(coordinates[3], coordinates[4], coordinates[5]));
-				
-				ladder1.setPeer(ladder2);
-				ladder2.setPeer(ladder1);
-				
-				ladders.add(ladder1);
-				ladders.add(ladder2);
-				
-				line = bufferedReader.readLine();
 			}
-		}
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		return ladders;
