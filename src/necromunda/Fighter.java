@@ -87,6 +87,26 @@ public abstract class Fighter implements Serializable {
 	private BasedModelImage gangerPicture;
 	private String name;
 	
+	public static Fighter getInstance(Type type, String name, Gang ownGang) {
+		Fighter fighter = null;
+		
+		switch (type) {
+			case LEADER:
+				fighter = new Leader(name, new LeaderProfile(), ownGang);
+				break;
+			case GANGER:
+				fighter = new Ganger(name, new GangerProfile(), ownGang);
+				break;
+			case JUVE:
+				fighter = new Juve(name, new JuveProfile(), ownGang);
+				break;
+			case HEAVY:
+				fighter = new Heavy(name, new HeavyProfile(), ownGang);
+		}
+		
+		return fighter;
+	}
+	
 	public Fighter(String name, FighterProfile profile, Gang ownGang) {
 		this.name = name;
 		this.profile = profile;
