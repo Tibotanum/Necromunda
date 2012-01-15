@@ -36,3 +36,8 @@ The BSD License for the included jMonkeyEngine libraries is held in "jMonkeyBSDL
 Developer notice
 ----------------
 To get the project started you need the jMonkeyPlatform libraries on your classpath. You can get them on "http://jmonkeyengine.com".
+
+Contributors
+------------
+Tibotanum (source code, building models)
+Skurcey (building models)
