@@ -4,11 +4,6 @@ import necromunda.Fighter;
 import necromunda.Necromunda;
 
 public class NeedleRifle extends NeedlePistol {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8970210827239248514L;
-
 	public NeedleRifle() {
 		setName("Needle Rifle");
 		setWeaponType(WeaponType.SPECIAL);

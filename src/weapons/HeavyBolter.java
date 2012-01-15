@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Utils;
 
 public class HeavyBolter extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4837501305046592200L;
-
 	public HeavyBolter() {
 		setName("Heavy Bolter");
 		setWeaponType(WeaponType.HEAVY);

@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Utils;
 
 public class KrakGrenades extends Grenades {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3837234959143422936L;
-
 	public KrakGrenades() {
 		setName("Krak Grenades");
 		setCost(50);

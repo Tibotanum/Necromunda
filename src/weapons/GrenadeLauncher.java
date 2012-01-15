@@ -15,11 +15,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Sphere;
 
 public class GrenadeLauncher extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1952085375372489650L;
-	
 	public GrenadeLauncher() {
 		setName("Grenade Launcher");
 		setWeaponType(WeaponType.SPECIAL);

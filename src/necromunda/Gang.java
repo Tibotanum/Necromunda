@@ -11,12 +11,6 @@ import java.util.TreeSet;
 
 
 public class Gang implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2367078332448161962L;
-
 	public enum Phase {
 		MOVEMENT("Movement"),
 		SHOOTING("Shooting"),

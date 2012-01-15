@@ -5,11 +5,6 @@ import necromunda.Utils;
 
 
 public class StubGun extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5576002771279054513L;
-
 	public StubGun() {
 		setName("Stub Gun");
 		setWeaponType(WeaponType.PISTOL);

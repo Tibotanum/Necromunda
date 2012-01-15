@@ -10,12 +10,6 @@ import weapons.RangeCombatWeapon;
 import weapons.Weapon;
 
 public abstract class Fighter implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -735618313207459151L;
-
 	public static FighterProfile getTemplateProfile() {
 		return new GangerProfile();
 	}

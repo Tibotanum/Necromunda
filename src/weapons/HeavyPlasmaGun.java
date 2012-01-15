@@ -17,11 +17,6 @@ import necromunda.Necromunda;
 import necromunda.Utils;
 
 public class HeavyPlasmaGun extends PlasmaWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -629032065585270401L;
-
 	public HeavyPlasmaGun() {
 		setName("Heavy Plasma Gun");
 		setWeaponType(WeaponType.HEAVY);

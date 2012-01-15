@@ -5,12 +5,6 @@ import necromunda.Necromunda;
 import necromunda.Fighter.State;
 
 public class NeedlePistol extends RangeCombatWeapon {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3385621320949231800L;
-
 	public NeedlePistol() {
 		setName("Needle Pistol");
 		setWeaponType(WeaponType.PISTOL);

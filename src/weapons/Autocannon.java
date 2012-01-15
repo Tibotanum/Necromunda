@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Utils;
 
 public class Autocannon extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3350885247055071909L;
-
 	public Autocannon() {
 		setName("Autocannon");
 		setWeaponType(WeaponType.HEAVY);

@@ -5,11 +5,6 @@ import java.io.Serializable;
 import necromunda.Necromunda;
 
 public class PlasmaPistol extends PlasmaWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8560434423413731861L;
-
 	public PlasmaPistol() {
 		setName("Plasma Pistol");
 		setWeaponType(WeaponType.PISTOL);

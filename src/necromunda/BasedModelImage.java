@@ -3,11 +3,6 @@ package necromunda;
 import java.io.Serializable;
 
 public class BasedModelImage implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 744252569745462346L;
 	private String imageFileName;
 	private int offset;
 	private int baseWidth;

@@ -3,10 +3,6 @@ package necromunda;
 import java.io.Serializable;
 
 public abstract class FighterProfile implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2538309320719376434L;
 	private int movement;
 	private int weaponSkill;
 	private int ballisticSkill;

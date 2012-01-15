@@ -7,11 +7,6 @@ import weapons.RangeCombatWeapon.WeaponType;
 import com.jme3.math.ColorRGBA;
 
 public class MissileLauncher extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8775293707331788986L;
-
 	public MissileLauncher() {
 		setName("Missile Launcher");
 		setWeaponType(WeaponType.HEAVY);

@@ -6,12 +6,6 @@ import necromunda.Necromunda;
 import necromunda.Utils;
 
 public class PlasmaGrenades extends Grenades {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8784711632367167462L;
-
 	public PlasmaGrenades() {
 		setName("Plasma Grenades");
 		setCost(41);

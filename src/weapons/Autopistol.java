@@ -2,12 +2,6 @@ package weapons;
 
 
 public class Autopistol extends RangeCombatWeapon {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5405933393719083267L;
-
 	public Autopistol() {
 		setName("Autopistol");
 		setWeaponType(WeaponType.PISTOL);

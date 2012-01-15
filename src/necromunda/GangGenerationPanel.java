@@ -52,10 +52,6 @@ import necromunda.Gang.House;
 import weapons.*;
 
 public class GangGenerationPanel extends JPanel implements ItemListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1860302614163537187L;
 	JLabel gangNameLabel;
 	JTextField gangNameTextField;
 	JLabel houseLabel;

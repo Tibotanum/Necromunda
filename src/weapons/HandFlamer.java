@@ -8,12 +8,6 @@ import com.jme3.math.ColorRGBA;
 import necromunda.Necromunda;
 
 public class HandFlamer extends Flamer {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7127255870175542341L;
-
 	public HandFlamer() {
 		setName("Hand Flamer");
 		setWeaponType(WeaponType.PISTOL);

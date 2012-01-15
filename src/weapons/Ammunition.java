@@ -13,11 +13,6 @@ import necromunda.TemplateNode;
 import necromunda.Utils;
 
 public abstract class Ammunition implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4548533318842667346L;
-	
 	private String name;
 	private RangeCombatWeapon weapon;
 	private boolean addingToOwnersStrength;

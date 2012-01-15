@@ -1,11 +1,6 @@
 package necromunda;
 
 public class GangerProfile extends FighterProfile {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6516704566486543854L;
-
 	public GangerProfile() {
 		setMovement(4);
 		setWeaponSkill(3);

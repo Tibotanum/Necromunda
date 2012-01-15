@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Utils;
 
 public class HeavyStubber extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8655040421260065525L;
-
 	public HeavyStubber() {
 		setName("Heavy Stubber");
 		setWeaponType(WeaponType.HEAVY);

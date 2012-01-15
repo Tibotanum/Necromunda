@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Necromunda;
 
 public class Shotgun extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3107206319409527991L;
-
 	public Shotgun() {
 		setName("Shotgun");
 		setWeaponType(WeaponType.BASIC);

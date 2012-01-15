@@ -4,12 +4,6 @@ import necromunda.Necromunda;
 import necromunda.Utils;
 
 public class PlasmaGun extends PlasmaWeapon {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1267718976706485346L;
-
 	public PlasmaGun() {
 		setName("Plasma Gun");
 		setWeaponType(WeaponType.SPECIAL);

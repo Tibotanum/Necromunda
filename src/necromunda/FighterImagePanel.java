@@ -16,10 +16,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class FighterImagePanel extends JPanel implements ChangeListener {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7907778232065535638L;
 	private SpinnerListModel spinnerModel;
 	private Map<BasedModelImage, Image> imageMap = new HashMap<BasedModelImage, Image>();
 	

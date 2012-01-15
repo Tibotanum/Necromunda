@@ -4,11 +4,6 @@ import necromunda.Fighter;
 import necromunda.Necromunda;
 
 public class WebPistol extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1933132080175427580L;
-
 	public WebPistol() {
 		setName("Web Pistol");
 		setWeaponType(WeaponType.PISTOL);

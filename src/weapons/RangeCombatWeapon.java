@@ -10,12 +10,6 @@ import necromunda.Utils;
 import necromunda.Fighter.State;
 
 public abstract class RangeCombatWeapon extends Weapon {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4885937292616950445L;
-	
 	public static float MINIMUM_TEMPLATE_SIZE = 0.01f;
 
 	public enum WeaponType {

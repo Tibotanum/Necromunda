@@ -1,11 +1,6 @@
 package necromunda;
 
 public class HeavyProfile extends FighterProfile {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 903989683024366321L;
-
 	public HeavyProfile() {
 		setMovement(4);
 		setWeaponSkill(3);

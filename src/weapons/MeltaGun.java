@@ -3,12 +3,6 @@ package weapons;
 import necromunda.Utils;
 
 public class MeltaGun extends RangeCombatWeapon {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1634089833984318586L;
-
 	public MeltaGun() {
 		setName("Melta-Gun");
 		setWeaponType(WeaponType.SPECIAL);

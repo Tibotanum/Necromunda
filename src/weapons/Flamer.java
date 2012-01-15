@@ -12,11 +12,6 @@ import com.jme3.scene.shape.Sphere;
 
 
 public class Flamer extends RangeCombatWeapon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8054290943744117729L;
-
 	private final String outOfFuelMessage;
 
 	public Flamer() {

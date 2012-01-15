@@ -8,10 +8,6 @@ import necromunda.Fighter;
 import necromunda.Necromunda;
 
 public abstract class Weapon implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1723030735199990133L;
 	private String name;
 	private Fighter owner;
 	private boolean addingToOwnersStrength;

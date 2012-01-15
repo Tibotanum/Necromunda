@@ -1,11 +1,6 @@
 package necromunda;
 
 public class LeaderProfile extends FighterProfile {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6685452866184944013L;
-
 	public LeaderProfile() {
 		setMovement(4);
 		setWeaponSkill(4);

@@ -3,11 +3,6 @@ package weapons;
 import necromunda.Necromunda;
 
 public class FragGrenades extends Grenades {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3511653440549401022L;
-	
 	public FragGrenades() {
 		setName("Frag Grenades");
 		setCost(30);
