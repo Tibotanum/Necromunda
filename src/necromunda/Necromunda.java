@@ -129,11 +129,12 @@ public class Necromunda extends Observable {
 		
 		buildings = new ArrayList<Building>();
 		
-		buildings.add(new Building(FastMath.PI / 4, new Vector3f(8, 0, 8), "01"));
-		buildings.add(new Building(FastMath.PI / 2, new Vector3f(6, 0, 40), "01"));
-		buildings.add(new Building(0, new Vector3f(24, 0, 22), "03"));
+		buildings.add(new Building(FastMath.PI / 6, new Vector3f(8, 0, 8), "01"));
+		buildings.add(new Building(FastMath.PI / 3, new Vector3f(6, 0, 40), "01"));
+		buildings.add(new Building(FastMath.PI / 8, new Vector3f(24, 0, 22), "04"));
+		buildings.add(new Building(FastMath.PI / 8, new Vector3f(24, 0, 22), "05"));
 		buildings.add(new Building(0, new Vector3f(38, 0, 40), "01"));
-		buildings.add(new Building(FastMath.PI / 8 * 3, new Vector3f(8, 0, 24), "02"));
+		buildings.add(new Building(FastMath.PI / 5 * 3, new Vector3f(8, 0, 24), "02"));
 		
 		maps.put("Steel Quarter", buildings);
 		
