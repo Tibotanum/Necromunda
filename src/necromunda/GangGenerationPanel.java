@@ -517,67 +517,38 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				if (gangList.getSelectedValue() != null) {
 					Gang selectedGang = (Gang)gangList.getSelectedValue();
 					Fighter.Type fighterType = (Fighter.Type)gangerTypeComboBox.getSelectedItem();
-					Class<? extends Fighter> fighterClass = fighterType.getAssociatedClass();
-					Fighter ganger = null;
 					
-					try {
-						Method method = fighterClass.getMethod("getTemplateProfile", new Class<?>[0]);
-						FighterProfile profile = (FighterProfile)method.invoke(fighterClass.getClass(), new Object[0]);
-						
-						profile.setMovement(Integer.parseInt(movementTextField.getText()));
-						profile.setWeaponSkill(Integer.parseInt(weaponSkillTextField.getText()));
-						profile.setBallisticSkill(Integer.parseInt(ballisticSkillTextField.getText()));
-						profile.setStrength(Integer.parseInt(strengthTextField.getText()));
-						profile.setToughness(Integer.parseInt(toughnessTextField.getText()));
-						profile.setWounds(Integer.parseInt(woundsTextField.getText()));
-						profile.setInitiative(Integer.parseInt(initiativeTextField.getText()));
-						profile.setAttacks(Integer.parseInt(attacksTextField.getText()));
-						profile.setLeadership(Integer.parseInt(leadershipTextField.getText()));
-						
-						movementTextField.setText(String.valueOf(profile.getMovement()));
-						weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
-						ballisticSkillTextField.setText(String.valueOf(profile.getBallisticSkill()));
-						strengthTextField.setText(String.valueOf(profile.getStrength()));
-						toughnessTextField.setText(String.valueOf(profile.getToughness()));
-						woundsTextField.setText(String.valueOf(profile.getWounds()));
-						initiativeTextField.setText(String.valueOf(profile.getInitiative()));
-						attacksTextField.setText(String.valueOf(profile.getAttacks()));
-						leadershipTextField.setText(String.valueOf(profile.getLeadership()));
-						
-						ganger = fighterClass.getConstructor(String.class, FighterProfile.class, Gang.class).newInstance(gangerNameTextField.getText(), profile, selectedGang);
-					}
-					catch (SecurityException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					catch (InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					catch (InstantiationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					Fighter fighter = Fighter.getInstance(fighterType, gangerNameTextField.getText(), selectedGang);
+
+					FighterProfile profile = fighter.getProfile();
+					
+					profile.setMovement(Integer.parseInt(movementTextField.getText()));
+					profile.setWeaponSkill(Integer.parseInt(weaponSkillTextField.getText()));
+					profile.setBallisticSkill(Integer.parseInt(ballisticSkillTextField.getText()));
+					profile.setStrength(Integer.parseInt(strengthTextField.getText()));
+					profile.setToughness(Integer.parseInt(toughnessTextField.getText()));
+					profile.setWounds(Integer.parseInt(woundsTextField.getText()));
+					profile.setInitiative(Integer.parseInt(initiativeTextField.getText()));
+					profile.setAttacks(Integer.parseInt(attacksTextField.getText()));
+					profile.setLeadership(Integer.parseInt(leadershipTextField.getText()));
+					
+					movementTextField.setText(String.valueOf(profile.getMovement()));
+					weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
+					ballisticSkillTextField.setText(String.valueOf(profile.getBallisticSkill()));
+					strengthTextField.setText(String.valueOf(profile.getStrength()));
+					toughnessTextField.setText(String.valueOf(profile.getToughness()));
+					woundsTextField.setText(String.valueOf(profile.getWounds()));
+					initiativeTextField.setText(String.valueOf(profile.getInitiative()));
+					attacksTextField.setText(String.valueOf(profile.getAttacks()));
+					leadershipTextField.setText(String.valueOf(profile.getLeadership()));
 					
 					BasedModelImage image = (BasedModelImage)gangerPictureSpinner.getModel().getValue();
-					ganger.setGangerPicture(image);
+					fighter.setGangerPicture(image);
 					
-					selectedGang.addGanger(ganger);
+					selectedGang.addGanger(fighter);
 					updateGangRating();
 					
-					((DefaultListModel)gangerList.getModel()).addElement(ganger);
+					((DefaultListModel)gangerList.getModel()).addElement(fighter);
 					
 					okButton.getAction().setEnabled(true);
 				}
