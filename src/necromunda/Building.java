@@ -5,12 +5,12 @@ import com.jme3.math.Vector3f;
 public class Building {
 	private Vector3f position;
 	private float rotationAngle;
-	private String identifier;
+	private String[] identifiers;
 	
-	public Building(float rotationAngle, Vector3f origin, String identifier) {
+	public Building(float rotationAngle, Vector3f origin, String... identifiers) {
 		this.position = origin;
 		this.rotationAngle = rotationAngle;
-		this.identifier = identifier;
+		this.identifiers = identifiers;
 	}
 
 	public Vector3f getOrigin() {
@@ -25,11 +25,11 @@ public class Building {
 		return rotationAngle;
 	}
 
-	public String getIdentifier() {
-		return identifier;
+	public String[] getIdentifiers() {
+		return identifiers;
 	}
 
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
+	public void setIdentifiers(String[] identifiers) {
+		this.identifiers = identifiers;
 	}
 }

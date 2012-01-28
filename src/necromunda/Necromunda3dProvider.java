@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -87,11 +88,13 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private Necromunda game;
 	
 	private boolean invertMouse;
-	private List<Building> buildings;
 	
 	private FighterNode selectedFighterNode;
 	private List<FighterNode> validTargetFighterNodes;
 	private List<FighterNode> fighterNodes;
+	
+	private Node buildingsNode;
+	private Node selectedBuildingNode;
 
 	private RigidBodyControl buildingsControl;
 	private Line currentPath;
@@ -107,8 +110,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private List<FighterNode> targetedFighterNodes;
 
 	private List<FighterNode> validSustainedFireTargetFighterNodes;
+	
+	private boolean rightButtonDown;
 
-	private List<Node> buildingNodes;
+	private LinkedList<Node> buildingNodes;
 	private List<Ladder> ladders;
 	private Ladder currentLadder;
 	private List<Ladder> currentLadders;
@@ -122,7 +127,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		fighterNodes = new ArrayList<FighterNode>();
 
-		buildingNodes = new ArrayList<Node>();
+		buildingsNode = new Node("buildingsNode");
+		
+		buildingNodes = new LinkedList<Node>();
 
 		templateNodes = new ArrayList<TemplateNode>();
 
@@ -158,15 +165,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		ladders = new ArrayList<Ladder>();
 		
-		Node buildingsNode = createBuildings();
-
-		CollisionShape sceneShape = CollisionShapeFactory.createMeshShape(buildingsNode);
-		buildingsControl = new RigidBodyControl(sceneShape, 0);
-		buildingsControl.setKinematic(false);
-		buildingsNode.addControl(buildingsControl);
+		createBuildings();
 
 		PhysicsSpace physicsSpace = getPhysicsSpace();
-		physicsSpace.add(buildingsNode);
 		physicsSpace.addCollisionListener(new PhysicsCollisionListenerImpl());
 		physicsSpace.addTickListener(new PhysicsTickListenerImpl());
 
@@ -274,6 +275,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		inputManager.addMapping("EndTurn", new KeyTrigger(KeyInput.KEY_E));
 		inputManager.addListener(keyboardListener, "EndTurn");
 		
+		inputManager.addMapping("SkipBuilding", new KeyTrigger(KeyInput.KEY_K));
+		inputManager.addListener(keyboardListener, "SkipBuilding");
+		
 		if (ENABLE_PHYSICS_DEBUG) {
 			physicsSpace.enableDebug(assetManager);
 			createLadderLines();
@@ -291,38 +295,31 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		return tableNode;
 	}
 
-	private Node createBuildings() {
-		Node buildingsNode = new Node("buildingsNode");
-		
-		for (Building building : buildings) {
-			Material buildingMaterial = materialFactory.createBuildingMaterial(building.getIdentifier());
-
-			Spatial model = assetManager.loadModel("Building" + building.getIdentifier() + ".mesh.xml");
-			model.setMaterial(buildingMaterial);
-
-			Vector3f origin = building.getOrigin();
-			float rotationAngle = building.getRotationAngle();
-
+	private void createBuildings() {
+		for (Building building : game.getBuildings()) {
 			Node buildingNode = new Node("buildingNode");
-			buildingNodes.add(buildingNode);
-			buildingNode.attachChild(model);
-			buildingNode.setLocalTranslation(origin);
-			buildingNode.rotate(0, rotationAngle, 0);
+			
+			for (String identifier : building.getIdentifiers()) {
+				Material buildingMaterial = materialFactory.createBuildingMaterial(identifier);
+	
+				Spatial model = assetManager.loadModel("Building" + identifier + ".mesh.xml");
+				model.setMaterial(buildingMaterial);
 
-			buildingsNode.attachChild(buildingNode);
-			
-			//Create ladders
-			Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
-			
-			List<Ladder> ladders = Ladder.createLaddersFrom("/Building" + building.getIdentifier() + ".ladder", selectedMaterial);
-			
-			for (Ladder ladder : ladders){
-				this.ladders.add(ladder);
-				buildingNode.attachChild(ladder.getLineNode());
+				buildingNode.attachChild(model);
+				
+				//Create ladders
+				Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
+				
+				List<Ladder> ladders = Ladder.createLaddersFrom("/Building" + identifier + ".ladder", selectedMaterial);
+				
+				for (Ladder ladder : ladders) {
+					this.ladders.add(ladder);
+					buildingNode.attachChild(ladder.getLineNode());
+				}
 			}
+			
+			buildingNodes.add(buildingNode);
 		}
-
-		return buildingsNode;
 	}
 	
 	private void createLadderLines() {
@@ -426,10 +423,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		this.invertMouse = invertMouse;
 	}
 
-	public void setBuildings(List<Building> buildings) {
-		this.buildings = buildings;
-	}
-
 	private void colouriseBasesUnderTemplate(TemplateNode templateNode) {
 		List<FighterNode> fighterNodesUnderTemplate = getFighterNodesUnderTemplate(templateNode, fighterNodes);
 
@@ -452,6 +445,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			game.setSelectionMode(SelectionMode.SELECT);
 			game.endTurn();
 			turnStarted();
+		}
+		else if (name.equals("SkipBuilding")) {
+			skipBuilding();
 		}
 		else if (selectedFighter == null) {
 			Necromunda.setStatusMessage("You must select a fighter first.");
@@ -641,34 +637,77 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		currentClimbPath.addToLength(nearestLadderCollisionPoint.distance(selectedFighterNode.getLocalTranslation()));
 	}
 
-	private void executeMouseAction(String name) {
+	private void executeMouseAction(String name, boolean isPressed) {
 		if (name.equals("leftClick")) {
-			onLeftClick();
+			onLeftClick(isPressed);
 		}
 		else if (name.equals("rightClick")) {
-			onRightClick();
+			onRightClick(isPressed);
 		}
 	}
 
-	private void onLeftClick() {
-		if (game.getSelectionMode().equals(SelectionMode.DEPLOY)) {
-			deploy();
+	private void onLeftClick(boolean isPressed) {
+		if (isPressed) {
+			if (game.getSelectionMode().equals(SelectionMode.SELECT)) {
+				select();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
+				move();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.CLIMB)) {
+				climb();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
+				target();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_BUILDING)) {
+				deployBuilding();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_MODEL)) {
+				deployModel();
+			}
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.SELECT)) {
-			select();
+	}
+	
+	private void deployBuilding() {
+		Vector3f nearestIntersection = getTableCollisionPoint();
+
+		if (nearestIntersection == null) {
+			return;
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
-			move();
+
+		selectedBuildingNode = selectedBuildingNode.clone(false);
+		selectedBuildingNode.setLocalTranslation(nearestIntersection);
+		buildingsNode.attachChild(selectedBuildingNode);
+	}
+	
+	private void skipBuilding() {
+		buildingsNode.detachChild(selectedBuildingNode);
+		
+		selectedBuildingNode = buildingNodes.poll();
+		
+		Vector3f nearestIntersection = getTableCollisionPoint();
+
+		if (nearestIntersection == null) {
+			return;
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.CLIMB)) {
-			climb();
+
+		if (selectedBuildingNode == null) {
+			CollisionShape sceneShape = CollisionShapeFactory.createMeshShape(buildingsNode);
+			buildingsControl = new RigidBodyControl(sceneShape, 0);
+			buildingsControl.setKinematic(false);
+			buildingsNode.addControl(buildingsControl);
+			getPhysicsSpace().add(buildingsNode);
+			
+			game.setSelectionMode(SelectionMode.DEPLOY_MODEL);
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
-			target();
+		else {
+			selectedBuildingNode.setLocalTranslation(nearestIntersection);
+			buildingsNode.attachChild(selectedBuildingNode);
 		}
 	}
 
-	private void deploy() {
+	private void deployModel() {
 		Vector3f contactPoint = getSceneryCollisionPoint();
 
 		List<FighterNode> fighterNodesWithinDistance = getFighterNodesWithinDistance(selectedFighterNode, NOT_TOUCH_DISTANCE);
@@ -815,20 +854,29 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		game.setSelectionMode(SelectionMode.SELECT);
 	}
 
-	private void onRightClick() {
-		if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
-			tearDownCurrentPath();
+	private void onRightClick(boolean isPressed) {
+		if (isPressed) {
+			rightButtonDown = true;
+			
+			if (game.getSelectionMode().equals(SelectionMode.MOVE)) {
+				tearDownCurrentPath();
+				game.setSelectionMode(SelectionMode.SELECT);
+				deselectFighter();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.CLIMB)) {
+				abortClimbing();
+				game.setSelectionMode(SelectionMode.SELECT);
+				deselectFighter();
+			}
+			else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
+				removeTargetingFacilities();
+				game.setSelectionMode(SelectionMode.SELECT);
+				deselectFighter();
+			}
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.CLIMB)) {
-			abortClimbing();
+		else {
+			rightButtonDown = false;
 		}
-		else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
-			removeTargetingFacilities();
-		}
-
-		game.setSelectionMode(SelectionMode.SELECT);
-
-		deselectFighter();
 	}
 
 	private FighterNode getFighterNodeUnderCursor() {
@@ -1166,6 +1214,19 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		return boundingVolumes;
 	}
+	
+	private Vector3f getTableCollisionPoint() {
+		List<Collidable> collidables = new ArrayList<Collidable>();
+		collidables.add(getTableNode());
+		CollisionResult closestCollision = Utils.getNearestCollisionFrom(cam.getLocation(), cam.getDirection(), collidables);
+		
+		if (closestCollision != null) {
+			return closestCollision.getContactPoint().add(GROUND_BUFFER);
+		}
+		else {
+			return null;
+		}
+	}
 
 	private Vector3f getSceneryCollisionPoint() {
 		List<Collidable> collidables = new ArrayList<Collidable>();
@@ -1272,13 +1333,11 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private class MouseListener implements ActionListener, AnalogListener {
 		public void onAction(String name, boolean isPressed, float tpf) {
-			if (isPressed) {
-				Necromunda.setStatusMessage("");
+			Necromunda.setStatusMessage("");
 
-				executeMouseAction(name);
+			executeMouseAction(name, isPressed);
 
-				game.updateStatus();
-			}
+			game.updateStatus();
 		}
 
 		public void onAnalog(String name, float value, float tpf) {
@@ -1288,7 +1347,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			else if (game.getSelectionMode().equals(SelectionMode.TARGET)) {
 				setUpTargeting();
 			}
-			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY)) {
+			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_MODEL)) {
 				Vector3f nearestIntersection = getSceneryCollisionPoint();
 
 				if (nearestIntersection == null) {
@@ -1308,8 +1367,44 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				selectedFighterNode.setLocalTranslation(nearestIntersection);
 				lockPhysics();
 			}
+			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_BUILDING)) {
+				if (rightButtonDown) {
+					if ((selectedBuildingNode != null) && isMouseMovement(name)) {
+						float direction = 1;
+						
+						if (name.equals("Move_Left")) {
+							direction = -1;
+						}
+						
+						selectedBuildingNode.rotate(0, value * 3 * direction, 0);
+					}
+				}
+				else {
+					Vector3f nearestIntersection = getTableCollisionPoint();
+	
+					if (nearestIntersection == null) {
+						return;
+					}
+					
+					if (selectedBuildingNode == null) {
+						selectedBuildingNode = buildingNodes.poll();
+						buildingsNode.attachChild(selectedBuildingNode);
+					}
+					
+					selectedBuildingNode.setLocalTranslation(nearestIntersection);
+				}
+			}
 
 			updateModels();
+		}
+	}
+	
+	private boolean isMouseMovement(String name) {
+		if (name.equals("Move_Left") || name.equals("Move_Right") || name.equals("Move_Up") || name.equals("Move_Down")) {
+			return true;
+		}
+		else {
+			return false;
 		}
 	}
 

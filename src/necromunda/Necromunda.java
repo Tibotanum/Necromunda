@@ -21,7 +21,8 @@ import com.jme3.math.Vector3f;
 
 public class Necromunda extends Observable {
 	public enum SelectionMode {
-		DEPLOY,
+		DEPLOY_MODEL,
+		DEPLOY_BUILDING,
 		SELECT,
 		MOVE,
 		CLIMB,
@@ -55,7 +56,7 @@ public class Necromunda extends Observable {
 	private static String statusMessage;
 	
 	private List<Gang> gangs;
-	private Map<String, List<Building>> maps;
+	private List<Building> buildings;
 	private Fighter selectedFighter;
 	private LinkedList<Fighter> deployQueue;
 	private SelectionMode selectionMode;
@@ -87,10 +88,10 @@ public class Necromunda extends Observable {
 	
 	public Necromunda() {
 		gangs = new ArrayList<Gang>();
-		selectionMode = SelectionMode.DEPLOY;
+		selectionMode = SelectionMode.DEPLOY_BUILDING;
 		turn = 1;
 		statusMessage = "";
-		maps = createBuildings();
+		buildings = createBuildings();
 		
 		deployQueue = new LinkedList<Fighter>();
 		
@@ -112,33 +113,15 @@ public class Necromunda extends Observable {
 		return game;
 	}
 	
-	private Map<String, List<Building>> createBuildings() {
-		Map<String, List<Building>> maps = new HashMap<String, List<Building>>();
-		
+	private List<Building> createBuildings() {
 		List<Building> buildings = new ArrayList<Building>();
 		
-		buildings.add(new Building(FastMath.PI / 4, new Vector3f(8, 0, 8), "01"));
-		buildings.add(new Building(FastMath.PI / -8, new Vector3f(40, 0, 8), "01"));
-		buildings.add(new Building(FastMath.PI / 2, new Vector3f(6, 0, 40), "01"));
-		buildings.add(new Building(0, new Vector3f(24, 0, 22), "03"));
-		buildings.add(new Building(0, new Vector3f(38, 0, 40), "01"));
-		buildings.add(new Building(FastMath.PI / 8 * 3, new Vector3f(8, 0, 24), "02"));
-		buildings.add(new Building(FastMath.PI / 8 * -3, new Vector3f(40, 0, 24), "02"));
-
-		maps.put("Courtyard", buildings);
+		buildings.add(new Building(0, new Vector3f(8, 0, 8), "01"));
+		buildings.add(new Building(0, new Vector3f(40, 0, 8), "02"));
+		buildings.add(new Building(0, new Vector3f(6, 0, 40), "03"));
+		buildings.add(new Building(0, new Vector3f(24, 0, 22), "04", "05"));
 		
-		buildings = new ArrayList<Building>();
-		
-		buildings.add(new Building(FastMath.PI / 6, new Vector3f(8, 0, 8), "01"));
-		buildings.add(new Building(FastMath.PI / 3, new Vector3f(6, 0, 40), "01"));
-		buildings.add(new Building(FastMath.PI / 8, new Vector3f(24, 0, 22), "04"));
-		buildings.add(new Building(FastMath.PI / 8, new Vector3f(24, 0, 22), "05"));
-		buildings.add(new Building(0, new Vector3f(38, 0, 40), "01"));
-		buildings.add(new Building(FastMath.PI / 5 * 3, new Vector3f(8, 0, 24), "02"));
-		
-		maps.put("Steel Quarter", buildings);
-		
-		return maps;
+		return buildings;
 	}
 	
 	private void initialiseGUI() {
@@ -294,7 +277,7 @@ public class Necromunda extends Observable {
 		return currentGang.getHostileGangers(gangs);
 	}
 
-	public Map<String, List<Building>> getMaps() {
-		return maps;
+	public List<Building> getBuildings() {
+		return buildings;
 	}
 }

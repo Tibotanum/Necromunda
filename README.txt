@@ -12,9 +12,10 @@ Controls
 --------
 The game can be controlled as follows:
 
-Left mouse button:		Select model, end movement, shoot
-Right mouse button:		Abort movement
+Left mouse button:		Select model, end movement, shoot, place building
+Right mouse button:		Abort movement, hold when placing a building to turn it
 W, A, S, D:				Move camera
+K:                      Skip building during building placement
 B:						Attempt to break a web pistol web
 M:						Start regular movement
 R:						Start run movement

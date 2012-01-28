@@ -61,7 +61,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	JLabel gangerTypeLabel;
 	JComboBox gangerTypeComboBox;
 	JComboBox weaponComboBox;
-	JComboBox mapComboBox;
 	JLabel weaponProfileStringLabel;
 	JList gangerWeaponList;
 	JButton okButton;
@@ -384,8 +383,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			}
 		});
 		
-		mapComboBox = new JComboBox(game.getMaps().keySet().toArray());
-		
 		gangList = new JList(new DefaultListModel());
 		gangList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
 		gangList.addListSelectionListener(new ListSelectionListener() {
@@ -601,7 +598,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		panel1.add(gangerTypeComboBox);
 		
 		optionsPanel.add(invertMouseCheckBox);
-		optionsPanel.add(mapComboBox);
 		
 		Box mainBox = Box.createHorizontalBox();
 		mainBox.add(gangerPictureSpinner);
@@ -767,7 +763,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 						
 			final Necromunda3dProvider necromunda3dProvider = new Necromunda3dProvider(game);
 			necromunda3dProvider.setInvertMouse(invertMouseCheckBox.isSelected());
-			necromunda3dProvider.setBuildings(game.getMaps().get(mapComboBox.getSelectedItem()));
+			//necromunda3dProvider.setBuildings(game.getBuildings().get(mapComboBox.getSelectedItem()));
 
 			Thread thread = new Thread(new Runnable() {
 
