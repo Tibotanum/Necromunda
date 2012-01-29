@@ -48,6 +48,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import necromunda.Gang.House;
+import necromunda.MaterialFactory.MaterialIdentifier;
 
 import weapons.*;
 
@@ -61,6 +62,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	JLabel gangerTypeLabel;
 	JComboBox gangerTypeComboBox;
 	JComboBox weaponComboBox;
+	JComboBox terrainTypeComboBox;
 	JLabel weaponProfileStringLabel;
 	JList gangerWeaponList;
 	JButton okButton;
@@ -578,6 +580,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		invertMouseCheckBox = new JCheckBox("Invert mouse");
 		invertMouseCheckBox.setSelected(true);
 		
+		terrainTypeComboBox = new JComboBox(game.getTerrainTextureMap().keySet().toArray());
+		
 		JPanel panel1 = new JPanel();
 		panel1.setLayout(new GridLayout(0, 4, 5, 5));
 		panel1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -598,6 +602,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		panel1.add(gangerTypeComboBox);
 		
 		optionsPanel.add(invertMouseCheckBox);
+		optionsPanel.add(terrainTypeComboBox);
 		
 		Box mainBox = Box.createHorizontalBox();
 		mainBox.add(gangerPictureSpinner);
@@ -763,7 +768,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 						
 			final Necromunda3dProvider necromunda3dProvider = new Necromunda3dProvider(game);
 			necromunda3dProvider.setInvertMouse(invertMouseCheckBox.isSelected());
-			//necromunda3dProvider.setBuildings(game.getBuildings().get(mapComboBox.getSelectedItem()));
+			String materialIdentifier = game.getTerrainTextureMap().get(terrainTypeComboBox.getSelectedItem());
+			necromunda3dProvider.setTerrainType(materialIdentifier);
 
 			Thread thread = new Thread(new Runnable() {
 

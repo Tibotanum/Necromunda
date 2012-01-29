@@ -16,6 +16,8 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import necromunda.MaterialFactory.MaterialIdentifier;
+
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
@@ -63,6 +65,8 @@ public class Necromunda extends Observable {
 	private Gang currentGang;
 	private int turn;
 	private Phase phase;
+
+	private Map<String, String> terrainTextureMap;
 	
 	private JFrame necromundaFrame;
 	
@@ -92,6 +96,7 @@ public class Necromunda extends Observable {
 		turn = 1;
 		statusMessage = "";
 		buildings = createBuildings();
+		terrainTextureMap = createTerrainTextureMapping();
 		
 		deployQueue = new LinkedList<Fighter>();
 		
@@ -122,6 +127,16 @@ public class Necromunda extends Observable {
 		buildings.add(new Building(0, new Vector3f(24, 0, 22), "04", "05"));
 		
 		return buildings;
+	}
+	
+	private Map<String, String> createTerrainTextureMapping() {
+		Map<String, String> map = new HashMap<String, String>();
+		
+		map.put("Grass", "grass01.tgr");
+		map.put("Toxic Ash", "toxicash01.tgr");
+		map.put("Dark Ash", "darkash01.tgr");
+		
+		return map;
 	}
 	
 	private void initialiseGUI() {
@@ -279,5 +294,9 @@ public class Necromunda extends Observable {
 
 	public List<Building> getBuildings() {
 		return buildings;
+	}
+
+	public Map<String, String> getTerrainTextureMap() {
+		return terrainTextureMap;
 	}
 }

@@ -1,0 +1,9 @@
+#NTEVersion 6
+#BeginNodes 1
+601 211
+engine.graphics.synthesis.texture.PatternPerlinNoise
+ExportName "DiffuseMap" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 2 0.0 0.0 0.0 1.0 0.36231884 0.8 0.8 0.8 1.0 1.0 ScaleX 1000.0 ScaleY 1000.0 ValueScale 1.0 Persistence 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+#EndNodes
+#BeginConnections 0
+#EndConnections
+glpreview 0 -1 -1 -1 Object 1 Spec._Power 20.0 POM_Strength 0.25 Ambient 0.25 TexScale_U 2 TexScale_V 2 CamRotX 32.0 CamRotY 217.0 CamDist 3.1999993 endglpreview

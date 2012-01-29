@@ -22,13 +22,13 @@ public class MaterialFactory {
 		SYMBOL_SEDATED,
 		SYMBOL_COMATOSE,
 		SYMBOL_LADDER,
-		TABLE_GRASS;
+		TABLE;
 	}
 	
 	AssetManager assetManager;
 	Map<Enum<MaterialIdentifier>, Material> materialMap = new HashMap<Enum<MaterialIdentifier>, Material>();
 	
-	public MaterialFactory(AssetManager assetManager) {
+	public MaterialFactory(AssetManager assetManager, Necromunda3dProvider necromunda3dProvider) {
 		this.assetManager = assetManager;
 		
 		Material baseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -77,7 +77,7 @@ public class MaterialFactory {
 		Texture ladderSymbolTexture = assetManager.loadTexture("Textures/Ladder.PNG");
 		ladderSymbolMaterial.setTexture("ColorMap", ladderSymbolTexture);
 		
-		NeoTextureMaterialKey key = new NeoTextureMaterialKey("Textures/grass01.tgr");
+		NeoTextureMaterialKey key = new NeoTextureMaterialKey("Textures/" + necromunda3dProvider.getTerrainType());
 		Material tableMaterial = assetManager.loadAsset(key);
 		tableMaterial.setFloat("Shininess", 12f);
 		
@@ -90,7 +90,7 @@ public class MaterialFactory {
 		materialMap.put(MaterialIdentifier.SYMBOL_SEDATED, sedatedSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_COMATOSE, comatoseSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_LADDER, ladderSymbolMaterial);
-		materialMap.put(MaterialIdentifier.TABLE_GRASS, tableMaterial);
+		materialMap.put(MaterialIdentifier.TABLE, tableMaterial);
 	}
 	
 	public Material createMaterial(Enum<MaterialIdentifier> identifier) {

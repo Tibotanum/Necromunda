@@ -3,10 +3,12 @@ package necromunda;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -121,6 +123,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private BitmapText statusMessage;
 
 	private MaterialFactory materialFactory;
+	
+	private String terrainType;
 
 	public Necromunda3dProvider(Necromunda game) {
 		this.game = game;
@@ -158,7 +162,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		assetManager.registerLocator("", ClasspathLocator.class.getName());
 		assetManager.registerLoader("com.jme3.material.plugins.NeoTextureMaterialLoader", "tgr");
 
-		materialFactory = new MaterialFactory(assetManager);
+		materialFactory = new MaterialFactory(assetManager, this);
 
 		Node tableNode = createTableNode();
 		rootNode.attachChild(tableNode);
@@ -287,7 +291,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private Node createTableNode() {
 		Box box = new Box(new Vector3f(24, -0.5f, 24), 24, 0.5f, 24);
 		Geometry tableGeometry = new Geometry("tableGeometry", box);
-		tableGeometry.setMaterial(materialFactory.createMaterial(MaterialIdentifier.TABLE_GRASS));
+		tableGeometry.setMaterial(materialFactory.createMaterial(MaterialIdentifier.TABLE));
 
 		Node tableNode = new Node("tableNode");
 		tableNode.attachChild(tableGeometry);
@@ -2023,5 +2027,13 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				it.remove();
 			}
 		}
+	}
+
+	public String getTerrainType() {
+		return terrainType;
+	}
+
+	public void setTerrainType(String terrainType) {
+		this.terrainType = terrainType;
 	}
 }
