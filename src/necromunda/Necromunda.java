@@ -121,10 +121,14 @@ public class Necromunda extends Observable {
 	private List<Building> createBuildings() {
 		List<Building> buildings = new ArrayList<Building>();
 		
-		buildings.add(new Building(0, new Vector3f(8, 0, 8), "01"));
-		buildings.add(new Building(0, new Vector3f(40, 0, 8), "02"));
-		buildings.add(new Building(0, new Vector3f(6, 0, 40), "03"));
-		buildings.add(new Building(0, new Vector3f(24, 0, 22), "04", "05"));
+		buildings.add(new Building("01"));
+		buildings.add(new Building("02"));
+		buildings.add(new Building("03"));
+		buildings.add(new Building("04", "05"));
+		buildings.add(new Building("06"));
+		buildings.add(new Building("07"));
+		buildings.add(new Building("08"));
+		buildings.add(new Building("09"));
 		
 		return buildings;
 	}
