@@ -985,6 +985,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		if (currentPath != null) {
 			selectedFighterNode.setLocalTranslation(currentPath.getOrigin());
 		}
+		
+		if (currentClimbPath != null) {
+			selectedFighterNode.setLocalTranslation(currentClimbPath.getStart());
+		}
 
 		rootNode.detachChildNamed("currentPathBoxNode");
 
