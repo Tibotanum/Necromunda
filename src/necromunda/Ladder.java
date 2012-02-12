@@ -22,6 +22,7 @@ import com.jme3.system.JmeSystem;
 
 public class Ladder {
 	private Ladder peer;
+	private Node buildingNode;
 	private Node lineNode;
 	
 	public Ladder(Vector3f origin) {
@@ -98,5 +99,13 @@ public class Ladder {
 
 	public Node getLineNode() {
 		return lineNode;
+	}
+
+	public Node getBuildingNode() {
+		return buildingNode;
+	}
+
+	public void setBuildingNode(Node buildingNode) {
+		this.buildingNode = buildingNode;
 	}
 }
