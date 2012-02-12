@@ -66,6 +66,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -116,7 +117,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private boolean rightButtonDown;
 
 	private LinkedList<Node> buildingNodes;
-	private List<Ladder> ladders;
 	private Ladder currentLadder;
 	private List<Ladder> currentLadders;
 
@@ -166,8 +166,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 		Node tableNode = createTableNode();
 		rootNode.attachChild(tableNode);
-
-		ladders = new ArrayList<Ladder>();
 		
 		createBuildings();
 
@@ -284,7 +282,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		
 		if (ENABLE_PHYSICS_DEBUG) {
 			physicsSpace.enableDebug(assetManager);
-			createLadderLines();
+			//createLadderLines();
 		}
 	}
 
@@ -301,7 +299,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private void createBuildings() {
 		for (Building building : game.getBuildings()) {
-			Node buildingNode = new Node("buildingNode");
+			BuildingNode buildingNode = new BuildingNode("buildingNode");
 			
 			for (String identifier : building.getIdentifiers()) {
 				Material buildingMaterial = materialFactory.createBuildingMaterial(identifier);
@@ -317,7 +315,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				List<Ladder> ladders = Ladder.createLaddersFrom("/Building" + identifier + ".ladder", selectedMaterial);
 				
 				for (Ladder ladder : ladders) {
-					this.ladders.add(ladder);
+					buildingNode.setLadders(ladders);
 					buildingNode.attachChild(ladder.getLineNode());
 				}
 			}
@@ -326,13 +324,25 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		}
 	}
 	
-	private void createLadderLines() {
-		for (Ladder ladder : ladders) {
+	private void createLadderLines() {		
+		for (Ladder ladder : getLaddersFrom(buildingsNode)) {
 			com.jme3.scene.shape.Line lineShape = new com.jme3.scene.shape.Line(Vector3f.ZERO, Vector3f.UNIT_Y);
 			Geometry lineGeometry = new Geometry("line", lineShape);
 			lineGeometry.setMaterial(materialFactory.createMaterial(MaterialFactory.MaterialIdentifier.SELECTED));
 			ladder.getLineNode().attachChild(lineGeometry);
 		}
+	}
+	
+	private List<Ladder> getLaddersFrom(Node buildingsNode) {
+		List<Ladder> ladders = new ArrayList<Ladder>();
+		
+		List<Spatial> buildingNodes = buildingsNode.getChildren();
+		
+		for (Spatial buildingNode : buildingNodes) {
+			ladders.addAll(((BuildingNode)buildingNode).getLadders());
+		}
+		
+		return ladders;
 	}
 
 	private void invertMouse() {
@@ -652,6 +662,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private void onLeftClick(boolean isPressed) {
 		if (isPressed) {
+			Necromunda.setStatusMessage("");
+			
 			if (game.getSelectionMode().equals(SelectionMode.SELECT)) {
 				select();
 			}
@@ -687,7 +699,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	
 	private void skipBuilding() {
 		buildingsNode.detachChild(selectedBuildingNode);
-		
+
 		selectedBuildingNode = buildingNodes.poll();
 		
 		Vector3f nearestIntersection = getTableCollisionPoint();
@@ -1337,8 +1349,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 
 	private class MouseListener implements ActionListener, AnalogListener {
 		public void onAction(String name, boolean isPressed, float tpf) {
-			Necromunda.setStatusMessage("");
-
 			executeMouseAction(name, isPressed);
 
 			game.updateStatus();
@@ -1448,17 +1458,17 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	}
 	
 	private List<Ladder> getLaddersInReach(Vector3f origin, float baseRadius) {
-		List<Ladder> ladders = new ArrayList<Ladder>();
+		List<Ladder> laddersInReach = new ArrayList<Ladder>();
 		
-		for (Ladder ladder : this.ladders) {
+		for (Ladder ladder : (List<Ladder>)getLaddersFrom(buildingsNode)) {
 			float distance = ladder.getWorldStart().distance(origin);
 			
 			if ((distance - baseRadius) <= MAX_LADDER_DISTANCE) {
-				ladders.add(ladder);
+				laddersInReach.add(ladder);
 			}
 		}
 		
-		return ladders;
+		return laddersInReach;
 	}
 
 	private void unpinFighters() {
