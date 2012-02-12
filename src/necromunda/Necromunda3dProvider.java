@@ -460,7 +460,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			game.endTurn();
 			turnStarted();
 		}
-		else if (name.equals("SkipBuilding")) {
+		else if (name.equals("SkipBuilding") && game.getSelectionMode().equals(SelectionMode.DEPLOY_BUILDING)) {
 			skipBuilding();
 		}
 		else if (selectedFighter == null) {
@@ -716,11 +716,33 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			getPhysicsSpace().add(buildingsNode);
 			
 			game.setSelectionMode(SelectionMode.DEPLOY_MODEL);
+			updateModelPosition();
 		}
 		else {
 			selectedBuildingNode.setLocalTranslation(nearestIntersection);
 			buildingsNode.attachChild(selectedBuildingNode);
 		}
+	}
+	
+	private void updateModelPosition() {
+		Vector3f nearestIntersection = getSceneryCollisionPoint();
+
+		if (nearestIntersection == null) {
+			return;
+		}
+
+		if (selectedFighterNode == null) {
+			selectedFighterNode = new FighterNode("fighterNode", game.getSelectedFighter(), materialFactory);
+
+			getPhysicsSpace().add(selectedFighterNode.getGhostControl());
+			getObjectsNode().attachChild(selectedFighterNode);
+			fighterNodes.add(selectedFighterNode);
+
+			game.updateStatus();
+		}
+
+		selectedFighterNode.setLocalTranslation(nearestIntersection);
+		lockPhysics();
 	}
 
 	private void deployModel() {
@@ -1362,24 +1384,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				setUpTargeting();
 			}
 			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_MODEL)) {
-				Vector3f nearestIntersection = getSceneryCollisionPoint();
-
-				if (nearestIntersection == null) {
-					return;
-				}
-
-				if (selectedFighterNode == null) {
-					selectedFighterNode = new FighterNode("fighterNode", game.getSelectedFighter(), materialFactory);
-
-					getPhysicsSpace().add(selectedFighterNode.getGhostControl());
-					getObjectsNode().attachChild(selectedFighterNode);
-					fighterNodes.add(selectedFighterNode);
-
-					game.updateStatus();
-				}
-
-				selectedFighterNode.setLocalTranslation(nearestIntersection);
-				lockPhysics();
+				updateModelPosition();
 			}
 			else if (game.getSelectionMode().equals(SelectionMode.DEPLOY_BUILDING)) {
 				if (rightButtonDown) {
