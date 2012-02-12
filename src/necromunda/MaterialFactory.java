@@ -103,7 +103,6 @@ public class MaterialFactory {
 		TextureKey key = new TextureKey("Textures/NecromundaBuilding" + identifier + ".png", false);
 		Texture modelTexture = assetManager.loadTexture(key);
 		buildingMaterial.setTexture("DiffuseMap", modelTexture);
-		buildingMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		
 		return buildingMaterial;
 	}
