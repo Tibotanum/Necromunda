@@ -1,38 +1,29 @@
 package necromunda;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
 import com.jme3.material.Material;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Line;
 import com.jme3.system.JmeSystem;
 
-public class Ladder {
-	private Ladder peer;
-	private Node buildingNode;
-	private Node lineNode;
+public class LadderNode extends Node {
+	private LadderNode peer;
 	
-	public Ladder(Vector3f origin) {
-		lineNode = new Node("lineNode");
-		lineNode.setLocalTranslation(origin);
+	public LadderNode(String name) {
+		super(name);
 	}
 	
-	public static List<Ladder> createLaddersFrom(String filename, Material material) {
+	public static List<LadderNode> createLaddersFrom(String filename, Material material) {
 		InputStream is = JmeSystem.class.getResourceAsStream(filename);
-		List<Ladder> ladders = new ArrayList<Ladder>();
+		List<LadderNode> ladders = new ArrayList<LadderNode>();
 
 		if (is != null) {
 			try {
@@ -51,8 +42,10 @@ public class Ladder {
 						index++;
 					}
 				
-					Ladder ladder1 = new Ladder(new Vector3f(coordinates[0], coordinates[1], coordinates[2]));
-					Ladder ladder2 = new Ladder(new Vector3f(coordinates[3], coordinates[4], coordinates[5]));
+					LadderNode ladder1 = new LadderNode("ladder");
+					ladder1.setLocalTranslation(coordinates[0], coordinates[1], coordinates[2]);
+					LadderNode ladder2 = new LadderNode("ladder");
+					ladder2.setLocalTranslation(coordinates[3], coordinates[4], coordinates[5]);
 					
 					ladder1.setPeer(ladder2);
 					ladder2.setPeer(ladder1);
@@ -75,37 +68,25 @@ public class Ladder {
 		
 		return ladders;
 	}
-
-	public Ladder getPeer() {
-		return peer;
-	}
-
-	public void setPeer(Ladder peer) {
-		this.peer = peer;
-	}
-	
-	public Vector3f getWorldStart() {
-		return lineNode.getWorldTranslation();
-	}
-	
-	public Vector3f getWorldEnd() {
-		return lineNode.getWorldTranslation().add(Vector3f.UNIT_Y);
-	}
 	
 	public float distance(Vector3f point) {
 		necromunda.Line line = new necromunda.Line(getWorldStart(), getWorldEnd());
 		return line.distance(point);
 	}
-
-	public Node getLineNode() {
-		return lineNode;
+	
+	public Vector3f getWorldStart() {
+		return getWorldTranslation();
+	}
+	
+	public Vector3f getWorldEnd() {
+		return getWorldTranslation().add(Vector3f.UNIT_Y);
 	}
 
-	public Node getBuildingNode() {
-		return buildingNode;
+	public LadderNode getPeer() {
+		return peer;
 	}
 
-	public void setBuildingNode(Node buildingNode) {
-		this.buildingNode = buildingNode;
+	public void setPeer(LadderNode peer) {
+		this.peer = peer;
 	}
 }
