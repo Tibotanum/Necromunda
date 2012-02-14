@@ -117,8 +117,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	private boolean rightButtonDown;
 
 	private LinkedList<Node> buildingNodes;
-	private Ladder currentLadder;
-	private List<Ladder> currentLadders;
+	private LadderNode currentLadder;
+	private List<LadderNode> currentLadders;
 
 	private BitmapText statusMessage;
 
@@ -312,11 +312,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				//Create ladders
 				Material selectedMaterial = materialFactory.createMaterial(MaterialIdentifier.SELECTED);
 				
-				List<Ladder> ladders = Ladder.createLaddersFrom("/Building" + identifier + ".ladder", selectedMaterial);
+				List<LadderNode> ladders = LadderNode.createLaddersFrom("/Building" + identifier + ".ladder", selectedMaterial);
 				
-				for (Ladder ladder : ladders) {
-					buildingNode.setLadders(ladders);
-					buildingNode.attachChild(ladder.getLineNode());
+				for (LadderNode ladder : ladders) {
+					buildingNode.attachChild(ladder);
 				}
 			}
 			
@@ -325,21 +324,21 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 	}
 	
 	private void createLadderLines() {		
-		for (Ladder ladder : getLaddersFrom(buildingsNode)) {
+		for (LadderNode ladder : getLaddersFrom(buildingsNode)) {
 			com.jme3.scene.shape.Line lineShape = new com.jme3.scene.shape.Line(Vector3f.ZERO, Vector3f.UNIT_Y);
 			Geometry lineGeometry = new Geometry("line", lineShape);
 			lineGeometry.setMaterial(materialFactory.createMaterial(MaterialFactory.MaterialIdentifier.SELECTED));
-			ladder.getLineNode().attachChild(lineGeometry);
+			ladder.attachChild(lineGeometry);
 		}
 	}
 	
-	private List<Ladder> getLaddersFrom(Node buildingsNode) {
-		List<Ladder> ladders = new ArrayList<Ladder>();
+	private List<LadderNode> getLaddersFrom(Node buildingsNode) {
+		List<LadderNode> ladders = new ArrayList<LadderNode>();
 		
 		List<Spatial> buildingNodes = buildingsNode.getChildren();
 		
 		for (Spatial buildingNode : buildingNodes) {
-			ladders.addAll(((BuildingNode)buildingNode).getLadders());
+			ladders.addAll(((BuildingNode)buildingNode).getLadderNodes());
 		}
 		
 		return ladders;
@@ -405,7 +404,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_COMATOSE));
 			}
 			
-			List<Ladder> laddersInReach = getLaddersInReach(fighterNode.getLocalTranslation(), fighter.getBaseRadius());
+			List<LadderNode> laddersInReach = getLaddersInReach(fighterNode.getLocalTranslation(), fighter.getBaseRadius());
 
 			if (!laddersInReach.isEmpty()) {
 				fighterNode.attachSymbol(materialFactory.createMaterial(MaterialIdentifier.SYMBOL_LADDER));
@@ -633,7 +632,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		}
 	}
 	
-	private void climbLadder(Ladder ladder) {
+	private void climbLadder(LadderNode ladder) {
 		Vector3f currentPathOrigin;
 		
 		if (currentPath != null) {
@@ -1284,7 +1283,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		}
 	}
 
-	private Vector3f getLadderCollisionPoint(Ladder ladder) {
+	private Vector3f getLadderCollisionPoint(LadderNode ladder) {
 		CollisionResults results = new CollisionResults();
 		Ray ray = new Ray(ladder.getWorldEnd(), Vector3f.UNIT_Y.mult(-1));
 		getTableNode().collideWith(ray, results);
@@ -1466,10 +1465,10 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		}
 	}
 	
-	private List<Ladder> getLaddersInReach(Vector3f origin, float baseRadius) {
-		List<Ladder> laddersInReach = new ArrayList<Ladder>();
+	private List<LadderNode> getLaddersInReach(Vector3f origin, float baseRadius) {
+		List<LadderNode> laddersInReach = new ArrayList<LadderNode>();
 		
-		for (Ladder ladder : (List<Ladder>)getLaddersFrom(buildingsNode)) {
+		for (LadderNode ladder : (List<LadderNode>)getLaddersFrom(buildingsNode)) {
 			float distance = ladder.getWorldStart().distance(origin);
 			
 			if ((distance - baseRadius) <= MAX_LADDER_DISTANCE) {
