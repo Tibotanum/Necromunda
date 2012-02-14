@@ -8,52 +8,58 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 
 public class BuildingNode extends Node {
-	private List<Ladder> ladders;
-	
 	public BuildingNode(String name) {
 		super(name);
-		ladders = new ArrayList<Ladder>();
-	}
-
-	public List<Ladder> getLadders() {
-		return ladders;
-	}
-
-	public void setLadders(List<Ladder> ladders) {
-		this.ladders = ladders;
 	}
 
 	@Override
 	public Node clone(boolean cloneMaterials) {
 		BuildingNode buildingNode = (BuildingNode)super.clone(cloneMaterials);
 		
-		List<Ladder> visitedLadders = new ArrayList<Ladder>();
+		int index = 0;
 		
-		Set<Ladder> clonedLadders = new HashSet<Ladder>();
+		do {
+			index = buildingNode.detachChildNamed("ladder");
+		}
+		while (index > -1);
 		
-		for (Ladder ladder : ladders) {
+		List<LadderNode> visitedLadders = new ArrayList<LadderNode>();
+		
+		for (LadderNode ladder : getLadderNodes()) {
 			if (visitedLadders.contains(ladder)) {
 				continue;
 			}
 			
-			Ladder clonedLadder = new Ladder(ladder.getLineNode().getLocalTranslation());
-			Ladder clonedPeerLadder = new Ladder(ladder.getPeer().getLineNode().getLocalTranslation());
+			LadderNode clonedLadder = new LadderNode("ladder");
+			clonedLadder.setLocalTranslation(ladder.getLocalTranslation());
+			LadderNode clonedPeerLadder = new LadderNode("ladder");
+			clonedPeerLadder.setLocalTranslation(ladder.getPeer().getLocalTranslation());
 			clonedLadder.setPeer(clonedPeerLadder);
 			clonedPeerLadder.setPeer(clonedLadder);
 			
-			clonedLadders.add(clonedLadder);
-			clonedLadders.add(clonedPeerLadder);
+			buildingNode.attachChild(clonedLadder);
+			buildingNode.attachChild(clonedPeerLadder);
 			
-			buildingNode.attachChild(clonedLadder.getLineNode());
-			buildingNode.attachChild(clonedPeerLadder.getLineNode());
-			
-			visitedLadders.add(clonedPeerLadder);
+			visitedLadders.add(ladder.getPeer());
 		}
 		
-		buildingNode.setLadders(new ArrayList<Ladder>(clonedLadders));
+		System.out.println(buildingNode.getLadderNodes().size());
 		
 		return buildingNode;
+	}
+	
+	public List<LadderNode> getLadderNodes() {
+		List<LadderNode> ladderNodes = new ArrayList<LadderNode>();
+		
+		for (Spatial child : getChildren()) {
+			if (child.getName().equals("ladder")) {
+				ladderNodes.add((LadderNode)child);
+			}
+		}
+		
+		return ladderNodes;
 	}
 }
