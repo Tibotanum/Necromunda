@@ -24,11 +24,6 @@ public class BasedModelImage implements Serializable {
 	public String getRelativeImageFileName() {
 		return imageFileName;
 	}
-	
-	public String getImageFileName() {
-		int index = imageFileName.lastIndexOf('/');
-		return imageFileName.substring(index + 1);
-	}
 
 	@Override
 	public boolean equals(Object obj) {
