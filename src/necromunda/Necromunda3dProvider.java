@@ -1,5 +1,9 @@
 package necromunda;
 
+import java.awt.image.BufferedImage;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +16,9 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
+import java.util.prefs.BackingStoreException;
+
+import javax.imageio.ImageIO;
 
 import necromunda.Fighter.State;
 import necromunda.MaterialFactory.MaterialIdentifier;
@@ -148,7 +155,27 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		AppSettings settings = new AppSettings(false);
 		settings.setTitle("Necromunda");
 		settings.setSettingsDialogImage("/Textures/Splashscreen01.png");
+		settings.setFrameRate(60);
+		//settings.setSamples(4);
+		//settings.setVSync(true);
+		settings.setIcons(createSettingsIcons());
 		setSettings(settings);
+	}
+	
+	private BufferedImage[] createSettingsIcons() {
+		List<BufferedImage> iconImages = new ArrayList<BufferedImage>();
+		
+		try {
+			iconImages.add(ImageIO.read(getClass().getResource("/Textures/Orlock_Logo_tiny.png")));
+			iconImages.add(ImageIO.read(getClass().getResource("/Textures/Orlock_Logo_small.png")));
+			iconImages.add(ImageIO.read(getClass().getResource("/Textures/Orlock_Logo_medium.png")));
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return iconImages.toArray(new BufferedImage[0]);
 	}
 
 	@Override
