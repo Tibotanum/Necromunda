@@ -8,6 +8,7 @@ import java.util.List;
 
 import weapons.RangeCombatWeapon;
 import weapons.Weapon;
+import weapons.WebPistol;
 
 public abstract class Fighter implements Serializable {
 	public static FighterProfile getTemplateProfile() {
@@ -68,6 +69,7 @@ public abstract class Fighter implements Serializable {
 	private boolean hasShot;
 	private boolean canShoot;
 	private boolean isWebbed;
+	private boolean isHidden;
 	private float baseRadius;
 	private float remainingMovementDistance;
 	private int remainingWounds;
@@ -110,6 +112,7 @@ public abstract class Fighter implements Serializable {
 		canMove = true;
 		canRun = true;
 		canShoot = true;
+		isHidden = false;
 		baseRadius = 0.5f;
 		remainingMovementDistance = profile.getMovement();
 		remainingWounds = profile.getWounds();
@@ -237,6 +240,23 @@ public abstract class Fighter implements Serializable {
 		}
 		else {
 			setState(State.OUT_OF_ACTION);
+		}
+	}
+	
+	public void breakWeb() {
+		if (isWebbed()) {
+			int webRoll = Utils.rollD6();
+
+			if ((webRoll + getStrength()) >= 9) {
+				setWebbed(false);
+				Necromunda.appendToStatusMessage("This ganger has broken the web.");
+			}
+			else {
+				WebPistol.dealWebDamageTo(this);
+			}
+		}
+		else {
+			Necromunda.setStatusMessage("This ganger is not webbed.");
 		}
 	}
 	
@@ -517,6 +537,14 @@ public abstract class Fighter implements Serializable {
 		this.isWebbed = isWebbed;
 	}
 	
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(boolean isHidden) {
+		this.isHidden = isHidden;
+	}
+
 	public int getMovement() {
 		return profile.getMovement();
 	}

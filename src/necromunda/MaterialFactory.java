@@ -10,6 +10,7 @@ import com.jme3.material.RenderState.BlendMode;
 import com.jme3.material.plugins.NeoTextureMaterialKey;
 import com.jme3.math.ColorRGBA;
 import com.jme3.texture.Texture;
+import com.jme3.texture.Texture.WrapMode;
 
 public class MaterialFactory {
 	public enum MaterialIdentifier {
@@ -21,6 +22,8 @@ public class MaterialFactory {
 		SYMBOL_DOWN,
 		SYMBOL_SEDATED,
 		SYMBOL_COMATOSE,
+		SYMBOL_WEBBED,
+		SYMBOL_HIDDEN,
 		SYMBOL_LADDER,
 		TABLE;
 	}
@@ -32,14 +35,16 @@ public class MaterialFactory {
 		this.assetManager = assetManager;
 		
 		Material baseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		baseMaterial.setFloat("Shininess", 5f);
+		baseMaterial.setColor("Specular", ColorRGBA.White);
 		baseMaterial.setColor("Diffuse", new ColorRGBA(64 / 255f, 147 / 255f, 91 / 255f, 1.0f));
 		baseMaterial.setBoolean("UseMaterialColors", true);
 		
 		baseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		Texture modelTexture = assetManager.loadTexture("Textures/Grass01.gif");
+		baseMaterial.setColor("Specular", ColorRGBA.White);
+		baseMaterial.setColor("Diffuse", new ColorRGBA(64 / 255f, 147 / 255f, 91 / 255f, 1.0f));
 		baseMaterial.setTexture("DiffuseMap", modelTexture);
-		baseMaterial.setFloat("Shininess", 100f);
+		baseMaterial.setFloat("Shininess", 128f);
 		
 		Material selectedBaseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		selectedBaseMaterial.setFloat("Shininess", 5f);
@@ -73,6 +78,14 @@ public class MaterialFactory {
 		Texture comatoseSymbolTexture = assetManager.loadTexture("Textures/Comatose.PNG");
 		comatoseSymbolMaterial.setTexture("ColorMap", comatoseSymbolTexture);
 		
+		Material webbedSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Texture webbedSymbolTexture = assetManager.loadTexture("Textures/Webbed.PNG");
+		webbedSymbolMaterial.setTexture("ColorMap", webbedSymbolTexture);
+		
+		Material hiddenSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Texture hiddenSymbolTexture = assetManager.loadTexture("Textures/Hidden.PNG");
+		hiddenSymbolMaterial.setTexture("ColorMap", hiddenSymbolTexture);
+		
 		Material ladderSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		Texture ladderSymbolTexture = assetManager.loadTexture("Textures/Ladder.PNG");
 		ladderSymbolMaterial.setTexture("ColorMap", ladderSymbolTexture);
@@ -80,6 +93,17 @@ public class MaterialFactory {
 		NeoTextureMaterialKey key = new NeoTextureMaterialKey("Textures/" + necromunda3dProvider.getTerrainType());
 		Material tableMaterial = assetManager.loadAsset(key);
 		tableMaterial.setFloat("Shininess", 12f);
+		
+		/*Material tableMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		Texture tableTexture = assetManager.loadTexture("Textures/diffus.tga");
+		Texture tableTextureNormal = assetManager.loadTexture("Textures/normal.tga");
+		Texture tableTextureSpecular = assetManager.loadTexture("Textures/specular.tga");
+		tableTexture.setWrap(WrapMode.Repeat);
+		tableTextureNormal.setWrap(WrapMode.Repeat);
+		tableTextureSpecular.setWrap(WrapMode.Repeat);
+		tableMaterial.setTexture("DiffuseMap", tableTexture);
+		tableMaterial.setTexture("NormalMap", tableTextureNormal);
+		tableMaterial.setTexture("SpecularMap", tableTextureSpecular);*/
 		
 		materialMap.put(MaterialIdentifier.NORMAL, baseMaterial);
 		materialMap.put(MaterialIdentifier.SELECTED, selectedBaseMaterial);
@@ -89,6 +113,8 @@ public class MaterialFactory {
 		materialMap.put(MaterialIdentifier.SYMBOL_DOWN, downSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_SEDATED, sedatedSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_COMATOSE, comatoseSymbolMaterial);
+		materialMap.put(MaterialIdentifier.SYMBOL_WEBBED, webbedSymbolMaterial);
+		materialMap.put(MaterialIdentifier.SYMBOL_HIDDEN, hiddenSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_LADDER, ladderSymbolMaterial);
 		materialMap.put(MaterialIdentifier.TABLE, tableMaterial);
 	}

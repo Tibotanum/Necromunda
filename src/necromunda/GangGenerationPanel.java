@@ -47,69 +47,71 @@ import javax.swing.SpinnerModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jme3.system.JmeContext.Type;
+
 import necromunda.Gang.House;
 import necromunda.MaterialFactory.MaterialIdentifier;
 
 import weapons.*;
 
 public class GangGenerationPanel extends JPanel implements ItemListener {
-	JLabel gangNameLabel;
-	JTextField gangNameTextField;
-	JLabel houseLabel;
-	JComboBox houseComboBox;
-	JLabel gangerNameLabel;
-	JTextField gangerNameTextField;
-	JLabel gangerTypeLabel;
-	JComboBox gangerTypeComboBox;
-	JComboBox weaponComboBox;
-	JComboBox terrainTypeComboBox;
-	JLabel weaponProfileStringLabel;
-	JList gangerWeaponList;
-	JButton okButton;
-	JButton addGangButton;
-	JButton removeGangButton;
-	JButton saveGangButton;
-	JButton loadGangButton;
-	JButton addGangerButton;
-	JButton removeGangerButton;
-	JButton addWeaponButton;
-	JButton removeWeaponButton;
+	private JLabel gangNameLabel;
+	private JTextField gangNameTextField;
+	private JLabel houseLabel;
+	private JComboBox houseComboBox;
+	private JLabel gangerNameLabel;
+	private JTextField gangerNameTextField;
+	private JLabel gangerTypeLabel;
+	private JComboBox gangerTypeComboBox;
+	private JComboBox weaponComboBox;
+	private JComboBox terrainTypeComboBox;
+	private JLabel weaponProfileStringLabel;
+	private JList gangerWeaponList;
+	private JButton okButton;
+	private JButton addGangButton;
+	private JButton removeGangButton;
+	private JButton saveGangButton;
+	private JButton loadGangButton;
+	private JButton addGangerButton;
+	private JButton removeGangerButton;
+	private JButton addWeaponButton;
+	private JButton removeWeaponButton;
 	
-	JLabel movementLabel;
-	JLabel weaponSkillLabel;
-	JLabel ballisticSkillLabel;
-	JLabel strengthLabel;
-	JLabel toughnessLabel;
-	JLabel woundsLabel;
-	JLabel initiativeLabel;
-	JLabel attacksLabel;
-	JLabel leadershipLabel;
-	JLabel gangRatingLabel;
-	JLabel gangRating;
+	private JLabel movementLabel;
+	private JLabel weaponSkillLabel;
+	private JLabel ballisticSkillLabel;
+	private JLabel strengthLabel;
+	private JLabel toughnessLabel;
+	private JLabel woundsLabel;
+	private JLabel initiativeLabel;
+	private JLabel attacksLabel;
+	private JLabel leadershipLabel;
+	private JLabel gangRatingLabel;
+	private JLabel gangRating;
 	
-	JCheckBox invertMouseCheckBox;
+	private JCheckBox invertMouseCheckBox;
 	
-	JTextField movementTextField;
-	JTextField weaponSkillTextField;
-	JTextField ballisticSkillTextField;
-	JTextField strengthTextField;
-	JTextField toughnessTextField;
-	JTextField woundsTextField;
-	JTextField initiativeTextField;
-	JTextField attacksTextField;
-	JTextField leadershipTextField;
+	private JTextField movementTextField;
+	private JTextField weaponSkillTextField;
+	private JTextField ballisticSkillTextField;
+	private JTextField strengthTextField;
+	private JTextField toughnessTextField;
+	private JTextField woundsTextField;
+	private JTextField initiativeTextField;
+	private JTextField attacksTextField;
+	private JTextField leadershipTextField;
 	
-	JTabbedPane tabbedPane;
-	JPanel mainPanel;
-	JPanel optionsPanel;
+	private JTabbedPane tabbedPane;
+	private JPanel mainPanel;
+	private JPanel optionsPanel;
 	
-	JList gangList;
-	JList gangerList;
+	private JList gangList;
+	private JList gangerList;
 	
-	FighterImagePanel gangerPicturePanel;
-	JSpinner gangerPictureSpinner;
+	private FighterImagePanel gangerPicturePanel;
+	private JSpinner gangerPictureSpinner;
 	
-	List<BasedModelImage> gangerImages;
+	private List<BasedModelImage> gangerImages;
 	
 	public GangGenerationPanel(final Necromunda game) {
 		mainPanel = new JPanel();

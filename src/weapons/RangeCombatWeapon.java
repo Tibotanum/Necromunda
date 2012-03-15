@@ -60,6 +60,7 @@ public abstract class RangeCombatWeapon extends Weapon {
 	public void trigger() {
 		currentAmmunition.trigger();
 		getOwner().setHasShot(true);
+		getOwner().setHidden(false);
 	}
 
 	public void hitRoll(int hitRoll) {

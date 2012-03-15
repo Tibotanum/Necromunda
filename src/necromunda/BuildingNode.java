@@ -46,8 +46,6 @@ public class BuildingNode extends Node {
 			visitedLadders.add(ladder.getPeer());
 		}
 		
-		System.out.println(buildingNode.getLadderNodes().size());
-		
 		return buildingNode;
 	}
 	

@@ -12,8 +12,10 @@ import com.jme3.bullet.control.GhostControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.FastMath;
+import com.jme3.math.Vector2f;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -81,7 +83,8 @@ public class FighterNode extends Node {
 		Geometry figure = new Geometry("figure", quad);
 		figure.setMaterial(figureMaterial);
 		figure.move(xOffsetLeft, BASE_HEIGHT, 0);
-		figure.setQueueBucket(Bucket.Transparent);
+		figure.setQueueBucket(Bucket.Translucent);
+		figure.setShadowMode(ShadowMode.Off);
 
 		CustomBillboardControl billboardControl = new CustomBillboardControl();
 		billboardControl.setAlignment(BillboardControl.Alignment.AxialY);
@@ -106,6 +109,7 @@ public class FighterNode extends Node {
 		
 		Geometry symbol = new Geometry("symbol", quad);
 		symbol.setMaterial(material);
+		symbol.setShadowMode(ShadowMode.Off);
 		
 		Node symbolNode = (Node)getChild("figureNode");
 		symbolNode.attachChild(symbol);

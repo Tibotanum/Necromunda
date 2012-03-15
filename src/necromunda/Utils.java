@@ -61,7 +61,7 @@ public class Utils {
 	
 	public static CollisionResult getNearestCollisionFrom(Vector3f origin, Vector3f direction, List<Collidable> collidables) {
 		CollisionResults results = new CollisionResults();
-		Ray ray = new Ray(origin, direction.normalize());
+		Ray ray = new Ray(origin, direction);
 
 		for (Collidable collidable : collidables) {
 			collidable.collideWith(ray, results);
