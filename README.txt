@@ -12,20 +12,20 @@ Controls
 --------
 The game can be controlled as follows:
 
-Left mouse button:		Select model, end movement, shoot, place building
-Right mouse button:		Abort movement, hold when placing a building to turn it
-W, A, S, D:				Move camera
+Left mouse button:      Select model, end movement, shoot, place building
+Right mouse button:     Abort movement, hold when placing a building to turn it
+W, A, S, D:             Move camera
 K:                      Skip building during building placement
-B:						Attempt to break a web pistol web
-M:						Start regular movement
-R:						Start run movement
-C:						Climb a ladder (during regular movement; press repeatedly to cycle through ladders if more than one is in reach)
+B:                      Attempt to break a web pistol web
+M:                      Start regular movement
+R:                      Start run movement
+C:                      Climb a ladder (during regular movement; press repeatedly to cycle through ladders if more than one is in reach)
 I:                      Hide
-Y:						Cycle weapons
-O:						Cycle weapon mode
-H:						Start shooting
-N:						Cycle to next phase
-E:						End current turn
+Y:                      Cycle weapons
+O:                      Cycle weapon mode
+H:                      Start shooting
+N:                      Cycle to next phase
+E:                      End current turn
 
 Note: When climbing you first have to start a movement. If you are standing close enough to a ladder you can press 'C'. After this you have to stop the movement first by clicking the left mouse button. If you have not yet moved all of the allowed distance you can continue moving by pressing 'M' again.
 
