@@ -860,16 +860,6 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			List<FighterNode> hostileFighterNodesWithinDistance = getHostileFighterNodesFrom(fighterNodesWithinDistance);
 			List<FighterNode> hostileFighterNodesWithinDistanceAndWithLineOfSight = getFighterNodesWithLineOfSightFrom(selectedFighterNode,
 					hostileFighterNodesWithinDistance);
-			
-			Iterator<FighterNode> it = hostileFighterNodesWithinDistanceAndWithLineOfSight.iterator();
-			
-			while (it.hasNext()) {
-				FighterNode fighterNode = it.next();
-				
-				if (fighterNode.getFighter().isHidden()) {
-					it.remove();
-				}
-			}
 
 			if (selectedFighterNode.getFighter().isGoingToRun() && (!hostileFighterNodesWithinDistanceAndWithLineOfSight.isEmpty())) {
 				Necromunda.setStatusMessage("You cannot run so close to an enemy fighter.");
@@ -993,21 +983,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			otherFighterNodes.remove(fighterNodeUnderCursor);
 			
 			collidables.addAll(otherFighterNodes);*/
-			
-			if (fighterNodeUnderCursor.getFighter().isHidden()) {
-				Necromunda.setStatusMessage("This fighter is hidden.");
-				return;
-			}
-			
-			VisibilityInfo visibilityInfo = getVisibilityInfo(selectedFighterNode, fighterNodeUnderCursor.getCollisionShapePointCloud(), collidables);
-
-			if (/*!currentLineOfSight.isValid() ||*/ (visibilityInfo.getNumberOfVisiblePoints() == 0) || isPhysicsLocked()) {
-				Necromunda.setStatusMessage("This fighter is out of sight.");
-				return;
-			}
 
 			if (validSustainedFireTargetFighterNodes.isEmpty() && (!validTargetFighterNodes.contains(fighterNodeUnderCursor))) {
-				Necromunda.setStatusMessage("This fighter is not the nearest target.");
+				Necromunda.setStatusMessage("This fighter is not a valid target.");
 				return;
 			}
 
@@ -1020,6 +998,8 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			if (weapon.getNumberOfShots() > 0) {
 				return;
 			}
+			
+			VisibilityInfo visibilityInfo = getVisibilityInfo(selectedFighterNode, fighterNodeUnderCursor.getCollisionShapePointCloud(), collidables);
 			
 			float visiblePercentage = visibilityInfo.getVisiblePercentage();
 
@@ -1118,6 +1098,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		targetedFighterNodes.add(fighterNode);
 
 		List<FighterNode> sustainedFireNeighbours = getFighterNodesWithinDistance(getFighterNodeUnderCursor(), fighterNodes, Necromunda.SUSTAINED_FIRE_RADIUS);
+		sustainedFireNeighbours = getFighterNodesWithLineOfSightFrom(selectedFighterNode, sustainedFireNeighbours);
 
 		validSustainedFireTargetFighterNodes.add(fighterNode);
 		validSustainedFireTargetFighterNodes.addAll(sustainedFireNeighbours);
@@ -1129,7 +1110,7 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 			return true;
 		}
 		else {
-			Necromunda.setStatusMessage("This target is too far away from the first.");
+			Necromunda.setStatusMessage("This target is not a valid target for sustained fire.");
 			return false;
 		}
 	}
@@ -2001,7 +1982,9 @@ public class Necromunda3dProvider extends SimpleApplication implements Observer 
 		collidables.add(getBuildingsNode());
 
 		for (FighterNode fighterNode : fighterNodes) {
-			if (getVisibilityInfo(source, fighterNode.getCollisionShapePointCloud(), collidables).getNumberOfVisiblePoints() > 0) {
+			VisibilityInfo visibilityInfo = getVisibilityInfo(source, fighterNode.getCollisionShapePointCloud(), collidables);
+			
+			if ((visibilityInfo.getNumberOfVisiblePoints() > 0) && !fighterNode.getFighter().isHidden()) {
 				fighterNodesWithLineOfSight.add(fighterNode);
 			}
 		}
