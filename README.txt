@@ -19,7 +19,7 @@ K:                      Skip building during building placement
 B:                      Attempt to break a web pistol web
 M:                      Start regular movement
 R:                      Start run movement
-C:                      Climb a ladder (during regular movement; press repeatedly to cycle through ladders if more than one is in reach)
+C:                      Climb a ladder (during regular or run movement; press repeatedly to cycle through ladders if more than one is in reach)
 I:                      Hide
 Y:                      Cycle weapons
 O:                      Cycle weapon mode
@@ -27,7 +27,7 @@ H:                      Start shooting
 N:                      Cycle to next phase
 E:                      End current turn
 
-Note: When climbing you first have to start a movement. If you are standing close enough to a ladder you can press 'C'. After this you have to stop the movement first by clicking the left mouse button. If you have not yet moved all of the allowed distance you can continue moving by pressing 'M' again.
+Note: When climbing you first have to start a regular or run movement. If you are standing close enough to a ladder you can press 'C'. After this you have to stop the movement first by clicking the left mouse button. If you have not yet moved all of the allowed distance you can continue moving or running by pressing 'M' or 'R' again.
 
 Copyright notice
 ----------------
