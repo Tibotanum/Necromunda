@@ -37,7 +37,7 @@ public class NeedlePistol extends RangeCombatWeapon {
 		}
 		
 		@Override
-		public void dealDamageTo(Fighter... fighters) {
+		public boolean dealDamageTo(Fighter... fighters) {
 			final int inflictedWounds = 1; 
 			
 			for (Fighter fighter : fighters) {
@@ -56,6 +56,8 @@ public class NeedlePistol extends RangeCombatWeapon {
 				
 				Necromunda.appendToStatusMessage(String.format("%s wounded automatically. %s wounds were inflicted.", getWeapon().getName(), inflictedWounds));
 			}
+			
+			return true;
 		}
 	}
 }

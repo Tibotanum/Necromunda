@@ -54,11 +54,13 @@ public class WebPistol extends RangeCombatWeapon {
 		}
 		
 		@Override
-		public void dealDamageTo(Fighter... fighters) {
+		public boolean dealDamageTo(Fighter... fighters) {
 			for (Fighter fighter : fighters) {
 				fighter.setWebbed(true);
 				Necromunda.appendToStatusMessage(String.format("%s has been webbed.", fighter));
 			}
+			
+			return true;
 		}
 		
 		@Override

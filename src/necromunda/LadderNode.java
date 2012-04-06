@@ -15,6 +15,8 @@ import com.jme3.scene.Node;
 import com.jme3.system.JmeSystem;
 
 public class LadderNode extends Node {
+	public final static float MAX_LADDER_DISTANCE = 0.5f;
+	
 	private LadderNode peer;
 	
 	public LadderNode(String name) {

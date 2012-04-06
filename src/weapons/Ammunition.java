@@ -7,10 +7,7 @@ import java.util.List;
 
 import com.jme3.math.ColorRGBA;
 
-import necromunda.Fighter;
-import necromunda.Necromunda;
-import necromunda.TemplateNode;
-import necromunda.Utils;
+import necromunda.*;
 
 public abstract class Ammunition implements Serializable {
 	private String name;
@@ -35,6 +32,8 @@ public abstract class Ammunition implements Serializable {
 	private float templateRadius;
 	private float templateLength;
 	private Color templateColor;
+	
+	private boolean rerollWound;
 	
 	public Ammunition() {
 		targeted = true;
@@ -90,11 +89,11 @@ public abstract class Ammunition implements Serializable {
 		}
 	}
 	
-	public void dealDamageTo(Fighter... fighters) {
-		dealDamageTo(getStrength(), fighters);
+	public boolean dealDamageTo(Fighter... fighters) {
+		return dealDamageTo(getStrength(), fighters);
 	}
 
-	public void dealDamageTo(int strength, Fighter... fighters) {
+	public boolean dealDamageTo(int strength, Fighter... fighters) {
 		for(Fighter fighter : fighters) {
 			int targetWoundRoll = Necromunda.STRENGTH_RESISTANCE_MAP[strength - 1][fighter.getToughness() - 1];
 			int woundRoll = Utils.rollD6();
@@ -120,8 +119,11 @@ public abstract class Ammunition implements Serializable {
 			}
 			else {
 				Necromunda.appendToStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded not.", targetWoundRoll, woundRoll));
+				return !rerollWound;
 			}
 		}
+		
+		return true;
 	}
 	
 	public String getProfileString() {
@@ -327,5 +329,13 @@ public abstract class Ammunition implements Serializable {
 	
 	public boolean isTemplateMoving() {
 		return false;
+	}
+
+	public boolean isRerollWound() {
+		return rerollWound;
+	}
+
+	public void setRerollWound(boolean rerollWound) {
+		this.rerollWound = rerollWound;
 	}
 }

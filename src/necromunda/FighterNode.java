@@ -187,6 +187,11 @@ public class FighterNode extends Node {
 		return pointCloud;
 	}
 	
+	public void setBaseMaterial(Material baseMaterial) {
+		Spatial base = getChild("base");
+		base.setMaterial(baseMaterial);
+	}
+	
 	public float getCenterToHeadOffset() {
 		return fighter.getBaseRadius() * 1.0f;
 	}

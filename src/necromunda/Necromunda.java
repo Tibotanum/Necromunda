@@ -22,16 +22,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
 public class Necromunda extends Observable {
-	public enum SelectionMode {
-		DEPLOY_MODEL,
-		DEPLOY_BUILDING,
-		SELECT,
-		MOVE,
-		CLIMB,
-		TARGET,
-		REROLL
-	}
-	
 	public enum Phase {
 		MOVEMENT("Movement"),
 		SHOOTING("Shooting"),
@@ -61,7 +51,6 @@ public class Necromunda extends Observable {
 	private List<Building> buildings;
 	private Fighter selectedFighter;
 	private LinkedList<Fighter> deployQueue;
-	private SelectionMode selectionMode;
 	private Gang currentGang;
 	private int turn;
 	private Phase phase;
@@ -92,7 +81,6 @@ public class Necromunda extends Observable {
 	
 	public Necromunda() {
 		gangs = new ArrayList<Gang>();
-		selectionMode = SelectionMode.DEPLOY_BUILDING;
 		turn = 1;
 		statusMessage = "";
 		buildings = createBuildings();
@@ -121,14 +109,80 @@ public class Necromunda extends Observable {
 	private List<Building> createBuildings() {
 		List<Building> buildings = new ArrayList<Building>();
 		
-		buildings.add(new Building("01"));
-		buildings.add(new Building("02"));
-		buildings.add(new Building("03"));
-		buildings.add(new Building("04", "05"));
-		buildings.add(new Building("06"));
-		buildings.add(new Building("07"));
-		buildings.add(new Building("08"));
-		buildings.add(new Building("09"));
+		Building building = new Building();
+		building.put("SmallTower", "Tower");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("MineEntrance");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("LargeTower", "Tower");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("AcidPoolTank");
+		building.put("AcidPoolBridge");
+		buildings.add(building);
+
+		building = new Building();
+		building.put("PsykerHide");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("Container");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("Mushrooms");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("Barrels");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("WaterPumpControlBody", "WaterPumpControlBody");
+		building.put("WaterPumpControlWheel", "SimpleRedPaint");
+		building.put("WaterPumpControlPipes", "MetalNoir");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("Pipe90", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeDouble", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeLittle", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeLittle90", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeLittle45", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeT", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeX", "Pipe");
+		buildings.add(building);
+		
+		building = new Building();
+		building.put("PipeY", "Pipe");
+		buildings.add(building);
 		
 		return buildings;
 	}
@@ -136,9 +190,9 @@ public class Necromunda extends Observable {
 	private Map<String, String> createTerrainTextureMapping() {
 		Map<String, String> map = new HashMap<String, String>();
 		
-		map.put("Grass", "grass01.tgr");
-		map.put("Toxic Ash", "toxicash01.tgr");
-		map.put("Dark Ash", "darkash01.tgr");
+		map.put("Grass", "Grass.tgr");
+		map.put("Toxic Ash", "ToxicAsh.tgr");
+		map.put("Dark Ash", "DarkAsh.tgr");
 		
 		return map;
 	}
@@ -161,7 +215,6 @@ public class Necromunda extends Observable {
 		if (selectedFighter == null) {
 			currentGang = gangs.get(0);
 			currentGang.turnStarted();
-			selectionMode = SelectionMode.SELECT;
 			phase = Phase.MOVEMENT;
 		}
 	}
@@ -176,10 +229,6 @@ public class Necromunda extends Observable {
 		currentGang = getNextGang();
 
 		currentGang.turnStarted();
-		
-		selectedFighter = null;
-		
-		selectionMode = SelectionMode.SELECT;
 		
 		phase = Phase.MOVEMENT;
 	}
@@ -207,13 +256,6 @@ public class Necromunda extends Observable {
 			case HAND_TO_HAND:
 			case RECOVERY:
 		}
-		
-		selectionMode = SelectionMode.SELECT;
-	}
-	
-	public void updateStatus() {
-		setChanged();
-		notifyObservers();
 	}
 	
 	public void commitGeneratedGangs(Enumeration<?> gangs) {		
@@ -227,7 +269,7 @@ public class Necromunda extends Observable {
 				setSelectedFighter(deployQueue.poll());
 			}
 			
-			getGangs().add(nextGang);
+			this.gangs.add(nextGang);
 		}
 	}
 
@@ -253,14 +295,6 @@ public class Necromunda extends Observable {
 
 	public JFrame getNecromundaFrame() {
 		return necromundaFrame;
-	}
-
-	public SelectionMode getSelectionMode() {
-		return selectionMode;
-	}
-
-	public void setSelectionMode(SelectionMode selectionMode) {
-		this.selectionMode = selectionMode;
 	}
 
 	public int getTurn() {

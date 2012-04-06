@@ -120,31 +120,33 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		setLayout(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		
+		String basePath = "/Images/Textures/Fighters/";
+		
 		gangerImages = new ArrayList<BasedModelImage>();
 		
-		gangerImages.add(new BasedModelImage("/Textures/EscherBoss01.png", 33, 134));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger01.png", 9, 130));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger02.png", 2, 127));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger03.png", 17, 128));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger04.png", 0, 129));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger05.png", 0, 113));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger06.png", 32, 115));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger07.png", 0, 116));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger08.png", 30, 114));
-		gangerImages.add(new BasedModelImage("/Textures/EscherGanger09.png", 18, 115));
-		gangerImages.add(new BasedModelImage("/Textures/EscherHeavy01.png", 0, 129));
-		gangerImages.add(new BasedModelImage("/Textures/EscherKid01.png", 0, 128));
-		gangerImages.add(new BasedModelImage("/Textures/EscherKid02.png", 9, 131));
+		gangerImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
+		gangerImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
+		gangerImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
+		gangerImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
+		gangerImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
 		
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueBoss01.png", 2, 121));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueGanger01.png", 1, 125));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueGanger02.png", 1, 129));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueGanger03.png", 1, 123));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueGanger04.png", 1, 123));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueHeavy01.png", 1, 125));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueHeavy02.png", 21, 114));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueKid01.png", 34, 124));
-		gangerImages.add(new BasedModelImage("/Textures/DelaqueKid02.png", 18, 122));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
+		gangerImages.add(new BasedModelImage(basePath + "/DelaqueGanger01.png", 1, 125));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
+		gangerImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
 		
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
@@ -791,8 +793,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			game.getNecromundaFrame().add(scrollPane);
 			game.getNecromundaFrame().add(game.getStatusPanel());
 			game.getNecromundaFrame().getContentPane().validate();*/
-			
-			game.addObserver(necromunda3dProvider);
 		}
 	}
 

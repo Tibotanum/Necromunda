@@ -77,8 +77,8 @@ public abstract class RangeCombatWeapon extends Weapon {
 		currentAmmunition.explode();
 	}
 
-	public void dealDamageTo(Fighter... fighters) {
-		currentAmmunition.dealDamageTo(fighters);
+	public boolean dealDamageTo(Fighter... fighters) {
+		return currentAmmunition.dealDamageTo(fighters);
 	}
 
 	public WeaponType getWeaponType() {

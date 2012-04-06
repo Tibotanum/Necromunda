@@ -105,6 +105,7 @@ public class Shotgun extends RangeCombatWeapon {
 			setHitRollModificationLong(-1);
 			setAmmoRoll(6);
 			setCost(5);
+			setRerollWound(true);
 		}
 	}
 	
