@@ -1,5 +1,4 @@
 /bin
 Thumbs.db
 hs_err_pid*.log
-OpenAL32.dll
-lwjgl.dll
+*.dll
