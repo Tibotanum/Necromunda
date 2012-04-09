@@ -10,11 +10,10 @@ import javax.imageio.ImageIO;
 
 import necromunda.Fighter.State;
 import necromunda.MaterialFactory.MaterialIdentifier;
-import necromunda.Necromunda.Phase;
 import weapons.*;
 
 import com.jme3.app.*;
-import com.jme3.app.state.ScreenshotAppState;
+import com.jme3.app.state.*;
 import com.jme3.asset.TextureKey;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.bounding.*;
@@ -63,19 +62,15 @@ public class Necromunda3dProvider extends SimpleApplication {
 	
 	private SelectionMode selectionMode;
 	
-	private TargetHandler targetHandler;
-	
 	private Node buildingsNode;
 	private Node selectedBuildingNode;
 
 	private RigidBodyControl buildingsControl;
 	private Line currentPath;
 	private ClimbPath currentClimbPath;
-	private Node currentPathBoxNode;
 	private Line currentLineOfSight;
 	private Node currentLineOfSightBoxNode;
 	private TemplateNode currentTemplateNode;
-	private List<TemplateNode> templateNodes;
 	private List<TemplateRemover> templateRemovers;
 	private boolean physicsTickLock1;
 	private boolean physicsTickLock2;
@@ -108,8 +103,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 		buildingsNode = new Node("buildingsNode");
 		
 		buildingNodes = new LinkedList<Node>();
-
-		templateNodes = new ArrayList<TemplateNode>();
 
 		templateRemovers = new ArrayList<TemplateRemover>();
 
@@ -390,12 +383,16 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 		
 		if ((currentPath != null) && currentPath.isValid() && !isPhysicsLocked()) {
-			currentPathBoxNode.getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.VALID_PATH));
+			getCurrentPathBoxNode().getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.VALID_PATH));
 		}
 		
 		updateModels();
 		
 		statusMessage.setText(getStatusTextFrom(game));
+	}
+	
+	private Node getCurrentPathBoxNode() {
+		return (Node)rootNode.getChild("currentPathBoxNode");
 	}
 
 	private void updateModels() {
@@ -468,7 +465,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 			colouriseBasesUnderTemplate(currentTemplateNode);
 		}
 
-		for (TemplateNode templateNode : templateNodes) {
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			colouriseBasesUnderTemplate(templateNode);
 		}
 	}
@@ -483,6 +480,18 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 		
 		return fighterNodes;
+	}
+	
+	public List<TemplateNode> getTemplateNodes() {
+		List<TemplateNode> templateNodes = new ArrayList<TemplateNode>();
+		
+		for (Spatial child : getObjectsNode().getChildren()) {
+			if (child instanceof TemplateNode) {
+				templateNodes.add((TemplateNode)child);
+			}
+		}
+		
+		return templateNodes;
 	}
 
 	private Node getObjectsNode() {
@@ -569,13 +578,199 @@ public class Necromunda3dProvider extends SimpleApplication {
 	
 	private void target() {
 		if (getSelectedRangeCombatWeapon().getCurrentAmmunition().isTargeted()) {
-			targetHandler = new RegularTargetHandler();
+			targetRegularWeapon();
 		}
 		else {
-			targetHandler = new TemplateTargetHandler();
+			targetTemplateWeapon();
+		}
+	}
+	
+	private void targetRegularWeapon() {
+		FighterNode fighterNodeUnderCursor = getFighterNodeUnderCursor();
+
+		if (fighterNodeUnderCursor == null) {
+			return;
+		}
+
+		if (!getHostileFighterNodesFrom(getFighterNodes()).contains(fighterNodeUnderCursor)) {
+			Necromunda.setStatusMessage("This fighter is not hostile.");
+			return;
+		}
+
+		if (getValidSustainedFireTargetFighterNodes().isEmpty() && (!getValidTargetFighterNodes().contains(fighterNodeUnderCursor))) {
+			Necromunda.setStatusMessage("This fighter is not a valid target.");
+			return;
+		}
+
+		if (validSustainedFireTargetFighterNodes.isEmpty()) {
+			targetedFighterNodes.add(fighterNodeUnderCursor);
+
+			List<FighterNode> sustainedFireNeighbours = getFighterNodesWithinDistance(getFighterNodeUnderCursor(), getFighterNodes(), Necromunda.SUSTAINED_FIRE_RADIUS);
+			sustainedFireNeighbours = getFighterNodesWithLineOfSightFrom(selectedFighterNode, sustainedFireNeighbours);
+
+			validSustainedFireTargetFighterNodes.add(fighterNodeUnderCursor);
+			validSustainedFireTargetFighterNodes.addAll(sustainedFireNeighbours);
+			
+			getSelectedRangeCombatWeapon().targetAdded();
+		}
+		else {
+			if (validSustainedFireTargetFighterNodes.contains(fighterNodeUnderCursor)) {
+				targetedFighterNodes.add(fighterNodeUnderCursor);
+				getSelectedRangeCombatWeapon().targetAdded();
+			}
+			else {
+				Necromunda.setStatusMessage("This target is not a valid target for sustained fire.");
+			}
+		}
+
+		if (getSelectedRangeCombatWeapon().getNumberOfShots() > 0) {
+			return;
 		}
 		
-		targetHandler.target(this);
+		List<Collidable> collidables = getBoundingVolumes();
+
+		if (currentTemplateNode != null) {
+			collidables.removeAll(currentTemplateNode.getBoundingSpheres());
+		}
+
+		collidables.add(buildingsNode);
+		
+		List<FighterNode> otherFighterNodes = new ArrayList<FighterNode>(getFighterNodes());
+		otherFighterNodes.remove(selectedFighterNode);
+		otherFighterNodes.remove(fighterNodeUnderCursor);
+		
+		collidables.addAll(otherFighterNodes);
+		
+		RangeCombatWeapon weapon = getSelectedRangeCombatWeapon();
+
+		for (FighterNode fighterNode : targetedFighterNodes) {
+			VisibilityInfo visibilityInfo = getVisibilityInfo(selectedFighterNode, fighterNode.getCollisionShapePointCloud(), collidables);
+			
+			float visiblePercentage = visibilityInfo.getVisiblePercentage();
+
+			Necromunda.appendToStatusMessage("Visible percentage: " + (visiblePercentage * 100));
+			
+			int hitModifier = getHitModifier(visiblePercentage);
+
+			float distance = fighterNode.getLocalTranslation().distance(selectedFighterNode.getLocalTranslation());
+
+			if (distance > weapon.getMaximumRange()) {
+				Necromunda.appendToStatusMessage("Object out of range.");
+				continue;
+			}
+
+			Fighter selectedFighter = game.getSelectedFighter();
+
+			int targetHitRoll = 7 - selectedFighter.getBallisticSkill() - weapon.getRangeModifier(distance) - hitModifier;
+
+			if (targetHitRoll >= 10) {
+				Necromunda.appendToStatusMessage(String.format("You need a %s to hit - impossible!", targetHitRoll));
+				continue;
+			}
+
+			Necromunda.appendToStatusMessage(String.format("Target hit roll is %s.", targetHitRoll));
+
+			int hitRoll = Utils.rollD6();
+
+			if ((targetHitRoll > 6) && (hitRoll == 6)) {
+				targetHitRoll -= 3;
+				hitRoll = Utils.rollD6();
+			}
+
+			if ((hitRoll < targetHitRoll) || (hitRoll <= 1)) {
+				Necromunda.appendToStatusMessage(String.format("Rolled a %s and missed...", hitRoll));
+				
+				if (currentTemplateNode != null) {
+					boolean hasEffect = true;
+
+					if (weapon.isScattering()) {
+						List<Collidable> scatterCollidables = new ArrayList<Collidable>();
+						scatterCollidables.add(getBuildingsNode());
+						hasEffect = currentTemplateNode.scatter(getLineLength(currentLineOfSight), scatterCollidables);
+					}
+
+					if (hasEffect) {
+						fireTemplate(currentTemplateNode);
+					}
+
+					queueTemplateNodeForRemoval(currentTemplateNode);
+				}
+
+				continue;
+			}
+
+			Necromunda.appendToStatusMessage(String.format("Rolled a %s and hit!", hitRoll));
+
+			weapon.hitRoll(hitRoll);
+		}
+		
+		if (currentTemplateNode != null) {
+			fireTemplate(currentTemplateNode);
+			queueTemplateNodeForRemoval(currentTemplateNode);
+		}
+		else {
+			List<FighterNode> affectedFighterNodes = new ArrayList<FighterNode>();
+
+			affectedFighterNodes.add(fighterNodeUnderCursor);
+
+			if (weapon.getAdditionalTargetRange() > 0) {
+				List<FighterNode> fighterNodesWithinRange = getFighterNodesWithinDistance(fighterNodeUnderCursor, getFighterNodes(), weapon.getAdditionalTargetRange());
+				List<FighterNode> visibleFighterNodes = getFighterNodesWithLineOfSightFrom(selectedFighterNode, fighterNodesWithinRange);
+
+				affectedFighterNodes.addAll(visibleFighterNodes);
+			}
+
+			pinNormalFighters(affectedFighterNodes);
+
+			for (FighterNode affectedFighterNode : affectedFighterNodes) {
+				Fighter fighter = affectedFighterNode.getFighter();
+				
+				if (!weapon.dealDamageTo(fighter)) {
+					currentWeapon = weapon;
+					currentTarget = fighter;
+					selectionMode = SelectionMode.REROLL;
+					Necromunda.appendToStatusMessage("Re-roll wound roll?");
+				}
+			}
+		}
+		
+		getSelectedRangeCombatWeapon().trigger();
+
+		tearDownTargeting();
+
+		getTargetedFighterNodes().clear();
+		getValidSustainedFireTargetFighterNodes().clear();
+		
+		if (getSelectionMode() != SelectionMode.REROLL) {
+			setSelectionMode(SelectionMode.SELECT);
+		}
+	}
+	
+	private int getHitModifier(float visiblePercentage) {
+		int hitModifier = 0;
+		
+		if ((visiblePercentage < 1.0) && (visiblePercentage >= 0.5)) {
+			hitModifier = -1;
+		}
+		else if (visiblePercentage < 0.5) {
+			hitModifier = -2;
+		}
+		
+		return hitModifier;
+	}
+	
+	private void targetTemplateWeapon() {
+		getSelectedRangeCombatWeapon().trigger();
+
+		List<FighterNode> affectedFighterNodes = getFighterNodesUnderTemplate(currentTemplateNode, getFighterNodes());
+		pinNormalFighters(affectedFighterNodes);
+		currentTemplateNode.dealDamageTo(affectedFighterNodes);
+
+		tearDownTargeting();
+
+		if (getSelectionMode() != SelectionMode.REROLL) {
+			setSelectionMode(SelectionMode.SELECT);
+		}
 	}
 	
 	private void deployBuilding() {
@@ -764,6 +959,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 		if (isPressed) {
 			rightButtonDown = true;
 			
+			setFlyCamEnabled(false);
+			
 			if (selectionMode == SelectionMode.MOVE) {
 				tearDownMovement();
 				selectionMode = SelectionMode.SELECT;
@@ -782,6 +979,35 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 		else {
 			rightButtonDown = false;
+			
+			setFlyCamEnabled(true);
+		}
+	}
+	
+	private void setFlyCamEnabled(boolean enabled) {
+		FlyCamAppState flyCamAppState = stateManager.getState(FlyCamAppState.class);
+		InvertedFlyCamAppState invertedFlyCamAppState = stateManager.getState(InvertedFlyCamAppState.class);
+		
+		if (flyCamAppState != null) {
+			flyCamAppState.getCamera().setDragToRotate(!enabled);
+			
+			if (enabled) {
+				flyCamAppState.getCamera().registerWithInput(inputManager);
+			}
+			else {
+				flyCamAppState.getCamera().unregisterInput();
+			}
+		}
+		
+		if (invertedFlyCamAppState != null) {
+			invertedFlyCamAppState.getCamera().setDragToRotate(!enabled);
+			
+			if (enabled) {
+				invertedFlyCamAppState.getCamera().registerWithInput(inputManager);
+			}
+			else {
+				invertedFlyCamAppState.getCamera().unregisterInput();
+			}
 		}
 	}
 
@@ -794,7 +1020,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		if (closestCollision != null) {
 			Geometry geometry = closestCollision.getGeometry();
-			fighterNodeUnderCursor = (FighterNode) getParent(geometry, "fighterNode");
+			fighterNodeUnderCursor = (FighterNode)getParent(geometry, "fighterNode");
 		}
 
 		return fighterNodeUnderCursor;
@@ -859,13 +1085,12 @@ public class Necromunda3dProvider extends SimpleApplication {
 			selectedFighterNode.setLocalTranslation(currentClimbPath.getStart());
 		}
 
-		if (currentPathBoxNode != null) {
-			rootNode.detachChild(currentPathBoxNode);
-			getPhysicsSpace().remove(currentPathBoxNode);
+		if (getCurrentPathBoxNode() != null) {
+			getPhysicsSpace().remove(getCurrentPathBoxNode());
+			rootNode.detachChild(getCurrentPathBoxNode());
 		}
 
 		currentPath = null;
-		currentPathBoxNode = null;
 	}
 
 	private void abortClimbing() {
@@ -891,10 +1116,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void removeCurrentWeaponTemplate() {
-		if (currentTemplateNode != null) {
-			rootNode.detachChild(currentTemplateNode);
-			currentTemplateNode = null;
-		}
+		rootNode.detachChildNamed("currentTemplateNode");
+		currentTemplateNode = null;
 	}
 
 	private void commitMovement() {
@@ -1121,7 +1344,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 	public List<Collidable> getBoundingVolumes() {
 		List<Collidable> boundingVolumes = new ArrayList<Collidable>();
 
-		for (TemplateNode templateNode : templateNodes) {
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			boundingVolumes.addAll(templateNode.getBoundingSpheres());
 		}
 
@@ -1217,16 +1440,14 @@ public class Necromunda3dProvider extends SimpleApplication {
 					|| (b.getName().equals("currentPathBoxNode")) && ((a.getName().equals("collisionShapeNode")) && (a != selectedCollisionShapeNode))) {
 				if (currentPath != null) {
 					currentPath.setValid(false);
-					System.out.println("Setting path invalid");
-					currentPathBoxNode.getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.INVALID_PATH));
+					getCurrentPathBoxNode().getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.INVALID_PATH));
 				}
 			}
 			else if ((a.getName().equals("currentPathBoxNode")) && (b.getName().equals("buildingsNode")) || (b.getName().equals("currentPathBoxNode"))
 					&& (a.getName().equals("buildingsNode"))) {
 				if (currentPath != null) {
 					currentPath.setValid(false);
-					System.out.println("Setting path invalid");
-					currentPathBoxNode.getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.INVALID_PATH));
+					getCurrentPathBoxNode().getChild("currentPathBoxGeometry").setMaterial(materialFactory.createMaterial(MaterialIdentifier.INVALID_PATH));
 				}
 			}
 		}
@@ -1515,7 +1736,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		public void remove() {
 			rootNode.detachChild(temporaryWeaponTemplate);
-			templateNodes.remove(temporaryWeaponTemplate);
 		}
 
 		public int getTimer() {
@@ -1576,20 +1796,15 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void removeTemplates() {
-		Iterator<TemplateNode> it = templateNodes.iterator();
-
-		while (it.hasNext()) {
-			TemplateNode templateNode = it.next();
-
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			if (templateNode.isTemplateToBeRemoved()) {
-				it.remove();
 				rootNode.detachChild(templateNode);
 			}
 		}
 	}
 
 	private void moveTemplates() {
-		for (TemplateNode templateNode : templateNodes) {
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			if (templateNode.isTemplateMoving()) {
 				float distance = templateNode.getDriftDistance();
 				float angle = templateNode.getDriftAngle();
@@ -1605,14 +1820,14 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void applyTemplateEffects() {
-		for (TemplateNode templateNode : templateNodes) {
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			List<FighterNode> affectedFighterNodes = getFighterNodesUnderTemplate(templateNode, getFighterNodes());
 			templateNode.dealDamageTo(affectedFighterNodes);
 		}
 	}
 
 	private void removeTemplateTrails() {
-		for (TemplateNode templateNode : templateNodes) {
+		for (TemplateNode templateNode : getTemplateNodes()) {
 			templateNode.removeTrail();
 		}
 	}
@@ -1666,22 +1881,21 @@ public class Necromunda3dProvider extends SimpleApplication {
 		GhostControl physicsGhostObject;
 		Material currentPathBoxMaterial = materialFactory.createMaterial(MaterialIdentifier.VALID_PATH); 
 
-		if (currentPathBoxNode == null) {
+		if (getCurrentPathBoxNode() == null) {
 			physicsGhostObject = new GhostControl(boxCollisionShape);
 
-			currentPathBoxNode = new Node("currentPathBoxNode");
-			currentPathBoxNode.addControl(physicsGhostObject);
-			
+			Node currentPathBoxNode = new Node("currentPathBoxNode");	
 			rootNode.attachChild(currentPathBoxNode);
-
+			
+			getCurrentPathBoxNode().addControl(physicsGhostObject);
 			getPhysicsSpace().add(physicsGhostObject);
 		}
 		else {
-			Geometry currentPathBoxGeometry = (Geometry)currentPathBoxNode.getChild("currentPathBoxGeometry");
+			Geometry currentPathBoxGeometry = (Geometry)getCurrentPathBoxNode().getChild("currentPathBoxGeometry");
 			currentPathBoxMaterial = currentPathBoxGeometry.getMaterial();
-			currentPathBoxNode.detachChildNamed("currentPathBoxGeometry");
+			getCurrentPathBoxNode().detachChildNamed("currentPathBoxGeometry");
 
-			physicsGhostObject = currentPathBoxNode.getControl(GhostControl.class);
+			physicsGhostObject = getCurrentPathBoxNode().getControl(GhostControl.class);
 			physicsGhostObject.setCollisionShape(boxCollisionShape);
 		}
 
@@ -1690,13 +1904,13 @@ public class Necromunda3dProvider extends SimpleApplication {
 		Geometry pathBoxGeometry = getPathBoxGeometryFor(boxCollisionShape);
 		pathBoxGeometry.setMaterial(currentPathBoxMaterial);
 
-		currentPathBoxNode.attachChild(pathBoxGeometry);
+		getCurrentPathBoxNode().attachChild(pathBoxGeometry);
 
 		Vector3f halfExtents = getHalfExtentsOf(selectedFighterNode);
 		Vector3f upTranslation = new Vector3f(0, halfExtents.getY(), 0);
 		Vector3f vector = currentPath.getOrigin().add(currentPath.getVector().mult(0.5f)).addLocal(upTranslation);
-		currentPathBoxNode.setLocalTranslation(vector);
-		currentPathBoxNode.lookAt(currentPath.getDirection().add(upTranslation), Vector3f.UNIT_Y);
+		getCurrentPathBoxNode().setLocalTranslation(vector);
+		getCurrentPathBoxNode().lookAt(currentPath.getDirection().add(upTranslation), Vector3f.UNIT_Y);
 
 		selectedFighterNode.setLocalTranslation(currentPath.getDirection());
 		lockPhysics();
@@ -2085,8 +2299,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void queueTemplateNodeForRemoval(TemplateNode templateNode) {
-		templateNodes.add(templateNode);
-
 		if (!currentTemplateNode.isTemplatePersistent()) {
 			templateNode.setName("temporaryTemplateNode");
 			TemplateRemover templateRemover = new TemplateRemover(templateNode);

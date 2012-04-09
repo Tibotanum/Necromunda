@@ -23,27 +23,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextField;
-import javax.swing.ListModel;
-import javax.swing.SpinnerListModel;
-import javax.swing.SpinnerModel;
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -786,13 +766,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			
 			thread.start();
 			
-			game.getNecromundaFrame().remove(GangGenerationPanel.this);
-
-			/*JScrollPane scrollPane = new JScrollPane(game.getPlayfieldPanel());
-			scrollPane.setAlignmentX(0.0f);			
-			game.getNecromundaFrame().add(scrollPane);
-			game.getNecromundaFrame().add(game.getStatusPanel());
-			game.getNecromundaFrame().getContentPane().validate();*/
+			((JFrame)getTopLevelAncestor()).dispose();
 		}
 	}
 
