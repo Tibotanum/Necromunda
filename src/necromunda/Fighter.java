@@ -430,11 +430,11 @@ public abstract class Fighter implements Serializable {
 		return value;
 	}
 
-	public BasedModelImage getGangerPicture() {
+	public BasedModelImage getFighterImage() {
 		return gangerPicture;
 	}
 
-	public void setGangerPicture(BasedModelImage gangerPicture) {
+	public void setFighterImage(BasedModelImage gangerPicture) {
 		this.gangerPicture = gangerPicture;
 	}
 	

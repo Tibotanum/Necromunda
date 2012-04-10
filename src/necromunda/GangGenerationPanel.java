@@ -39,21 +39,21 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	private JTextField gangNameTextField;
 	private JLabel houseLabel;
 	private JComboBox houseComboBox;
-	private JLabel gangerNameLabel;
-	private JTextField gangerNameTextField;
-	private JLabel gangerTypeLabel;
-	private JComboBox gangerTypeComboBox;
+	private JLabel fighterNameLabel;
+	private JTextField fighterNameTextField;
+	private JLabel fighterTypeLabel;
+	private JComboBox fighterTypeComboBox;
 	private JComboBox weaponComboBox;
 	private JComboBox terrainTypeComboBox;
 	private JLabel weaponProfileStringLabel;
-	private JList gangerWeaponList;
+	private JList fighterWeaponList;
 	private JButton okButton;
 	private JButton addGangButton;
 	private JButton removeGangButton;
 	private JButton saveGangButton;
 	private JButton loadGangButton;
-	private JButton addGangerButton;
-	private JButton removeGangerButton;
+	private JButton addFighterButton;
+	private JButton removeFighterButton;
 	private JButton addWeaponButton;
 	private JButton removeWeaponButton;
 	
@@ -86,12 +86,12 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	private JPanel optionsPanel;
 	
 	private JList gangList;
-	private JList gangerList;
+	private JList fighterList;
 	
-	private FighterImagePanel gangerPicturePanel;
-	private JSpinner gangerPictureSpinner;
+	private FighterImagePanel fighterImagePanel;
+	private JSpinner fighterImageSpinner;
 	
-	private List<BasedModelImage> gangerImages;
+	private List<BasedModelImage> fighterImages;
 	
 	public GangGenerationPanel(final Necromunda game) {
 		mainPanel = new JPanel();
@@ -102,31 +102,31 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		String basePath = "/Images/Textures/Fighters/";
 		
-		gangerImages = new ArrayList<BasedModelImage>();
+		fighterImages = new ArrayList<BasedModelImage>();
 		
-		gangerImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
-		gangerImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
-		gangerImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
-		gangerImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
-		gangerImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
+		fighterImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
+		fighterImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
+		fighterImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
+		fighterImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
+		fighterImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
 		
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
-		gangerImages.add(new BasedModelImage(basePath + "/DelaqueGanger01.png", 1, 125));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
-		gangerImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
+		fighterImages.add(new BasedModelImage(basePath + "/DelaqueGanger01.png", 1, 125));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
+		fighterImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
 		
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
@@ -150,6 +150,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		});
 		
 		saveGangButton = new JButton("Save Gang");
+		saveGangButton.setEnabled(false);
 		saveGangButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -189,15 +190,15 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			}
 		});
 			
-		gangerNameLabel = new JLabel("Ganger Name");
-		gangerNameTextField = new JTextField();
+		fighterNameLabel = new JLabel("Fighter Name");
+		fighterNameTextField = new JTextField();
 
-		SpinnerListModel spinnerListModel = new SpinnerListModel(gangerImages);
-		gangerPictureSpinner = new JSpinner(spinnerListModel);
-		gangerPicturePanel = new FighterImagePanel(spinnerListModel);
-		gangerPictureSpinner.setPreferredSize(new Dimension(150, 150));
-		gangerPictureSpinner.setEditor(gangerPicturePanel);
-		gangerPictureSpinner.addChangeListener(gangerPicturePanel);
+		SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages);
+		fighterImageSpinner = new JSpinner(spinnerListModel);
+		fighterImagePanel = new FighterImagePanel(spinnerListModel);
+		fighterImageSpinner.setPreferredSize(new Dimension(150, 150));
+		fighterImageSpinner.setEditor(fighterImagePanel);
+		fighterImageSpinner.addChangeListener(fighterImagePanel);
 		
 		movementLabel = new JLabel("Movement");
 		weaponSkillLabel = new JLabel("Weapon Skill");
@@ -230,13 +231,13 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		leadershipTextField = new JTextField();
 		setDefaultSize(leadershipTextField);
 		
-		gangerTypeLabel = new JLabel("Ganger Type");
-		gangerTypeComboBox = new JComboBox(Fighter.Type.class.getEnumConstants());
-		gangerTypeComboBox.addActionListener(new ActionListener() {
+		fighterTypeLabel = new JLabel("Fighter Type");
+		fighterTypeComboBox = new JComboBox(Fighter.Type.class.getEnumConstants());
+		fighterTypeComboBox.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Fighter.Type fighterType = (Fighter.Type)gangerTypeComboBox.getSelectedItem();
+				Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
 				Class<? extends Fighter> fighterClass = fighterType.getAssociatedClass();
 				
 				try {
@@ -275,7 +276,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				}
 			}
 		});
-		gangerTypeComboBox.setSelectedIndex(0);
+		fighterTypeComboBox.setSelectedIndex(0);
 		
 		weaponComboBox = new JComboBox();
 		weaponComboBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, (int)weaponComboBox.getMinimumSize().getHeight()));
@@ -311,16 +312,31 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		weaponProfileStringLabel = new JLabel();
 		updateWeaponString();
 		
-		gangerWeaponList = new JList(new DefaultListModel());
-		gangerWeaponList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
+		fighterWeaponList = new JList(new DefaultListModel());
+		fighterWeaponList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
+		fighterWeaponList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				Object value = fighterWeaponList.getSelectedValue();
+				
+				if (value != null) {
+					removeWeaponButton.setEnabled(true);
+				}
+				else {
+					removeWeaponButton.setEnabled(false);
+				}
+			}
+		});
 		
 		addWeaponButton = new JButton("Add Weapon");
+		addWeaponButton.setEnabled(false);
 		addWeaponButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (gangerList.getSelectedValue() != null) {
-					Fighter selectedGanger = (Fighter)gangerList.getSelectedValue();
+				if (fighterList.getSelectedValue() != null) {
+					Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
 					
 					Weapon weapon = null;
 					
@@ -336,33 +352,34 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 						e1.printStackTrace();
 					}
 					
-					selectedGanger.addWeapon(weapon);
-					weapon.setOwner(selectedGanger);
+					selectedFighter.addWeapon(weapon);
+					weapon.setOwner(selectedFighter);
 					updateGangRating();
 					
-					((DefaultListModel)gangerWeaponList.getModel()).addElement(weapon);
+					((DefaultListModel)fighterWeaponList.getModel()).addElement(weapon);
 				}
 			}
 		});
 		
 		removeWeaponButton = new JButton("Remove Weapon");
+		removeWeaponButton.setEnabled(false);
 		removeWeaponButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Fighter selectedGanger = (Fighter)gangerList.getSelectedValue();
-				Object[] values = gangerWeaponList.getSelectedValues();
-				DefaultListModel model = (DefaultListModel)gangerWeaponList.getModel();
+				Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
+				Object[] values = fighterWeaponList.getSelectedValues();
+				DefaultListModel model = (DefaultListModel)fighterWeaponList.getModel();
 				
 				for (Object o : values) {
 					model.removeElement(o);
 				}
 
-				selectedGanger.removeAllWeapons();
+				selectedFighter.removeAllWeapons();
 				
 				for (int i = 0; i < model.getSize(); i++) {
 					Weapon weapon = (Weapon)model.getElementAt(i);
-					selectedGanger.addWeapon(weapon);
+					selectedFighter.addWeapon(weapon);
 				}
 				
 				updateGangRating();
@@ -378,28 +395,43 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				Gang selectedGang = (Gang)gangList.getSelectedValue();
 				
 				if (selectedGang != null) {
-					DefaultListModel model = (DefaultListModel)gangerList.getModel();
+					DefaultListModel model = (DefaultListModel)fighterList.getModel();
 					model.removeAllElements();
 					
-					for (Fighter ganger : selectedGang.getGangMembers()) {
-						model.addElement(ganger);
+					for (Fighter fighter : selectedGang.getGangMembers()) {
+						model.addElement(fighter);
 					}
 					
 					updateGangRating();
+					
+					addFighterButton.setEnabled(true);
+					removeGangButton.setEnabled(true);
+					
+					if (!selectedGang.getGangMembers().isEmpty()) {
+						saveGangButton.setEnabled(true);
+					}
+					else{
+						saveGangButton.setEnabled(false);
+					}
+				}
+				else {
+					addFighterButton.setEnabled(false);
+					removeGangButton.setEnabled(false);
+					saveGangButton.setEnabled(false);
 				}
 			}
 		});
 		
-		gangerList = new JList(new DefaultListModel());
-		gangerList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
-		gangerList.setCellRenderer(new FighterListCellRenderer());
-		gangerList.addListSelectionListener(new ListSelectionListener() {
+		fighterList = new JList(new DefaultListModel());
+		fighterList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
+		fighterList.setCellRenderer(new FighterListCellRenderer());
+		fighterList.addListSelectionListener(new ListSelectionListener() {
 			
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				if (gangerList.getSelectedValue() != null) {
-					Fighter selectedGanger = (Fighter)gangerList.getSelectedValue();
-					FighterProfile profile = selectedGanger.getProfile();
+				if (fighterList.getSelectedValue() != null) {
+					Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
+					FighterProfile profile = selectedFighter.getProfile();
 					
 					movementTextField.setText(String.valueOf(profile.getMovement()));
 					weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
@@ -411,17 +443,25 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					attacksTextField.setText(String.valueOf(profile.getAttacks()));
 					leadershipTextField.setText(String.valueOf(profile.getLeadership()));
 					
-					DefaultListModel model = (DefaultListModel)gangerWeaponList.getModel();
+					DefaultListModel model = (DefaultListModel)fighterWeaponList.getModel();
 					model.removeAllElements();
 					
-					for (Weapon weapon : selectedGanger.getWeapons()) {
+					for (Weapon weapon : selectedFighter.getWeapons()) {
 						model.addElement(weapon);
 					}
+
+					addWeaponButton.setEnabled(true);
+					removeFighterButton.setEnabled(true);
+				}
+				else {
+					addWeaponButton.setEnabled(false);
+					removeFighterButton.setEnabled(false);
 				}
 			}
 		});
 		
 		removeGangButton = new JButton("Remove Gang");
+		removeGangButton.setEnabled(false);
 		removeGangButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -433,7 +473,9 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					model.removeElement(o);
 				}
 				
-				((DefaultListModel)gangerList.getModel()).clear();
+				((DefaultListModel)fighterList.getModel()).clear();
+				
+				okButton.getAction().setEnabled(getNumberOfFighters() > 0);
 			}
 		});
 		
@@ -488,16 +530,17 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			}
 		});
 		
-		addGangerButton = new JButton("Add Ganger");
-		addGangerButton.addActionListener(new ActionListener() {
+		addFighterButton = new JButton("Add Fighter");
+		addFighterButton.setEnabled(false);
+		addFighterButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (gangList.getSelectedValue() != null) {
 					Gang selectedGang = (Gang)gangList.getSelectedValue();
-					Fighter.Type fighterType = (Fighter.Type)gangerTypeComboBox.getSelectedItem();
+					Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
 					
-					Fighter fighter = Fighter.getInstance(fighterType, gangerNameTextField.getText(), selectedGang);
+					Fighter fighter = Fighter.getInstance(fighterType, fighterNameTextField.getText(), selectedGang);
 
 					FighterProfile profile = fighter.getProfile();
 					
@@ -521,37 +564,43 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					attacksTextField.setText(String.valueOf(profile.getAttacks()));
 					leadershipTextField.setText(String.valueOf(profile.getLeadership()));
 					
-					BasedModelImage image = (BasedModelImage)gangerPictureSpinner.getModel().getValue();
-					fighter.setGangerPicture(image);
+					BasedModelImage image = (BasedModelImage)fighterImageSpinner.getModel().getValue();
+					fighter.setFighterImage(image);
 					
-					selectedGang.addGanger(fighter);
+					selectedGang.addFighter(fighter);
 					updateGangRating();
 					
-					((DefaultListModel)gangerList.getModel()).addElement(fighter);
+					((DefaultListModel)fighterList.getModel()).addElement(fighter);
 					
 					okButton.getAction().setEnabled(true);
+					saveGangButton.setEnabled(true);
 				}
 			}
 		});
 		
-		removeGangerButton = new JButton("Remove Ganger");
-		removeGangerButton.addActionListener(new ActionListener() {
+		removeFighterButton = new JButton("Remove Fighter");
+		removeFighterButton.setEnabled(false);
+		removeFighterButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Gang selectedGang = (Gang)gangList.getSelectedValue(); 
-				Object[] values = gangerList.getSelectedValues();
-				DefaultListModel model = (DefaultListModel)gangerList.getModel();
+				Object[] values = fighterList.getSelectedValues();
+				DefaultListModel model = (DefaultListModel)fighterList.getModel();
 				
 				for (Object o : values) {
 					model.removeElement(o);
 					
 					if (o instanceof Fighter) {
-						selectedGang.removeGanger((Fighter)o);
+						selectedGang.removeFighter((Fighter)o);
 					}
 				}
 				
 				updateGangRating();
+				
+				saveGangButton.setEnabled(!selectedGang.getGangMembers().isEmpty());
+				
+				okButton.getAction().setEnabled(getNumberOfFighters() > 0);
 			}
 		});
 		
@@ -578,28 +627,28 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		panel1.add(houseComboBox);
 		panel1.add(removeGangButton);
 		panel1.add(loadGangButton);
-		panel1.add(gangerNameLabel);
-		panel1.add(gangerNameTextField);
-		panel1.add(addGangerButton);
-		panel1.add(removeGangerButton);
-		panel1.add(gangerTypeLabel);
-		panel1.add(gangerTypeComboBox);
+		panel1.add(fighterNameLabel);
+		panel1.add(fighterNameTextField);
+		panel1.add(addFighterButton);
+		panel1.add(removeFighterButton);
+		panel1.add(fighterTypeLabel);
+		panel1.add(fighterTypeComboBox);
 		
 		optionsPanel.add(invertMouseCheckBox);
 		optionsPanel.add(terrainTypeComboBox);
 		
 		Box mainBox = Box.createHorizontalBox();
-		mainBox.add(gangerPictureSpinner);
+		mainBox.add(fighterImageSpinner);
 		
 		JScrollPane gangListScrollPane = new JScrollPane(gangList);
 		mainBox.add(gangListScrollPane);
 		
-		JScrollPane gangerListScrollPane = new JScrollPane(gangerList);
-		mainBox.add(gangerListScrollPane);
+		JScrollPane fighterListScrollPane = new JScrollPane(fighterList);
+		mainBox.add(fighterListScrollPane);
 		
 		Box subBox = Box.createVerticalBox();
 		subBox.add(gangListScrollPane);
-		subBox.add(gangerListScrollPane);
+		subBox.add(fighterListScrollPane);
 		
 		mainBox.add(subBox);
 				
@@ -619,8 +668,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		panel2.add(Box.createRigidArea(new Dimension(5, 5)));
 		
-		JScrollPane gangerWeaponListScrollPane = new JScrollPane(gangerWeaponList);
-		panel2.add(gangerWeaponListScrollPane);
+		JScrollPane fighterWeaponListScrollPane = new JScrollPane(fighterWeaponList);
+		panel2.add(fighterWeaponListScrollPane);
 		panel2.add(Box.createRigidArea(new Dimension(5, 5)));
 		
 		Box box4 = Box.createHorizontalBox();
@@ -710,6 +759,20 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		add(tabbedPane, BorderLayout.CENTER);
 		add(okButtonPanel, BorderLayout.SOUTH);
+	}
+	
+	private int getNumberOfFighters() {
+		int number = 0;
+		
+		DefaultListModel gangModel = (DefaultListModel)gangList.getModel();
+		
+		for (Object o : gangModel.toArray()) {
+			Gang gang = (Gang)o;
+			
+			number += gang.getGangMembers().size();
+		}
+		
+		return number;
 	}
 	
 	private void setDefaultSize(JComponent component) {
@@ -804,8 +867,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			
 			if (model.getSize() > 0) {
 				Fighter fighter = (Fighter)model.getElementAt(index);
-				BasedModelImage image = fighter.getGangerPicture();
-				ImageIcon imageIcon = new ImageIcon(scaleImage(FIGHTER_ICON_SIZE_X, FIGHTER_ICON_SIZE_Y, gangerPicturePanel.getImageMap().get(image)));
+				BasedModelImage image = fighter.getFighterImage();
+				ImageIcon imageIcon = new ImageIcon(scaleImage(FIGHTER_ICON_SIZE_X, FIGHTER_ICON_SIZE_Y, fighterImagePanel.getImageMap().get(image)));
 				renderer.setIcon(imageIcon);
 				renderer.setText(String.format("%s (%s)", fighter.toString(), fighter.getProfile()));
 				

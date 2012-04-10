@@ -146,7 +146,7 @@ public class MaterialFactory {
 	}
 	
 	public Material createFigureMaterial(Fighter fighter) {
-		BasedModelImage basedModelImage = fighter.getGangerPicture();
+		BasedModelImage basedModelImage = fighter.getFighterImage();
 		Material figureMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		Texture modelTexture = assetManager.loadTexture(basedModelImage.getRelativeImageFileName());
 		figureMaterial.setTexture("ColorMap", modelTexture);

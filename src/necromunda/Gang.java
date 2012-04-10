@@ -71,11 +71,11 @@ public class Gang implements Serializable {
 		return hostileGangers;
 	}
 
-	public void addGanger(Fighter ganger) {
+	public void addFighter(Fighter ganger) {
 		gangMembers.add(ganger);
 	}
 	
-	public void removeGanger(Fighter ganger) {
+	public void removeFighter(Fighter ganger) {
 		gangMembers.remove(ganger);
 	}
 	

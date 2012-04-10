@@ -71,7 +71,7 @@ public class FighterNode extends Node {
 
 		Image modelImage = figureMaterial.getTextureParam("ColorMap").getTextureValue().getImage();
 
-		BasedModelImage basedModelImage = fighter.getGangerPicture();
+		BasedModelImage basedModelImage = fighter.getFighterImage();
 		
 		float pixelsPerInch = basedModelImage.getBaseWidth() / (upperBaseRadius * 2);
 		float imageHeightInInch = modelImage.getHeight() / pixelsPerInch;
