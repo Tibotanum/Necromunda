@@ -29,29 +29,9 @@ public class Gang implements Serializable {
 		}
 	}
 	
-	public enum House {
-		ORLOCK("Orlock"),
-		GOLIATH("Goliath"),
-		ESCHER("Escher"),
-		VAN_SAAR("Van Saar"),
-		DELAQUE("Delaque"),
-		CAWDOR("Cawdor");
-		
-		private String literal;
-		
-		private House(String displayName) {
-			this.literal = displayName;
-		}
-		
-		@Override
-		public String toString() {
-			return literal;
-		}
-	}
-	
 	private String name;
 	private Set<Fighter> gangMembers;
-	public House house;
+	private House house;
 	
 	public Gang(String name, House house) {
 		this.name = name;
@@ -112,5 +92,9 @@ public class Gang implements Serializable {
 		for (Fighter ganger : gangMembers) {
 			ganger.turnEnded();
 		}
+	}
+
+	public House getHouse() {
+		return house;
 	}
 }

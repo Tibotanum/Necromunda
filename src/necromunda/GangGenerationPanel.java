@@ -20,16 +20,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
+
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.*;
 
 import com.jme3.system.JmeContext.Type;
 
-import necromunda.Gang.House;
 import necromunda.MaterialFactory.MaterialIdentifier;
 
 import weapons.*;
@@ -91,7 +88,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	private FighterImagePanel fighterImagePanel;
 	private JSpinner fighterImageSpinner;
 	
-	private List<BasedModelImage> fighterImages;
+	private Map<House, List<BasedModelImage>> fighterImages;
 	
 	public GangGenerationPanel(final Necromunda game) {
 		mainPanel = new JPanel();
@@ -102,37 +99,43 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		String basePath = "/Images/Textures/Fighters/";
 		
-		fighterImages = new ArrayList<BasedModelImage>();
+		List<BasedModelImage> escherBasedModelImages = new ArrayList<BasedModelImage>();
 		
-		fighterImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
-		fighterImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
-		fighterImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
-		fighterImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
-		fighterImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
+		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
 		
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
-		fighterImages.add(new BasedModelImage(basePath + "/DelaqueGanger01.png", 1, 125));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
-		fighterImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
+		List<BasedModelImage> delaqueBasedModelImages = new ArrayList<BasedModelImage>();
+		
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
+		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
+		
+		fighterImages = new HashMap<House, List<BasedModelImage>>();
+		fighterImages.put(House.ESCHER, escherBasedModelImages);
+		fighterImages.put(House.DELAQUE, delaqueBasedModelImages);
 		
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
 		
 		houseLabel = new JLabel("Gang House");
-		houseComboBox = new JComboBox(Gang.House.class.getEnumConstants());
+		houseComboBox = new JComboBox(House.class.getEnumConstants());
 		
 		addGangButton = new JButton("Add Gang");
 		addGangButton.addActionListener(new ActionListener() {
@@ -141,7 +144,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			public void actionPerformed(ActionEvent e) {
 				DefaultListModel model = (DefaultListModel)gangList.getModel();
 				
-				House house = (Gang.House)houseComboBox.getSelectedItem();
+				House house = (House)houseComboBox.getSelectedItem();
 				
 				Gang newGang = new Gang(gangNameTextField.getText(), house);
 				
@@ -193,7 +196,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterNameLabel = new JLabel("Fighter Name");
 		fighterNameTextField = new JTextField();
 
-		SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages);
+		SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages.get(House.ESCHER));
 		fighterImageSpinner = new JSpinner(spinnerListModel);
 		fighterImagePanel = new FighterImagePanel(spinnerListModel);
 		fighterImageSpinner.setPreferredSize(new Dimension(150, 150));
@@ -413,6 +416,13 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					else{
 						saveGangButton.setEnabled(false);
 					}
+
+					SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages.get(selectedGang.getHouse()));
+					fighterImageSpinner.setModel(spinnerListModel);
+					fighterImagePanel = new FighterImagePanel(spinnerListModel);
+					fighterImageSpinner.removeChangeListener((ChangeListener)fighterImageSpinner.getEditor());
+					fighterImageSpinner.setEditor(fighterImagePanel);
+					fighterImageSpinner.addChangeListener(fighterImagePanel);
 				}
 				else {
 					addFighterButton.setEnabled(false);
@@ -867,8 +877,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			
 			if (model.getSize() > 0) {
 				Fighter fighter = (Fighter)model.getElementAt(index);
-				BasedModelImage image = fighter.getFighterImage();
-				ImageIcon imageIcon = new ImageIcon(scaleImage(FIGHTER_ICON_SIZE_X, FIGHTER_ICON_SIZE_Y, fighterImagePanel.getImageMap().get(image)));
+				BasedModelImage basedModelImage = fighter.getFighterImage();
+				ImageIcon imageIcon = new ImageIcon(scaleImage(FIGHTER_ICON_SIZE_X, FIGHTER_ICON_SIZE_Y, basedModelImage.getImage()));
 				renderer.setIcon(imageIcon);
 				renderer.setText(String.format("%s (%s)", fighter.toString(), fighter.getProfile()));
 				

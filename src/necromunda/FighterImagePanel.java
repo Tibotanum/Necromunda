@@ -17,46 +17,16 @@ import javax.swing.event.ChangeListener;
 
 public class FighterImagePanel extends JPanel implements ChangeListener {
 	private SpinnerListModel spinnerModel;
-	private Map<BasedModelImage, Image> imageMap = new HashMap<BasedModelImage, Image>();
 	
 	public FighterImagePanel(SpinnerListModel spinnerModel) {
 		this.spinnerModel = spinnerModel;
-		
-		List<?> basedModelImages = spinnerModel.getList();
-		
-		for (Object basedModelImage : basedModelImages) {
-			addImage((BasedModelImage)basedModelImage);
-		}
-	}
-	
-	private void addImage(BasedModelImage basedModelImage) {
-		Image image = loadImage(basedModelImage);
-		imageMap.put(basedModelImage, image);
-	}
-	
-	private Image loadImage(BasedModelImage basedModelImage) {
-		Image image = null;
-		File imageFile = new File(basedModelImage.getRelativeImageFileName());
-		
-		/*try {
-			image = ImageIO.read(imageFile);
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/
-		
-		image = Toolkit.getDefaultToolkit().getImage(getClass().getResource(basedModelImage.getRelativeImageFileName()));
-		
-		return image;
 	}
 
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		BasedModelImage basedModelImage = (BasedModelImage)spinnerModel.getValue();
-		Image image = imageMap.get(basedModelImage);
+		Image image = ((BasedModelImage)spinnerModel.getValue()).getImage();
 		
 		int xPosition = (this.getWidth() / 2) - (image.getWidth(this) / 2);
 		int yPosition = (this.getHeight() / 2) - (image.getHeight(this) / 2);
@@ -67,9 +37,5 @@ public class FighterImagePanel extends JPanel implements ChangeListener {
 	@Override
 	public void stateChanged(ChangeEvent e) {
 		repaint();
-	}
-
-	public Map<BasedModelImage, Image> getImageMap() {
-		return imageMap;
 	}
 }

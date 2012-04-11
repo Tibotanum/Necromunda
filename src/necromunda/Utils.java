@@ -1,5 +1,7 @@
 package necromunda;
 
+import java.awt.*;
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 
@@ -57,6 +59,23 @@ public class Utils {
 			System.err.println("Couldn't find file: " + imageFilePath);
 			return null;
 		}
+	}
+	
+	public static Image loadImage(BasedModelImage basedModelImage) {
+		Image image = null;
+		File imageFile = new File(basedModelImage.getRelativeImageFileName());
+		
+		/*try {
+			image = ImageIO.read(imageFile);
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		image = Toolkit.getDefaultToolkit().getImage(Utils.class.getResource(basedModelImage.getRelativeImageFileName()));
+		
+		return image;
 	}
 	
 	public static CollisionResult getNearestCollisionFrom(Vector3f origin, Vector3f direction, List<Collidable> collidables) {
