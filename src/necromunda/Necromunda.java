@@ -11,10 +11,7 @@ import java.util.NavigableSet;
 import java.util.Observable;
 import java.util.Set;
 
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 import necromunda.MaterialFactory.MaterialIdentifier;
 
@@ -189,6 +186,12 @@ public class Necromunda extends Observable {
 		necromundaFrame.setLocationRelativeTo(null);
 		necromundaFrame.add(gangGenerationPanel);
 		necromundaFrame.setVisible(true);
+		
+		JOptionPane.showMessageDialog(gangGenerationPanel, "This is an unofficial implementation of Necromunda.\n" +
+				" The copyright of Necromunda and all its related\n" +
+				" artwork including the ganger pictures contained\n" +
+				" in this software is owned by Games Workshop Limited\n" +
+				" and is used without permission.");
 	}
 	
 	public void fighterDeployed() {

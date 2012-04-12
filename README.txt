@@ -31,7 +31,7 @@ Note: When climbing you first have to start a regular or run movement. If you ar
 
 Copyright notice
 ----------------
-The copyright of Necromunda, its rules and all its related artwork (including the ganger pictures contained in this software) is owned by Games Workshop Limited.
+This is an unofficial implementation of Necromunda. The copyright of Necromunda and all its related artwork including the ganger pictures contained in this software is owned by Games Workshop Limited and is used without permission."
 
 The BSD License for the included jMonkeyEngine libraries is held in "jMonkeyBSDLicense.txt".
 
