@@ -4,15 +4,19 @@ import java.awt.Image;
 import java.io.Serializable;
 
 public class BasedModelImage implements Serializable {
+	private House house;
+	private Class<? extends Fighter> fighterClass;
 	private String imageFileName;
 	private int offset;
 	private int baseWidth;
 	private Image image;
 
-	public BasedModelImage(String imageFileName, int offset, int baseWidth) {
+	public BasedModelImage(String imageFileName, int offset, int baseWidth, House house, Class<? extends Fighter> fighterClass) {
 		this.imageFileName = imageFileName;
 		this.offset = offset;
 		this.baseWidth = baseWidth;
+		this.house = house;
+		this.fighterClass = fighterClass;
 	}
 
 	public int getOffset() {
@@ -55,5 +59,13 @@ public class BasedModelImage implements Serializable {
 		}
 		
 		return image;
+	}
+
+	public House getHouse() {
+		return house;
+	}
+
+	public Class<? extends Fighter> getFighterClass() {
+		return fighterClass;
 	}
 }

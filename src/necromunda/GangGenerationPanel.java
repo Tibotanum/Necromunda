@@ -88,7 +88,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	private FighterImagePanel fighterImagePanel;
 	private JSpinner fighterImageSpinner;
 	
-	private Map<House, List<BasedModelImage>> fighterImages;
+	private List<BasedModelImage> basedModelImages;
 	
 	public GangGenerationPanel(final Necromunda game) {
 		mainPanel = new JPanel();
@@ -99,38 +99,32 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		String basePath = "/Images/Textures/Fighters/";
 		
-		List<BasedModelImage> escherBasedModelImages = new ArrayList<BasedModelImage>();
+		basedModelImages = new ArrayList<BasedModelImage>();
 		
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128));
-		escherBasedModelImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134, House.ESCHER, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115, House.ESCHER, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129, House.ESCHER, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128, House.ESCHER, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131, House.ESCHER, Juve.class));
 		
-		List<BasedModelImage> delaqueBasedModelImages = new ArrayList<BasedModelImage>();
-		
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124));
-		delaqueBasedModelImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122));
-		
-		fighterImages = new HashMap<House, List<BasedModelImage>>();
-		fighterImages.put(House.ESCHER, escherBasedModelImages);
-		fighterImages.put(House.DELAQUE, delaqueBasedModelImages);
-		
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121, House.DELAQUE, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125, House.DELAQUE, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129, House.DELAQUE, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123, House.DELAQUE, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123, House.DELAQUE, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125, House.DELAQUE, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114, House.DELAQUE, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124, House.DELAQUE, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122, House.DELAQUE, Juve.class));
+
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
 		
@@ -196,7 +190,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterNameLabel = new JLabel("Fighter Name");
 		fighterNameTextField = new JTextField();
 
-		SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages.get(House.ESCHER));
+		SpinnerListModel spinnerListModel = new SpinnerListModel(filterBasedModelImages(basedModelImages, House.ESCHER, Leader.class));
 		fighterImageSpinner = new JSpinner(spinnerListModel);
 		fighterImagePanel = new FighterImagePanel(spinnerListModel);
 		fighterImageSpinner.setPreferredSize(new Dimension(150, 150));
@@ -277,6 +271,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				updateFighterImages();
 			}
 		});
 		fighterTypeComboBox.setSelectedIndex(0);
@@ -416,13 +412,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 					else{
 						saveGangButton.setEnabled(false);
 					}
-
-					SpinnerListModel spinnerListModel = new SpinnerListModel(fighterImages.get(selectedGang.getHouse()));
-					fighterImageSpinner.setModel(spinnerListModel);
-					fighterImagePanel = new FighterImagePanel(spinnerListModel);
-					fighterImageSpinner.removeChangeListener((ChangeListener)fighterImageSpinner.getEditor());
-					fighterImageSpinner.setEditor(fighterImagePanel);
-					fighterImageSpinner.addChangeListener(fighterImagePanel);
+					
+					updateFighterImages();
 				}
 				else {
 					addFighterButton.setEnabled(false);
@@ -769,6 +760,36 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		add(tabbedPane, BorderLayout.CENTER);
 		add(okButtonPanel, BorderLayout.SOUTH);
+	}
+	
+	private List<BasedModelImage> filterBasedModelImages(List<BasedModelImage> basedModelImages, House house, Class<? extends Fighter> fighterClass) {
+		List<BasedModelImage> filteredBasedModelImages = new ArrayList<BasedModelImage>();
+		
+		for (BasedModelImage basedModelImage : basedModelImages) {
+			if (basedModelImage.getHouse().equals(house) && basedModelImage.getFighterClass().equals(fighterClass)) {
+				filteredBasedModelImages.add(basedModelImage);
+			}
+		}
+		
+		return filteredBasedModelImages;
+	}
+	
+	private void updateFighterImages() {
+		if (gangList != null) {
+			Gang selectedGang = (Gang)gangList.getSelectedValue();
+			
+			if (selectedGang != null) {
+				House house = selectedGang.getHouse();
+				Class<? extends Fighter> fighterClass = ((Fighter.Type)fighterTypeComboBox.getSelectedItem()).getAssociatedClass();
+		
+				SpinnerListModel spinnerListModel = new SpinnerListModel(filterBasedModelImages(basedModelImages, house, fighterClass));
+				fighterImageSpinner.setModel(spinnerListModel);
+				fighterImagePanel = new FighterImagePanel(spinnerListModel);
+				fighterImageSpinner.removeChangeListener((ChangeListener)fighterImageSpinner.getEditor());
+				fighterImageSpinner.setEditor(fighterImagePanel);
+				fighterImageSpinner.addChangeListener(fighterImagePanel);
+			}
+		}
 	}
 	
 	private int getNumberOfFighters() {
