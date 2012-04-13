@@ -21,17 +21,17 @@ M:                      Start regular movement
 R:                      Start run movement
 C:                      Climb a ladder (during regular or run movement; press repeatedly to cycle through ladders if more than one is in reach)
 I:                      Hide
-Y:                      Cycle weapons
+Y:                      Cycle weapons, "Yes"
 O:                      Cycle weapon mode
 H:                      Start shooting
-N:                      Cycle to next phase
+N:                      Cycle to next phase, "No"
 E:                      End current turn
 
 Note: When climbing you first have to start a regular or run movement. If you are standing close enough to a ladder you can press 'C'. After this you have to stop the movement first by clicking the left mouse button. If you have not yet moved all of the allowed distance you can continue moving or running by pressing 'M' or 'R' again.
 
 Copyright notice
 ----------------
-This is an unofficial implementation of Necromunda. The copyright of Necromunda and all its related artwork including the ganger pictures contained in this software is owned by Games Workshop Limited and is used without permission."
+This is an unofficial implementation of Necromunda. The copyright of Necromunda and all its related artwork including the ganger pictures contained in this software is owned by Games Workshop Limited and is used without permission.
 
 The BSD License for the included jMonkeyEngine libraries is held in "jMonkeyBSDLicense.txt".
 
