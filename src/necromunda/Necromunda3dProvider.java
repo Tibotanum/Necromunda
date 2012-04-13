@@ -244,58 +244,11 @@ public class Necromunda3dProvider extends SimpleApplication {
 		rootNode.attachChild(sky);
 
 		MouseListener mouseListener = new MouseListener();
-
-		inputManager.addMapping("leftClick", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
-		inputManager.addMapping("rightClick", new MouseButtonTrigger(MouseInput.BUTTON_RIGHT));
-		inputManager.addListener(mouseListener, "leftClick");
-		inputManager.addListener(mouseListener, "rightClick");
-
-		inputManager.addMapping("Move_Left", new MouseAxisTrigger(MouseInput.AXIS_X, true));
-		inputManager.addMapping("Move_Right", new MouseAxisTrigger(MouseInput.AXIS_X, false));
-		inputManager.addMapping("Move_Up", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
-		inputManager.addMapping("Move_Down", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
-		inputManager.addListener(mouseListener, "Move_Left", "Move_Right", "Move_Up", "Move_Down");
-
 		KeyboardListener keyboardListener = new KeyboardListener();
-
-		inputManager.addMapping("Break", new KeyTrigger(KeyInput.KEY_B));
-		inputManager.addListener(keyboardListener, "Break");
-
-		inputManager.addMapping("Move", new KeyTrigger(KeyInput.KEY_M));
-		inputManager.addListener(keyboardListener, "Move");
-
-		inputManager.addMapping("Run", new KeyTrigger(KeyInput.KEY_R));
-		inputManager.addListener(keyboardListener, "Run");
 		
-		inputManager.addMapping("Hide", new KeyTrigger(KeyInput.KEY_I));
-		inputManager.addListener(keyboardListener, "Hide");
-
-		inputManager.addMapping("Climb", new KeyTrigger(KeyInput.KEY_C));
-		inputManager.addListener(keyboardListener, "Climb");
-
-		inputManager.addMapping("Cycle", new KeyTrigger(KeyInput.KEY_Y));
-		inputManager.addListener(keyboardListener, "Cycle");
-
-		inputManager.addMapping("Yes", new KeyTrigger(KeyInput.KEY_Z));
-		inputManager.addListener(keyboardListener, "Yes");
-
-		inputManager.addMapping("Mode", new KeyTrigger(KeyInput.KEY_O));
-		inputManager.addListener(keyboardListener, "Mode");
-
-		inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_H));
-		inputManager.addListener(keyboardListener, "Shoot");
-
-		inputManager.addMapping("NextPhase", new KeyTrigger(KeyInput.KEY_N));
-		inputManager.addListener(keyboardListener, "NextPhase");
-
-		inputManager.addMapping("No", new KeyTrigger(KeyInput.KEY_N));
-		inputManager.addListener(keyboardListener, "No");
-
-		inputManager.addMapping("EndTurn", new KeyTrigger(KeyInput.KEY_E));
-		inputManager.addListener(keyboardListener, "EndTurn");
-		
-		inputManager.addMapping("SkipBuilding", new KeyTrigger(KeyInput.KEY_K));
-		inputManager.addListener(keyboardListener, "SkipBuilding");
+		stateManager.attach(new GeneralAppState(inputManager, mouseListener, keyboardListener));
+		stateManager.attach(new RerollAppState(inputManager, mouseListener, keyboardListener));
+		stateManager.getState(GeneralAppState.class).setEnabled(true);
 		
 		if (ENABLE_PHYSICS_DEBUG) {
 			physicsSpace.enableDebug(assetManager);
@@ -625,11 +578,11 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		collidables.add(buildingsNode);
 		
-		List<FighterNode> otherFighterNodes = new ArrayList<FighterNode>(getFighterNodes());
+		/*List<FighterNode> otherFighterNodes = new ArrayList<FighterNode>(getFighterNodes());
 		otherFighterNodes.remove(selectedFighterNode);
 		otherFighterNodes.remove(getFighterNodeUnderCursor());
 		
-		collidables.addAll(otherFighterNodes);
+		collidables.addAll(otherFighterNodes);*/
 		
 		RangeCombatWeapon weapon = getSelectedRangeCombatWeapon();
 
@@ -659,6 +612,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 			Necromunda.appendToStatusMessage(String.format("Target hit roll is %s.", targetHitRoll));
 
 			int hitRoll = Utils.rollD6();
+			
+			weapon.hitRoll(hitRoll);
 
 			if ((targetHitRoll > 6) && (hitRoll == 6)) {
 				targetHitRoll -= 3;
@@ -667,6 +622,10 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 			if ((hitRoll < targetHitRoll) || (hitRoll <= 1)) {
 				Necromunda.appendToStatusMessage(String.format("Rolled a %s and missed...", hitRoll));
+				
+				if (hitRoll == 1) {
+					
+				}
 				
 				if (currentTemplateNode != null) {
 					boolean hasEffect = true;
@@ -688,41 +647,39 @@ public class Necromunda3dProvider extends SimpleApplication {
 			}
 
 			Necromunda.appendToStatusMessage(String.format("Rolled a %s and hit!", hitRoll));
-
-			weapon.hitRoll(hitRoll);
-		}
-		
-		if (currentTemplateNode != null) {
-			fireTemplate(currentTemplateNode);
-			queueTemplateNodeForRemoval(currentTemplateNode);
-		}
-		else {
-			List<FighterNode> affectedFighterNodes = new ArrayList<FighterNode>();
-
-			affectedFighterNodes.add(getFighterNodeUnderCursor());
-
-			if (weapon.getAdditionalTargetRange() > 0) {
-				List<FighterNode> fighterNodesWithinRange = getFighterNodesWithinDistance(getFighterNodeUnderCursor(), getFighterNodes(), weapon.getAdditionalTargetRange());
-				List<FighterNode> visibleFighterNodes = getFighterNodesWithLineOfSightFrom(selectedFighterNode, fighterNodesWithinRange);
-
-				affectedFighterNodes.addAll(visibleFighterNodes);
+			
+			if (currentTemplateNode != null) {
+				fireTemplate(currentTemplateNode);
+				queueTemplateNodeForRemoval(currentTemplateNode);
 			}
+			else {
+				List<FighterNode> affectedFighterNodes = new ArrayList<FighterNode>();
 
-			pinNormalFighters(affectedFighterNodes);
+				affectedFighterNodes.add(fighterNode);
 
-			for (FighterNode affectedFighterNode : affectedFighterNodes) {
-				Fighter fighter = affectedFighterNode.getFighter();
-				
-				if (!weapon.dealDamageTo(fighter)) {
-					currentWeapon = weapon;
-					currentTarget = fighter;
-					selectionMode = SelectionMode.REROLL;
-					Necromunda.appendToStatusMessage("Re-roll wound roll?");
+				if (weapon.getAdditionalTargetRange() > 0) {
+					List<FighterNode> fighterNodesWithinRange = getFighterNodesWithinDistance(fighterNode, getFighterNodes(), weapon.getAdditionalTargetRange());
+					List<FighterNode> visibleFighterNodes = getFighterNodesWithLineOfSightFrom(selectedFighterNode, fighterNodesWithinRange);
+
+					affectedFighterNodes.addAll(visibleFighterNodes);
+				}
+
+				pinNormalFighters(affectedFighterNodes);
+
+				for (FighterNode affectedFighterNode : affectedFighterNodes) {
+					Fighter fighter = affectedFighterNode.getFighter();
+					
+					if (!weapon.dealDamageTo(fighter)) {
+						currentWeapon = weapon;
+						currentTarget = fighter;
+						selectionMode = SelectionMode.REROLL;
+						Necromunda.appendToStatusMessage("Re-roll wound roll?");
+					}
 				}
 			}
+			
+			getSelectedRangeCombatWeapon().trigger();
 		}
-		
-		getSelectedRangeCombatWeapon().trigger();
 
 		tearDownTargeting();
 
@@ -731,6 +688,10 @@ public class Necromunda3dProvider extends SimpleApplication {
 		
 		if (getSelectionMode() != SelectionMode.REROLL) {
 			setSelectionMode(SelectionMode.SELECT);
+		}
+		else {
+			stateManager.getState(GeneralAppState.class).setEnabled(false);
+			stateManager.getState(RerollAppState.class).setEnabled(true);
 		}
 	}
 	
@@ -1075,7 +1036,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		currentClimbPath = null;
 	}
 
-	public void tearDownTargeting() {
+	private void tearDownTargeting() {
 		rootNode.detachChildNamed("currentLineOfSightBoxNode");
 		rootNode.detachChildNamed("currentLineOfSightLine");
 
@@ -1443,7 +1404,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 	}
 
-	private class MouseListener implements ActionListener, AnalogListener {
+	public class MouseListener implements ActionListener, AnalogListener {
 		public void onAction(String name, boolean isPressed, float tpf) {
 			executeMouseAction(name, isPressed);
 		}
@@ -1503,7 +1464,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 	}
 
-	private class KeyboardListener implements ActionListener {
+	public class KeyboardListener implements ActionListener {
 
 		@Override
 		public void onAction(String name, boolean isPressed, float tpf) {
@@ -1525,6 +1486,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 		else if (name.equals("EndTurn")) {
 			tearDownMovement();
+			tearDownTargeting();
 			selectionMode = SelectionMode.SELECT;
 			game.endTurn();
 			turnStarted();
@@ -1540,6 +1502,9 @@ public class Necromunda3dProvider extends SimpleApplication {
 			else if (name.equals("No")) {
 				selectionMode = SelectionMode.SELECT;
 			}
+			
+			stateManager.getState(RerollAppState.class).setEnabled(false);
+			stateManager.getState(GeneralAppState.class).setEnabled(true);
 		}
 		else if (selectedFighterNode != null) {
 			if ((selectionMode == SelectionMode.SELECT) && isMemberOfCurrentGang(selectedFighterNode)) {

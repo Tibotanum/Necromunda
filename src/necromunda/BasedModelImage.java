@@ -9,7 +9,7 @@ public class BasedModelImage implements Serializable {
 	private String imageFileName;
 	private int offset;
 	private int baseWidth;
-	private Image image;
+	private transient Image image;
 
 	public BasedModelImage(String imageFileName, int offset, int baseWidth, House house, Class<? extends Fighter> fighterClass) {
 		this.imageFileName = imageFileName;

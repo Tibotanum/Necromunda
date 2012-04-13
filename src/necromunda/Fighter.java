@@ -80,7 +80,7 @@ public abstract class Fighter implements Serializable {
 	private RangeCombatWeapon selectedRangeCombatWeapon;
 	private List<Weapon> weapons;
 	private int cost;
-	private BasedModelImage gangerPicture;
+	private BasedModelImage fighterImage;
 	private String name;
 	
 	public static Fighter getInstance(Type type, String name, Gang ownGang) {
@@ -431,11 +431,11 @@ public abstract class Fighter implements Serializable {
 	}
 
 	public BasedModelImage getFighterImage() {
-		return gangerPicture;
+		return fighterImage;
 	}
 
 	public void setFighterImage(BasedModelImage gangerPicture) {
-		this.gangerPicture = gangerPicture;
+		this.fighterImage = gangerPicture;
 	}
 	
 	public boolean isReliableMate() {

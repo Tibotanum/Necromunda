@@ -12,6 +12,6 @@ public class GrenadesAmmunition extends Ammunition {
 	@Override
 	public void sustainMalfunction() {
 		getWeapon().setBroken(true);
-		Necromunda.appendToStatusMessage(String.format("Your %s have run out.", getWeapon().getName()));
+		Necromunda.appendToStatusMessage(String.format("Your %s have run out.", getName()));
 	}
 }
