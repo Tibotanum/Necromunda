@@ -623,8 +623,16 @@ public class Necromunda3dProvider extends SimpleApplication {
 			if ((hitRoll < targetHitRoll) || (hitRoll <= 1)) {
 				Necromunda.appendToStatusMessage(String.format("Rolled a %s and missed...", hitRoll));
 				
-				if (hitRoll == 1) {
+				if ((hitRoll == 1) && (Utils.rollD6() == 1)) {
+					FighterNode strayShotFighterNode = getStrayShotFighterNode(selectedFighterNode, fighterNode);
 					
+					if (strayShotFighterNode != null) {
+						fighterNode = getStrayShotFighterNode(selectedFighterNode, fighterNode);
+						Necromunda.appendToStatusMessage(String.format("Stray shot hits %s.", fighterNode.getFighter().getName()));
+					}
+					else {
+						continue;
+					}
 				}
 				
 				if (currentTemplateNode != null) {
@@ -641,13 +649,14 @@ public class Necromunda3dProvider extends SimpleApplication {
 					}
 
 					queueTemplateNodeForRemoval(currentTemplateNode);
+					
+					continue;
 				}
-
-				continue;
+			}
+			else {
+				Necromunda.appendToStatusMessage(String.format("Rolled a %s and hit!", hitRoll));
 			}
 
-			Necromunda.appendToStatusMessage(String.format("Rolled a %s and hit!", hitRoll));
-			
 			if (currentTemplateNode != null) {
 				fireTemplate(currentTemplateNode);
 				queueTemplateNodeForRemoval(currentTemplateNode);
@@ -711,6 +720,31 @@ public class Necromunda3dProvider extends SimpleApplication {
 	private int getTargetHitRoll(Fighter fighter, RangeCombatWeapon weapon, float distance, int hitModifier) {
 		int targetHitRoll = 7 - fighter.getBallisticSkill() - weapon.getRangeModifier(distance) - hitModifier;
 		return targetHitRoll;
+	}
+	
+	private FighterNode getStrayShotFighterNode(FighterNode source, FighterNode target) {
+		FighterNode strayShotFighterNode = null;
+		List<FighterNode> strayShotCandidates = new ArrayList<FighterNode>();
+		
+		LineSegment lineSegment = new LineSegment(source.getLocalTranslation(), target.getLocalTranslation());
+		
+		for (FighterNode fighterNode : getFighterNodes()) {
+			if (source.getFighter().getGang().getGangMembers().contains(fighterNode.getFighter()) && (fighterNode != source)) {
+				Vector3f point = fighterNode.getLocalTranslation();
+				Vector3f projectedPoint = point.project(lineSegment.getPositiveEnd(null).subtract(lineSegment.getNegativeEnd(null))).add(source.getLocalTranslation());
+				
+				if ((lineSegment.distance(projectedPoint) < 0.01f) && ((lineSegment.distance(point) - fighterNode.getFighter().getBaseRadius()) <= 0.5f)) {
+					strayShotCandidates.add(fighterNode);
+				}
+			}
+		}
+		
+		if (!strayShotCandidates.isEmpty()) {
+			int candidateIndex = FastMath.nextRandomInt(0, strayShotCandidates.size() - 1);
+			strayShotFighterNode = strayShotCandidates.get(candidateIndex);
+		}
+		
+		return strayShotFighterNode;
 	}
 	
 	private void targetTemplateWeapon() {
