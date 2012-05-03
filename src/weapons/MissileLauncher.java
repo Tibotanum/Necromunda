@@ -2,19 +2,16 @@ package weapons;
 
 import necromunda.Necromunda;
 import necromunda.Utils;
-import weapons.RangeCombatWeapon.WeaponType;
+import weapons.RangeCombatWeapon.RangeCombatWeaponType;
 
 import com.jme3.math.ColorRGBA;
 
 public class MissileLauncher extends RangeCombatWeapon {
 	public MissileLauncher() {
 		setName("Missile Launcher");
-		setWeaponType(WeaponType.HEAVY);
-		setMoveOrFire(true);
-		setScattering(true);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
+		setMoveOrFire(true);	
 		setCost(185);
-		
-		setTemplateAttached(false);
 	}
 	
 	@Override
@@ -45,6 +42,8 @@ public class MissileLauncher extends RangeCombatWeapon {
 			
 			setTemplated(true);
 			setTemplateRadius(1.5f);
+			
+			setScattering(true);
 		}
 		
 		@Override
@@ -73,6 +72,8 @@ public class MissileLauncher extends RangeCombatWeapon {
 			setHitRollModificationLong(0);
 			setAmmoRoll(0);
 			setCost(115);
+			
+			setScattering(true);
 		}
 		
 		@Override

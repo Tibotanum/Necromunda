@@ -5,7 +5,7 @@ import necromunda.Necromunda;
 public class Shotgun extends RangeCombatWeapon {
 	public Shotgun() {
 		setName("Shotgun");
-		setWeaponType(WeaponType.BASIC);
+		setRangeCombatWeaponType(RangeCombatWeaponType.BASIC);
 		setCost(10);
 	}
 	

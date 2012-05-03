@@ -5,7 +5,7 @@ import necromunda.Utils;
 public class MeltaGun extends RangeCombatWeapon {
 	public MeltaGun() {
 		setName("Melta-Gun");
-		setWeaponType(WeaponType.SPECIAL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setCost(95);
 	}
 	

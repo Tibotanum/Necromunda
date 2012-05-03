@@ -1,12 +1,8 @@
 package weapons;
 
-import weapons.RangeCombatWeapon.WeaponType;
-
 public abstract class Grenades extends RangeCombatWeapon {
 	public Grenades() {
-		setWeaponType(WeaponType.GRENADE);
-		setScattering(true);
-		setTemplateAttached(false);
+		setRangeCombatWeaponType(RangeCombatWeaponType.GRENADE);
 	}
 
 	@Override

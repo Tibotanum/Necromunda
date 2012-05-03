@@ -17,10 +17,8 @@ public class Flamer extends RangeCombatWeapon {
 	public Flamer() {
 		setName("Flamer");
 		outOfFuelMessage = String.format("Your %s ran out of fuel.", this);
-		setWeaponType(WeaponType.SPECIAL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setCost(40);
-		
-		setTemplateAttached(true);
 	}
 	
 	@Override
@@ -55,6 +53,8 @@ public class Flamer extends RangeCombatWeapon {
 			setTemplated(true);
 			setTemplateRadius(1.25f);
 			setTemplateLength(7.25f);
+			
+			setTemplateAttached(true);
 		}
 		
 		@Override

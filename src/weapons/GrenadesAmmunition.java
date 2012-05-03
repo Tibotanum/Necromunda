@@ -3,6 +3,10 @@ package weapons;
 import necromunda.Necromunda;
 
 public class GrenadesAmmunition extends Ammunition {
+	public GrenadesAmmunition() {
+		setScattering(true);
+	}
+	
 	@Override
 	public int getEffectiveScatterDistance(float shotDistance, int scatterDistance) {
 		scatterDistance = scatterDistance / 2;

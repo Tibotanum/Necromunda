@@ -7,7 +7,7 @@ import necromunda.Utils;
 public class StubGun extends RangeCombatWeapon {
 	public StubGun() {
 		setName("Stub Gun");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(10);
 	}
 	

@@ -3,7 +3,7 @@ package weapons;
 public class Boltgun extends RangeCombatWeapon {
 	public Boltgun() {
 		setName("Boltgun");
-		setWeaponType(WeaponType.BASIC);
+		setRangeCombatWeaponType(RangeCombatWeaponType.BASIC);
 		setCost(35);
 	}
 	

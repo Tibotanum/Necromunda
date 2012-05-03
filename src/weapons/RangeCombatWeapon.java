@@ -12,17 +12,15 @@ import necromunda.Fighter.State;
 public abstract class RangeCombatWeapon extends Weapon {
 	public static float MINIMUM_TEMPLATE_SIZE = 0.01f;
 
-	public enum WeaponType {
+	public enum RangeCombatWeaponType {
 		PISTOL, BASIC, SPECIAL, HEAVY, GRENADE
 	}
 
-	private WeaponType weaponType;
+	private RangeCombatWeaponType rangeCombatWeaponType;
 	private boolean isBroken;
 	private boolean moveOrFire;
 	private List<Ammunition> ammunitions;
 	private Ammunition currentAmmunition;
-	private boolean templateAttached;
-	private boolean scattering;
 	
 	public RangeCombatWeapon() {
 		ammunitions = new ArrayList<Ammunition>();		
@@ -81,12 +79,12 @@ public abstract class RangeCombatWeapon extends Weapon {
 		return currentAmmunition.dealDamageTo(fighters);
 	}
 
-	public WeaponType getWeaponType() {
-		return weaponType;
+	public RangeCombatWeaponType getRangeCombatWeaponType() {
+		return rangeCombatWeaponType;
 	}
 
-	public void setWeaponType(WeaponType weaponType) {
-		this.weaponType = weaponType;
+	public void setRangeCombatWeaponType(RangeCombatWeaponType rangeCombatWeaponType) {
+		this.rangeCombatWeaponType = rangeCombatWeaponType;
 	}
 
 	protected int getHitRollModificationShort() {
@@ -164,6 +162,14 @@ public abstract class RangeCombatWeapon extends Weapon {
 		this.moveOrFire = moveOrFire;
 	}
 	
+	public boolean isScattering() {
+		return currentAmmunition.isScattering();
+	}
+	
+	public boolean isTemplateAttached() {
+		return currentAmmunition.isTemplateAttached();
+	}
+	
 	public boolean isHighImpact() {
 		return currentAmmunition.isHighImpact();
 	}
@@ -187,21 +193,5 @@ public abstract class RangeCombatWeapon extends Weapon {
 	@Override
 	public String getDamageText() {
 		return currentAmmunition.getDamageText();
-	}
-	
-	public boolean isTemplateAttached() {
-		return templateAttached;
-	}
-
-	public void setTemplateAttached(boolean templateAttached) {
-		this.templateAttached = templateAttached;
-	}
-
-	public boolean isScattering() {
-		return scattering;
-	}
-
-	public void setScattering(boolean scattering) {
-		this.scattering = scattering;
 	}
 }

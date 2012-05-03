@@ -4,7 +4,7 @@ package weapons;
 public class Laspistol extends RangeCombatWeapon {
 	public Laspistol() {
 		setName("Laspistol");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(15);
 	}
 	

@@ -5,7 +5,7 @@ import necromunda.Utils;
 public class Autocannon extends RangeCombatWeapon {
 	public Autocannon() {
 		setName("Autocannon");
-		setWeaponType(WeaponType.HEAVY);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
 		setCost(300);
 		
 		setMoveOrFire(true);

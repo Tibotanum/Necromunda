@@ -3,7 +3,7 @@ package weapons;
 public class Lasgun extends RangeCombatWeapon {
 	public Lasgun() {
 		setName("Lasgun");
-		setWeaponType(WeaponType.BASIC);
+		setRangeCombatWeaponType(RangeCombatWeaponType.BASIC);
 		setCost(25);
 	}
 	

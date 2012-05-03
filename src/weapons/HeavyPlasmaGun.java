@@ -19,11 +19,10 @@ import necromunda.Utils;
 public class HeavyPlasmaGun extends PlasmaWeapon {
 	public HeavyPlasmaGun() {
 		setName("Heavy Plasma Gun");
-		setWeaponType(WeaponType.HEAVY);
-		setScattering(false);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
 		setCost(285);
 		
-		setTemplateAttached(false);
+		setMoveOrFire(true);
 	}
 	
 	@Override

@@ -5,7 +5,7 @@ import necromunda.Utils;
 public class HeavyStubber extends RangeCombatWeapon {
 	public HeavyStubber() {
 		setName("Heavy Stubber");
-		setWeaponType(WeaponType.HEAVY);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
 		setCost(120);
 		
 		setMoveOrFire(true);

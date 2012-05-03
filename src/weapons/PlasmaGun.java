@@ -6,7 +6,7 @@ import necromunda.Utils;
 public class PlasmaGun extends PlasmaWeapon {
 	public PlasmaGun() {
 		setName("Plasma Gun");
-		setWeaponType(WeaponType.SPECIAL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setCost(70);
 	}
 	

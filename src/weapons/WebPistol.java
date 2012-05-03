@@ -6,7 +6,7 @@ import necromunda.Necromunda;
 public class WebPistol extends RangeCombatWeapon {
 	public WebPistol() {
 		setName("Web Pistol");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(134);
 	}
 	

@@ -9,10 +9,9 @@ import necromunda.Necromunda;
 
 public abstract class Weapon implements Serializable {
 	private String name;
-	private Fighter owner;
-	private boolean addingToOwnersStrength;
+	protected Fighter owner;	
 	private boolean enabled;
-	private int strength;
+	protected int strength;
 	private int damage;
 	private int armorSaveModification;
 	private int cost;
@@ -36,12 +35,7 @@ public abstract class Weapon implements Serializable {
 	}
 	
 	public int getStrength() {
-		if (addingToOwnersStrength) {
-			return owner.getStrength() + strength;
-		}
-		else {
-			return strength;
-		}
+		return strength;
 	}
 	
 	public void setStrength(int strength) {
@@ -108,14 +102,6 @@ public abstract class Weapon implements Serializable {
 
 	public void setOwner(Fighter owner) {
 		this.owner = owner;
-	}
-
-	public boolean isAddingToOwnersStrength() {
-		return addingToOwnersStrength;
-	}
-
-	public void setAddingToOwnersStrength(boolean addingToOwnersStrength) {
-		this.addingToOwnersStrength = addingToOwnersStrength;
 	}
 	
 	public String getDamageText() {

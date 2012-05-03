@@ -7,7 +7,7 @@ import necromunda.Fighter.State;
 public class NeedlePistol extends RangeCombatWeapon {
 	public NeedlePistol() {
 		setName("Needle Pistol");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(112);
 	}
 	

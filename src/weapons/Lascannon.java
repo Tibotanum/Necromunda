@@ -5,7 +5,7 @@ import necromunda.Utils;
 public class Lascannon extends RangeCombatWeapon {
 	public Lascannon() {
 		setName("Lascannon");
-		setWeaponType(WeaponType.HEAVY);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
 		setCost(400);
 		
 		setMoveOrFire(true);

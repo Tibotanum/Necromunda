@@ -34,6 +34,8 @@ public abstract class Ammunition implements Serializable {
 	private Color templateColor;
 	
 	private boolean rerollWound;
+	private boolean templateAttached;
+	private boolean scattering;
 	
 	public Ammunition() {
 		targeted = true;
@@ -337,5 +339,21 @@ public abstract class Ammunition implements Serializable {
 
 	public void setRerollWound(boolean rerollWound) {
 		this.rerollWound = rerollWound;
+	}
+	
+	public boolean isTemplateAttached() {
+		return templateAttached;
+	}
+
+	public void setTemplateAttached(boolean templateAttached) {
+		this.templateAttached = templateAttached;
+	}
+
+	public boolean isScattering() {
+		return scattering;
+	}
+
+	public void setScattering(boolean scattering) {
+		this.scattering = scattering;
 	}
 }

@@ -10,7 +10,7 @@ import necromunda.Necromunda;
 public class HandFlamer extends Flamer {
 	public HandFlamer() {
 		setName("Hand Flamer");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(15);
 	}
 	

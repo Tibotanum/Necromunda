@@ -17,12 +17,10 @@ import com.jme3.scene.shape.Sphere;
 public class GrenadeLauncher extends RangeCombatWeapon {
 	public GrenadeLauncher() {
 		setName("Grenade Launcher");
-		setWeaponType(WeaponType.SPECIAL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setMoveOrFire(true);
-		setScattering(true);
-		setCost(130);
 		
-		setTemplateAttached(false);
+		setCost(130);
 	}
 	
 	@Override

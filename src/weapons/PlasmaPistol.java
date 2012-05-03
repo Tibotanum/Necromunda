@@ -7,7 +7,7 @@ import necromunda.Necromunda;
 public class PlasmaPistol extends PlasmaWeapon {
 	public PlasmaPistol() {
 		setName("Plasma Pistol");
-		setWeaponType(WeaponType.PISTOL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(25);
 	}
 	

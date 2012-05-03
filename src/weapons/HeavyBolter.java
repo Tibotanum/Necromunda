@@ -5,7 +5,7 @@ import necromunda.Utils;
 public class HeavyBolter extends RangeCombatWeapon {
 	public HeavyBolter() {
 		setName("Heavy Bolter");
-		setWeaponType(WeaponType.HEAVY);
+		setRangeCombatWeaponType(RangeCombatWeaponType.HEAVY);
 		setCost(180);
 		
 		setMoveOrFire(true);

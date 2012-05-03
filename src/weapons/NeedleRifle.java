@@ -6,7 +6,7 @@ import necromunda.Necromunda;
 public class NeedleRifle extends NeedlePistol {
 	public NeedleRifle() {
 		setName("Needle Rifle");
-		setWeaponType(WeaponType.SPECIAL);
+		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setCost(242);
 		
 		getAmmunitions().add(new NeedleRifleAmmunition());
