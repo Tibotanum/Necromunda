@@ -28,7 +28,6 @@ public class Necromunda extends Observable {
 	
 	private List<Gang> gangs;
 	private List<Building> buildings;
-	private Fighter selectedFighter;
 	private LinkedList<Fighter> deployQueue;
 	private Gang currentGang;
 	private int turn;
@@ -194,14 +193,10 @@ public class Necromunda extends Observable {
 				" and is used without permission.");
 	}
 	
-	public void fighterDeployed() {
-		selectedFighter = deployQueue.poll();
-		
-		if (selectedFighter == null) {
-			currentGang = gangs.get(0);
-			currentGang.turnStarted();
-			phase = Phase.MOVEMENT;
-		}
+	public void deploymentFinished() {
+		currentGang = gangs.get(0);
+		currentGang.turnStarted();
+		phase = Phase.MOVEMENT;
 	}
 	
 	public void endTurn() {
@@ -249,13 +244,12 @@ public class Necromunda extends Observable {
 			
 			deployQueue.addAll(nextGang.getGangMembers());
 			
-			if (getCurrentGang() == null) {
-				setCurrentGang(nextGang);
-				setSelectedFighter(deployQueue.poll());
-			}
-			
 			this.gangs.add(nextGang);
 		}
+	}
+	
+	public Fighter getNextFighter() {
+		return deployQueue.poll();
 	}
 
 	public Gang getCurrentGang() {
@@ -264,14 +258,6 @@ public class Necromunda extends Observable {
 
 	public void setCurrentGang(Gang currentGang) {
 		this.currentGang = currentGang;
-	}
-
-	public Fighter getSelectedFighter() {
-		return selectedFighter;
-	}
-
-	public void setSelectedFighter(Fighter selectedFighter) {
-		this.selectedFighter = selectedFighter;
 	}
 
 	public List<Gang> getGangs() {
