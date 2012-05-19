@@ -88,10 +88,14 @@ public class Necromunda extends Observable {
 		List<Building> buildings = new ArrayList<Building>();
 		
 		Building building = new Building();
-		building.put("SmallTower", "Tower");
+		building.putModel("SmallTower", "Tower");
+		building.putBounds("SmallTowerBounds01");
+		building.putBounds("SmallTowerBounds02");
+		building.putBounds("SmallTowerBounds03");
+		building.putBounds("SmallTowerBounds04");
 		buildings.add(building);
 		
-		building = new Building();
+		/*building = new Building();
 		building.put("MineEntrance");
 		buildings.add(building);
 		
@@ -160,7 +164,7 @@ public class Necromunda extends Observable {
 		
 		building = new Building();
 		building.put("PipeY", "Pipe");
-		buildings.add(building);
+		buildings.add(building);*/
 		
 		return buildings;
 	}

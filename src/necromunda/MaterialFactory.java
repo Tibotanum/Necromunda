@@ -19,6 +19,7 @@ public class MaterialFactory {
 		TARGETED,
 		VALID_PATH,
 		INVALID_PATH,
+		TARGET_LINE,
 		SYMBOL_PINNED,
 		SYMBOL_DOWN,
 		SYMBOL_SEDATED,
@@ -75,6 +76,10 @@ public class MaterialFactory {
 		invalidPathMaterial.setBoolean("UseMaterialColors", true);
 		invalidPathMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		
+		Material targetLineMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		targetLineMaterial.setColor("Color", new ColorRGBA(ColorRGBA.Red));
+		targetLineMaterial.setColor("GlowColor", new ColorRGBA(ColorRGBA.Red));
+		
 		String basePath = "Images/Textures/OverheadSymbols/";
 
 		Material pinnedSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -114,6 +119,7 @@ public class MaterialFactory {
 		materialMap.put(MaterialIdentifier.TARGETED, targetedMaterial);
 		materialMap.put(MaterialIdentifier.VALID_PATH, validPathMaterial);
 		materialMap.put(MaterialIdentifier.INVALID_PATH, invalidPathMaterial);
+		materialMap.put(MaterialIdentifier.TARGET_LINE, targetLineMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_PINNED, pinnedSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_DOWN, downSymbolMaterial);
 		materialMap.put(MaterialIdentifier.SYMBOL_SEDATED, sedatedSymbolMaterial);

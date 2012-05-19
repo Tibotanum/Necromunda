@@ -23,7 +23,7 @@ public class LadderNode extends Node {
 		super(name);
 	}
 	
-	public static List<LadderNode> createLaddersFrom(String filename, Material material) {
+	public static List<LadderNode> createLadders(String filename) {
 		InputStream is = JmeSystem.class.getResourceAsStream(filename);
 		List<LadderNode> ladders = new ArrayList<LadderNode>();
 

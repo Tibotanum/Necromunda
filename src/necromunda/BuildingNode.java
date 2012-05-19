@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.*;
 
 public class BuildingNode extends Node {
 	public BuildingNode(String name) {
@@ -16,7 +15,7 @@ public class BuildingNode extends Node {
 	}
 
 	@Override
-	public Node clone(boolean cloneMaterials) {
+	public BuildingNode clone(boolean cloneMaterials) {
 		BuildingNode buildingNode = (BuildingNode)super.clone(cloneMaterials);
 		
 		int index = 0;

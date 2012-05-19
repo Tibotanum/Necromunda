@@ -36,12 +36,11 @@ public class FighterNode extends Node {
 	public FighterNode(String name, Fighter fighter, MaterialFactory materialFactory) {
 		super(name);
 		this.fighter = fighter;
-		
-		float baseRadius = fighter.getBaseRadius();
-		float upperBaseRadius = baseRadius - TOP_BOTTOM_RADIUS_DIFFERENCE;
+
+		float upperBaseRadius = fighter.getBaseRadius() - TOP_BOTTOM_RADIUS_DIFFERENCE;
 		int radialSamples = 20;
 
-		Cylinder cylinder = new Cylinder(4, radialSamples, baseRadius, upperBaseRadius, BASE_HEIGHT, true, false);
+		Cylinder cylinder = new Cylinder(4, radialSamples, fighter.getBaseRadius(), upperBaseRadius, BASE_HEIGHT, true, false);
 
 		FloatBuffer texBuffer = cylinder.getFloatBuffer(VertexBuffer.Type.TexCoord);
 		texBuffer.rewind();
@@ -96,12 +95,12 @@ public class FighterNode extends Node {
 		attachChild(base);
 		attachChild(figureNode);
 
-		Node collisionShapeNode = new Node("collisionShapeNode");
-		CylinderCollisionShape modelShape = new CylinderCollisionShape(new Vector3f(baseRadius, baseRadius * 1.5f, baseRadius), 1);
-		GhostControl physicsGhostObject = new GhostControl(modelShape);
-		collisionShapeNode.addControl(physicsGhostObject);
-		collisionShapeNode.move(0, baseRadius * 1.5f, 0);
-		attachChild(collisionShapeNode);
+		MyBox boundingBox = new MyBox(fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f, fighter.getBaseRadius());
+		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingBox);
+		boundingVolumeGeometry.setMaterial(materialFactory.createMaterial(MaterialIdentifier.SELECTED));
+		boundingVolumeGeometry.setCullHint(CullHint.Always);
+		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
+		attachChild(boundingVolumeGeometry);
 	}
 	
 	public void attachSymbol(Material material) {
@@ -181,10 +180,14 @@ public class FighterNode extends Node {
 		
 		// Add Node world offset
 		for (Vector3f vector : pointCloud) {
-			vector.addLocal(getChild("collisionShapeNode").getWorldTranslation());
+			vector.addLocal(getBoundingVolume().getWorldTranslation());
 		}
 		
 		return pointCloud;
+	}
+	
+	public Geometry getBoundingVolume() {
+		return (Geometry)getChild("boundingVolume");
 	}
 	
 	public void setBaseMaterial(Material baseMaterial) {
@@ -192,8 +195,17 @@ public class FighterNode extends Node {
 		base.setMaterial(baseMaterial);
 	}
 	
-	public float getCenterToHeadOffset() {
-		return fighter.getBaseRadius() * 1.0f;
+	public Vector3f getLocalHeadPosition() {
+		Vector3f localHeadPosition = getLocalCenter().add(getCenterToHeadVector());
+		return localHeadPosition;
+	}
+	
+	public Vector3f getLocalCenter() {
+		return getBoundingVolume().getLocalTranslation().clone();
+	}
+	
+	public Vector3f getCenterToHeadVector() {
+		return new Vector3f(0, fighter.getBaseRadius() * 1.0f, 0);
 	}
 
 	@Override
@@ -216,9 +228,5 @@ public class FighterNode extends Node {
 	
 	public void setPositionValid(boolean positionValid) {
 		this.positionValid = positionValid;
-	}
-
-	public GhostControl getGhostControl() {
-		return getChild("collisionShapeNode").getControl(GhostControl.class);
 	}
 }

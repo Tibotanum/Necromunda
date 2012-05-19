@@ -129,11 +129,11 @@ public abstract class Ammunition implements Serializable {
 	}
 	
 	public String getProfileString() {
-		String weaponProfile = String.format("Range: %s-%s-%s HRM: %s/%s Strength: %s Damage: %s ASM: %s AR: %s", getRangeShortLowerBound(),
+		String profileString = String.format("Range: %s-%s-%s HRM: %s/%s Strength: %s Damage: %s ASM: %s AR: %s", getRangeShortLowerBound(),
 				getRangeShortUpperBound(), getRangeLongUpperBound(), getHitRollModificationShort(), getHitRollModificationLong(), getStrength(), getDamageText(),
 				getArmorSaveModification(), getAmmoRoll());
 
-		return weaponProfile;
+		return profileString;
 	}
 	
 	public String getDamageText() {

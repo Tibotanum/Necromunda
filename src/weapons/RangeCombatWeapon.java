@@ -166,6 +166,10 @@ public abstract class RangeCombatWeapon extends Weapon {
 		return currentAmmunition.isScattering();
 	}
 	
+	public boolean isTemplated() {
+		return currentAmmunition.isTemplated();
+	}
+	
 	public boolean isTemplateAttached() {
 		return currentAmmunition.isTemplateAttached();
 	}

@@ -77,5 +77,4 @@ public class PlasmaGrenades extends Grenades {
 			}
 		}
 	}
-
 }

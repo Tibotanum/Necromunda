@@ -21,47 +21,55 @@ import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Sphere;
+import com.jme3.scene.shape.*;
 
 public class TemplateNode extends Node {
 	private static float TRAIL_STEPWIDTH = 1.0f;
 	
 	private Ammunition ammunition;
-	private List<BoundingSphere> boundingSpheres;
 	private List<Geometry> spheres;
+	private List<Geometry> boundingVolumes;
 	private ColorRGBA color;
 	
 	private TemplateNode(String name, Ammunition ammunition) {
 		super(name);
 		this.ammunition = ammunition;
-		boundingSpheres = new ArrayList<BoundingSphere>();
 		spheres = new ArrayList<Geometry>();
+		boundingVolumes = new ArrayList<Geometry>();
 	}
 	
 	public static TemplateNode createTemplateNode(AssetManager assetManager, Ammunition ammunition) {
 		TemplateNode templateNode = new TemplateNode("currentTemplateNode", ammunition);
 		
-		List<BoundingSphere> boundingSpheres = new ArrayList<BoundingSphere>();
 		List<Geometry> spheres = new ArrayList<Geometry>();
+		List<Geometry> boundingBoxes = new ArrayList<Geometry>();
 
 		if (ammunition.getTemplateLength() == 0) {
-			BoundingSphere boundingSphere = new BoundingSphere(ammunition.getTemplateRadius(), Vector3f.ZERO);
-			boundingSpheres.add(boundingSphere);
 			Sphere sphere = new Sphere(10, 10, ammunition.getTemplateRadius());
 			Geometry geometry = new Geometry("sphere", sphere);
 			spheres.add(geometry);
+			
+			Box boundingBox = new Box(ammunition.getTemplateRadius(), ammunition.getTemplateRadius(), ammunition.getTemplateRadius());
+			Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
+			boundingBoxes.add(boundingBoxGeometry);
 		}
 		else {
 			float radiusToLengthRatio = ammunition.getTemplateRadius() / ammunition.getTemplateLength();
 			
 			for (int i = 1; i <= ammunition.getTemplateLength(); i++) {
-				Vector3f vector = Vector3f.UNIT_Y.mult(i);
-				BoundingSphere boundingSphere = new BoundingSphere(radiusToLengthRatio * i, vector);
-				boundingSpheres.add(boundingSphere);
-				Sphere sphere = new Sphere(10, 10, radiusToLengthRatio * i);
+				float currentRadiusToLengthRatio = radiusToLengthRatio * i;
+				
+				Vector3f vector = Vector3f.UNIT_X.mult(i);
+				
+				Sphere sphere = new Sphere(10, 10, currentRadiusToLengthRatio);
 				Geometry geometry = new Geometry("sphere", sphere);
 				spheres.add(geometry);
 				geometry.setLocalTranslation(vector);
+				
+				MyBox boundingBox = new MyBox(currentRadiusToLengthRatio, currentRadiusToLengthRatio, currentRadiusToLengthRatio);
+				Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
+				boundingBoxes.add(boundingBoxGeometry);
+				boundingBoxGeometry.setLocalTranslation(vector);
 			}
 		}
 		
@@ -73,8 +81,15 @@ public class TemplateNode extends Node {
 			templateNode.attachChild(geometry);
 		}
 		
-		templateNode.setBoundingSpheres(boundingSpheres);
+		for (Geometry geometry : boundingBoxes) {
+			geometry.setMaterial(material);
+			geometry.setQueueBucket(Bucket.Transparent);
+			//geometry.setCullHint(CullHint.Always);
+			templateNode.attachChild(geometry);
+		}
+		
 		templateNode.setSpheres(spheres);
+		templateNode.setBoundingVolumes(boundingBoxes);
 		
 		return templateNode;
 	}
@@ -156,25 +171,29 @@ public class TemplateNode extends Node {
 		
 		for (float i = distance; i > 0; i -= TRAIL_STEPWIDTH) {
 			Vector3f tempVector = vector.mult(i);
-			BoundingSphere boundingSphere = new BoundingSphere(radius, tempVector);
-			boundingSpheres.add(boundingSphere);
+			
 			Sphere sphere = new Sphere(10, 10, radius);
 			Geometry geometry = new Geometry("sphere", sphere);
 			spheres.add(geometry);
 			geometry.setLocalTranslation(tempVector);
+			
+			MyBox boundingBox = new MyBox(radius, radius, radius);
+			Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
+			boundingVolumes.add(boundingBoxGeometry);
+			boundingBoxGeometry.setLocalTranslation(tempVector);
 		}
 		
 		updateGeometry();
 	}
 	
 	public void removeTrail() {
-		BoundingSphere firstBoundingSphere = boundingSpheres.get(0);
-		boundingSpheres.clear();
-		boundingSpheres.add(firstBoundingSphere);
-		
 		Geometry firstSphere = spheres.get(0);
 		spheres.clear();
 		spheres.add(firstSphere);
+		
+		Geometry firstBoundingBox = boundingVolumes.get(0);
+		boundingVolumes.clear();
+		boundingVolumes.add(firstBoundingBox);
 		
 		updateGeometry();
 	}
@@ -191,24 +210,14 @@ public class TemplateNode extends Node {
 			attachChild(geometry);
 		}
 		
-		setTransformRefresh();
-	}
-
-	@Override
-	protected void setTransformRefresh() {
-		super.setTransformRefresh();
-		
-		for (int i = 0; i < spheres.size(); i++) {
-			boundingSpheres.get(i).setCenter(spheres.get(i).getWorldTranslation());
+		for (Geometry geometry : boundingVolumes) {
+			geometry.setMaterial(material);
+			geometry.setQueueBucket(Bucket.Transparent);
+			//geometry.setCullHint(CullHint.Always);
+			attachChild(geometry);
 		}
-	}
-
-	public List<BoundingSphere> getBoundingSpheres() {
-		return boundingSpheres;
-	}
-
-	public void setBoundingSpheres(List<BoundingSphere> boundingSpheres) {
-		this.boundingSpheres = boundingSpheres;
+		
+		setTransformRefresh();
 	}
 
 	public List<Geometry> getSpheres() {
@@ -217,6 +226,14 @@ public class TemplateNode extends Node {
 
 	public void setSpheres(List<Geometry> spheres) {
 		this.spheres = spheres;
+	}
+
+	public List<Geometry> getBoundingVolumes() {
+		return boundingVolumes;
+	}
+
+	public void setBoundingVolumes(List<Geometry> boundingVolumes) {
+		this.boundingVolumes = boundingVolumes;
 	}
 
 	public ColorRGBA getColor() {
