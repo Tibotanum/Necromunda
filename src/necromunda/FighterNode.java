@@ -31,7 +31,6 @@ public class FighterNode extends Node {
 	public static final float TOP_BOTTOM_RADIUS_DIFFERENCE = 10f / 132f / 2f;
 	private final static float SYMBOL_HEIGHT = 2;
 	private Fighter fighter;
-	private boolean positionValid;
 	
 	public FighterNode(String name, Fighter fighter, MaterialFactory materialFactory) {
 		super(name);
@@ -103,7 +102,7 @@ public class FighterNode extends Node {
 		attachChild(boundingVolumeGeometry);
 	}
 	
-	public void attachSymbol(Material material) {
+	public void addSymbol(Material material) {
 		Quad quad = new Quad(0.3f, 0.3f);
 		
 		Geometry symbol = new Geometry("symbol", quad);
@@ -208,25 +207,11 @@ public class FighterNode extends Node {
 		return new Vector3f(0, fighter.getBaseRadius() * 1.0f, 0);
 	}
 
-	@Override
-	public void setLocalTranslation(Vector3f localTranslation) {
-		super.setLocalTranslation(localTranslation);
-		positionValid = true;
-	}
-
 	public Fighter getFighter() {
 		return fighter;
 	}
 
 	public void setFighter(Fighter fighter) {
 		this.fighter = fighter;
-	}
-
-	public boolean isPositionValid() {
-		return positionValid;
-	}
-	
-	public void setPositionValid(boolean positionValid) {
-		this.positionValid = positionValid;
 	}
 }

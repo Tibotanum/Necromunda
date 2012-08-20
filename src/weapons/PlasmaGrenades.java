@@ -23,6 +23,7 @@ public class PlasmaGrenades extends Grenades {
 		private static final long serialVersionUID = -2663602518106487058L;
 
 		public PlasmaGrenadesAmmunition() {
+			setName("Plasma Grenades");
 			setStrength(5);
 			setDamage(1);
 			setArmorSaveModification(-2);

@@ -39,7 +39,7 @@ public class TemplateNode extends Node {
 	}
 	
 	public static TemplateNode createTemplateNode(AssetManager assetManager, Ammunition ammunition) {
-		TemplateNode templateNode = new TemplateNode("currentTemplateNode", ammunition);
+		TemplateNode templateNode = new TemplateNode("templateNode", ammunition);
 		
 		List<Geometry> spheres = new ArrayList<Geometry>();
 		List<Geometry> boundingBoxes = new ArrayList<Geometry>();
@@ -141,7 +141,7 @@ public class TemplateNode extends Node {
 		q.fromAngleNormalAxis(angle, Vector3f.UNIT_Y);
 		Vector3f scatterDirection = q.mult(Vector3f.UNIT_X);
 
-		CollisionResult collisionResult = Utils.getNearestCollisionFrom(getLocalTranslation(), scatterDirection, collidables);
+		CollisionResult collisionResult = Utils.getClosestCollision(getLocalTranslation(), scatterDirection, collidables);
 
 		if (collisionResult != null) {
 			float rayDistance = collisionResult.getContactPoint().distance(getLocalTranslation());

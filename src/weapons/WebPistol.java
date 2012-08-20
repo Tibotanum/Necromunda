@@ -15,9 +15,9 @@ public class WebPistol extends RangeCombatWeapon {
 		getAmmunitions().add(new WebPistolAmmunition());
 	}
 	
-	public static void dealWebDamageTo(Fighter fighter) {
+	public static void dealWebDamage(Fighter fighter) {
 		final int inflictedWounds = 1;
-		int remainingWounds = fighter.getRemainingWounds();
+		int remainingWounds = fighter.getProfile().getCurrentWounds();
 		remainingWounds -= inflictedWounds;
 		
 		Necromunda.appendToStatusMessage(String.format("%s wounds were inflicted by the web.", inflictedWounds));
@@ -30,7 +30,7 @@ public class WebPistol extends RangeCombatWeapon {
 			remainingWounds = 1;
 		}
 		
-		fighter.setRemainingWounds(remainingWounds);
+		fighter.getProfile().setCurrentWounds(remainingWounds);
 	}
 
 	private class WebPistolAmmunition extends Ammunition {

@@ -11,7 +11,7 @@ public class Juve extends Fighter {
 	}
 
 	@Override
-	public boolean isReliableMate() {
+	public boolean isReliable() {
 		return false;
 	}
 }

@@ -20,6 +20,7 @@ public class FragGrenades extends Grenades {
 		private static final long serialVersionUID = -2843206583776734477L;
 
 		public FragGrenadesAmmunition() {
+			setName("Frag Grenades");
 			setStrength(3);
 			setDamage(1);
 			setArmorSaveModification(-1);

@@ -41,7 +41,7 @@ public class NeedlePistol extends RangeCombatWeapon {
 			final int inflictedWounds = 1; 
 			
 			for (Fighter fighter : fighters) {
-				int remainingWounds = fighter.getRemainingWounds();
+				int remainingWounds = fighter.getProfile().getCurrentWounds();
 				remainingWounds -= inflictedWounds;
 				
 				if (remainingWounds < 1) {
@@ -52,7 +52,7 @@ public class NeedlePistol extends RangeCombatWeapon {
 					remainingWounds = 1;
 				}
 				
-				fighter.setRemainingWounds(remainingWounds);
+				fighter.getProfile().setCurrentWounds(remainingWounds);
 				
 				Necromunda.appendToStatusMessage(String.format("%s wounded automatically. %s wounds were inflicted.", getWeapon().getName(), inflictedWounds));
 			}

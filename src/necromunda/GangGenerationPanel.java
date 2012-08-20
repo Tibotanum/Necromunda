@@ -239,7 +239,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				
 				try {
 					Method method = fighterClass.getMethod("getTemplateProfile", new Class<?>[0]);
-					FighterProfile profile = (FighterProfile)method.invoke(fighterClass.getClass(), new Object[0]);
+					FighterProfile profile = (FighterProfile)method.invoke(null, new Object[0]);
 					
 					movementTextField.setText(String.valueOf(profile.getMovement()));
 					weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));

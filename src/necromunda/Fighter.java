@@ -23,33 +23,33 @@ public abstract class Fighter implements Serializable {
 		COMATOSE("Comatose"),
 		BROKEN("Broken"),
 		OUT_OF_ACTION("Out of Action");
-		
+
 		private String literal;
-		
+
 		private State(String literal) {
 			this.literal = literal;
 		}
-		
+
 		@Override
 		public String toString() {
 			return literal;
 		}
 	}
-	
+
 	public enum Type {
 		LEADER("Leader", Leader.class),
 		GANGER("Ganger", Ganger.class),
 		JUVE("Juve", Juve.class),
 		HEAVY("Heavy", Heavy.class);
-		
+
 		private String literal;
 		private Class<? extends Fighter> associatedClass;
-		
+
 		private Type(String literal, Class<? extends Fighter> associatedClass) {
 			this.literal = literal;
 			this.associatedClass = associatedClass;
 		}
-		
+
 		@Override
 		public String toString() {
 			return literal;
@@ -59,22 +59,22 @@ public abstract class Fighter implements Serializable {
 			return associatedClass;
 		}
 	}
-	
+
 	private FighterProfile profile;
 	private State state;
-	private boolean hasMoved;
 	private boolean canMove;
-	private boolean hasRun;
+	private boolean hasMoved;
+	private boolean isGoingToMove;
 	private boolean canRun;
+	private boolean hasRun;
+	private boolean isGoingToRun;
 	private boolean hasShot;
 	private boolean canShoot;
 	private boolean isWebbed;
 	private boolean isHidden;
+	private float remainingMovement;
 	private float baseRadius;
-	private float remainingMovementDistance;
-	private int remainingWounds;
 	private int fleshWounds;
-	private boolean isGoingToRun;
 	private boolean isSpotted;
 	private Gang gang;
 	private RangeCombatWeapon selectedRangeCombatWeapon;
@@ -82,70 +82,66 @@ public abstract class Fighter implements Serializable {
 	private int cost;
 	private BasedModelImage fighterImage;
 	private String name;
-	
+
 	public static Fighter getInstance(Type type, String name, Gang ownGang) {
 		Fighter fighter = null;
-		
+
 		switch (type) {
-			case LEADER:
-				fighter = new Leader(name, new LeaderProfile(), ownGang);
-				break;
-			case GANGER:
-				fighter = new Ganger(name, new GangerProfile(), ownGang);
-				break;
-			case JUVE:
-				fighter = new Juve(name, new JuveProfile(), ownGang);
-				break;
-			case HEAVY:
-				fighter = new Heavy(name, new HeavyProfile(), ownGang);
+		case LEADER:
+			fighter = new Leader(name, new LeaderProfile(), ownGang);
+			break;
+		case GANGER:
+			fighter = new Ganger(name, new GangerProfile(), ownGang);
+			break;
+		case JUVE:
+			fighter = new Juve(name, new JuveProfile(), ownGang);
+			break;
+		case HEAVY:
+			fighter = new Heavy(name, new HeavyProfile(), ownGang);
 		}
-		
+
 		return fighter;
 	}
-	
+
 	public Fighter(String name, FighterProfile profile, Gang ownGang) {
 		this.name = name;
 		this.profile = profile;
 		this.gang = ownGang;
-		
+
 		state = State.NORMAL;
 		canMove = true;
 		canRun = true;
 		canShoot = true;
 		isHidden = false;
 		baseRadius = 0.5f;
-		remainingMovementDistance = profile.getMovement();
-		remainingWounds = profile.getWounds();
 		weapons = new ArrayList<Weapon>();
 	}
-	
-	/*private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-		in.defaultReadObject();
-		List<Weapon> tempWeapons = new ArrayList<Weapon>(weapons);
-		weapons.clear();
-		
-		for (Weapon weapon : tempWeapons) {
-			addWeapon(weapon);
-		}
-	}*/
-	
+
+	/*
+	 * private void readObject(ObjectInputStream in) throws IOException,
+	 * ClassNotFoundException { in.defaultReadObject(); List<Weapon> tempWeapons
+	 * = new ArrayList<Weapon>(weapons); weapons.clear();
+	 * 
+	 * for (Weapon weapon : tempWeapons) { addWeapon(weapon); } }
+	 */
+
 	public void addWeapon(Weapon weapon) {
 		weapons.add(weapon);
 	}
-	
+
 	public void removeAllWeapons() {
 		weapons.clear();
 	}
-	
+
 	public void injure(boolean highImpact) {
 		int injuryRoll = Utils.rollD6();
 		State tempState = null;
-		
+
 		if (injuryRoll == 1) {
-			fleshWounds++;
+			addFleshWound();
 			tempState = state;
-			
-			if ((fleshWounds >= profile.getWeaponSkill()) && (fleshWounds >= profile.getBallisticSkill())) {
+
+			if ((profile.getCurrentWeaponSkill() <= 0) && (profile.getCurrentBallisticSkill() <= 0)) {
 				tempState = State.OUT_OF_ACTION;
 			}
 		}
@@ -163,7 +159,7 @@ public abstract class Fighter implements Serializable {
 		else {
 			tempState = State.OUT_OF_ACTION;
 		}
-		
+
 		if (tempState.equals(State.DOWN)) {
 			if (state.equals(State.NORMAL) || state.equals(State.PINNED)) {
 				state = tempState;
@@ -173,14 +169,20 @@ public abstract class Fighter implements Serializable {
 			state = tempState;
 		}
 	}
-	
+
+	private void addFleshWound() {
+		fleshWounds++;
+		profile.setCurrentWeaponSkill(profile.getCurrentWeaponSkill() - 1);
+		profile.setCurrentBallisticSkill(profile.getCurrentBallisticSkill() - 1);
+	}
+
 	public void setNextNormalState() {
 		int injuryRoll = Utils.rollD6();
-		
+
 		if (injuryRoll == 1) {
-			fleshWounds++;
-			
-			if ((fleshWounds >= profile.getWeaponSkill()) && (fleshWounds >= profile.getBallisticSkill())) {
+			addFleshWound();
+
+			if ((profile.getCurrentWeaponSkill() <= 0) && (profile.getCurrentBallisticSkill() <= 0)) {
 				state = State.OUT_OF_ACTION;
 			}
 			else {
@@ -194,11 +196,11 @@ public abstract class Fighter implements Serializable {
 			state = State.OUT_OF_ACTION;
 		}
 	}
-	
+
 	public void poison() {
 		int injuryRoll = Utils.rollD6();
 		State tempState = state;
-		
+
 		if ((injuryRoll == 1) || (injuryRoll == 2)) {
 		}
 		else if ((injuryRoll == 3) || (injuryRoll == 4)) {
@@ -210,7 +212,7 @@ public abstract class Fighter implements Serializable {
 		else {
 			tempState = State.OUT_OF_ACTION;
 		}
-		
+
 		if (tempState.equals(State.PINNED)) {
 			if (state.equals(State.NORMAL)) {
 				state = tempState;
@@ -225,10 +227,10 @@ public abstract class Fighter implements Serializable {
 			state = tempState;
 		}
 	}
-	
+
 	public void setNextPoisonedState() {
 		int injuryRoll = Utils.rollD6();
-		
+
 		if ((injuryRoll == 1) || (injuryRoll == 2)) {
 			setState(State.PINNED);
 		}
@@ -242,7 +244,7 @@ public abstract class Fighter implements Serializable {
 			setState(State.OUT_OF_ACTION);
 		}
 	}
-	
+
 	public void breakWeb() {
 		if (isWebbed()) {
 			int webRoll = Utils.rollD6();
@@ -252,51 +254,66 @@ public abstract class Fighter implements Serializable {
 				Necromunda.appendToStatusMessage("This ganger has broken the web.");
 			}
 			else {
-				WebPistol.dealWebDamageTo(this);
+				WebPistol.dealWebDamage(this);
 			}
 		}
 		else {
 			Necromunda.setStatusMessage("This ganger is not webbed.");
 		}
 	}
-	
-	public void resetRemainingMovementDistance() {
+
+	public void resetRemainingMovement() {
 		if (state.equals(State.DOWN) || state.equals(State.SEDATED)) {
-			setRemainingMovementDistance(2);
+			setRemainingMovement(2);
 		}
 		else if (state.equals(State.COMATOSE)) {
-			setRemainingMovementDistance(0);
+			setRemainingMovement(0);
 		}
 		else {
-			setRemainingMovementDistance(profile.getMovement());
+			setRemainingMovement(profile.getMovement());
 		}
 	}
-	
-	public void setIsGoingToRun(boolean isGoingToRun) {
-		this.isGoingToRun = isGoingToRun;
-		resetRemainingMovementDistance();
-		
-		if (isGoingToRun) {
-			remainingMovementDistance *= 2;
-		}
+
+	public boolean isGoingToMove() {
+		return isGoingToMove;
 	}
-	
+
+	public void setGoingToMove(boolean isGoingToMove) {
+		this.isGoingToMove = isGoingToMove;
+	}
+
 	public boolean isGoingToRun() {
 		return isGoingToRun;
 	}
-	
+
+	public void setGoingToRun(boolean isGoingToRun) {
+		this.isGoingToRun = isGoingToRun;
+		resetRemainingMovement();
+
+		if (isGoingToRun) {
+			setRemainingMovement(getRemainingMovement() * 2);
+		}
+	}
+
+	public boolean hasMoved() {
+		return hasMoved;
+	}
+
+	public void setHasMoved(boolean hasMoved) {
+		this.hasMoved = hasMoved;
+	}
+
 	public void turnStarted() {
-		setIsGoingToRun(false);
 		setHasMoved(false);
 		setHasRun(false);
 		setHasShot(false);
-		resetRemainingMovementDistance();
-		
+		resetRemainingMovement();
+
 		for (Weapon weapon : weapons) {
 			weapon.turnStarted();
 		}
 	}
-	
+
 	public void turnEnded() {
 		if (state.equals(State.PINNED)) {
 			state = State.NORMAL;
@@ -308,10 +325,10 @@ public abstract class Fighter implements Serializable {
 			setNextPoisonedState();
 		}
 	}
-	
+
 	public void unpinByInitiative() {
 		int initiativeRoll = Utils.rollD6();
-		
+
 		if (initiativeRoll <= profile.getInitiative()) {
 			state = State.NORMAL;
 			Necromunda.appendToStatusMessage(String.format("%s unpins by initiative.", this));
@@ -320,17 +337,21 @@ public abstract class Fighter implements Serializable {
 			Necromunda.appendToStatusMessage(String.format("%s fails to unpin by initiative.", this));
 		}
 	}
-	
+
 	public int getGrenadeRange() {
 		int range = profile.getStrength() * 2 + 2;
-		
+
 		if (range > 12) {
 			range = 12;
 		}
-		
+
 		return range;
 	}
-	
+
+	public boolean isGangMate(Fighter fighter) {
+		return gang.getGangMembers().contains(fighter);
+	}
+
 	public List<Weapon> getWeapons() {
 		return weapons;
 	}
@@ -349,14 +370,6 @@ public abstract class Fighter implements Serializable {
 
 	public void setState(State state) {
 		this.state = state;
-	}
-
-	public float getRemainingMovementDistance() {
-		return remainingMovementDistance;
-	}
-
-	public void setRemainingMovementDistance(float remainingMovementDistance) {
-		this.remainingMovementDistance = remainingMovementDistance;
 	}
 
 	public Gang getGang() {
@@ -379,29 +392,12 @@ public abstract class Fighter implements Serializable {
 		return selectedRangeCombatWeapon;
 	}
 
-	public void setSelectedRangeCombatWeapon(
-			RangeCombatWeapon selectedRangeCombatWeapon) {
+	public void setSelectedRangeCombatWeapon(RangeCombatWeapon selectedRangeCombatWeapon) {
 		this.selectedRangeCombatWeapon = selectedRangeCombatWeapon;
 	}
 
 	public FighterProfile getProfile() {
 		return profile;
-	}
-
-	public int getRemainingWounds() {
-		return remainingWounds;
-	}
-
-	public void setRemainingWounds(int remainingWounds) {
-		this.remainingWounds = remainingWounds;
-	}
-
-	public boolean hasMoved() {
-		return hasMoved;
-	}
-
-	public void setHasMoved(boolean hasMoved) {
-		this.hasMoved = hasMoved;
 	}
 
 	public int getFleshWounds() {
@@ -416,17 +412,17 @@ public abstract class Fighter implements Serializable {
 		return cost;
 	}
 
-	public void setCost(int cost) {
+	protected void setCost(int cost) {
 		this.cost = cost;
 	}
 
 	public int getValue() {
 		int value = getCost();
-		
+
 		for (Weapon weapon : weapons) {
 			value += weapon.getCost();
 		}
-		
+
 		return value;
 	}
 
@@ -437,8 +433,8 @@ public abstract class Fighter implements Serializable {
 	public void setFighterImage(BasedModelImage gangerPicture) {
 		this.fighterImage = gangerPicture;
 	}
-	
-	public boolean isReliableMate() {
+
+	public boolean isReliable() {
 		if (state.equals(State.NORMAL) || state.equals(State.PINNED)) {
 			return true;
 		}
@@ -448,33 +444,32 @@ public abstract class Fighter implements Serializable {
 	}
 
 	public boolean canShoot() {
-		boolean canShoot = true;
-		
 		if (!this.canShoot || hasShot || hasRun || !state.equals(State.NORMAL)) {
-			canShoot = false;
+			return false;
 		}
-		
-		return canShoot;
+		else {
+			return true;
+		}
 	}
 
 	public void setCanShoot(boolean canShoot) {
 		this.canShoot = canShoot;
 	}
-	
+
 	public boolean canMove() {
-		boolean canMove = true;
-		
-		if (!this.canMove || (remainingMovementDistance == 0) || state.equals(State.COMATOSE) || isWebbed || state.equals(State.PINNED)) {
-			canMove = false;
+		if (!canMove || (profile.getCurrentMovement() == 0) || state.equals(State.COMATOSE) || isWebbed
+				|| state.equals(State.PINNED)) {
+			return false;
 		}
-		
-		return canMove;
+		else {
+			return true;
+		}
 	}
 
 	public void setCanMove(boolean canMove) {
 		this.canMove = canMove;
-	}	
-	
+	}
+
 	public boolean hasRun() {
 		return hasRun;
 	}
@@ -484,24 +479,26 @@ public abstract class Fighter implements Serializable {
 	}
 
 	public boolean canRun() {
-		boolean canRun = true;
-		
-		/*List<? extends Fighter> hostileGangers = gang.getHostileGangers(game.getGangs());
-		List<Fighter> visibleHostileGangers = game.getVisibleObjects(position, hostileGangers);
+		/*
+		 * List<? extends Fighter> hostileGangers =
+		 * gang.getHostileGangers(game.getGangs()); List<Fighter>
+		 * visibleHostileGangers = game.getVisibleObjects(position,
+		 * hostileGangers);
+		 * 
+		 * for (Fighter object : visibleHostileGangers) { float
+		 * runSpotDistanceBetweenPositions = Necromunda.RUN_SPOT_DISTANCE +
+		 * this.getRadius() + object.getRadius();
+		 * 
+		 * if (position.distance(object.getPosition()) <=
+		 * runSpotDistanceBetweenPositions) { return false; } }
+		 */
 
-		for (Fighter object : visibleHostileGangers) {
-			float runSpotDistanceBetweenPositions = Necromunda.RUN_SPOT_DISTANCE + this.getRadius() + object.getRadius();
-			
-			if (position.distance(object.getPosition()) <= runSpotDistanceBetweenPositions) {
-				return false;
-			}
-		}*/
-		
 		if (!this.canMove || !this.canRun || !state.equals(State.NORMAL)) {
 			return false;
 		}
-
-		return canRun;
+		else {
+			return true;
+		}
 	}
 
 	public void setCanRun(boolean canRun) {
@@ -536,7 +533,7 @@ public abstract class Fighter implements Serializable {
 	public void setWebbed(boolean isWebbed) {
 		this.isWebbed = isWebbed;
 	}
-	
+
 	public boolean isHidden() {
 		return isHidden;
 	}
@@ -545,68 +542,66 @@ public abstract class Fighter implements Serializable {
 		this.isHidden = isHidden;
 	}
 
-	public int getMovement() {
+	public float getRemainingMovement() {
+		return remainingMovement;
+	}
+
+	public void setRemainingMovement(float remainingMovement) {
+		this.remainingMovement = remainingMovement;
+	}
+
+	public float getMovement() {
 		return profile.getMovement();
 	}
-	
-	public int getWeaponSkill() {
-		int weaponSkill = profile.getWeaponSkill() - fleshWounds;
-		return weaponSkill;
-	}
-	
-	public int getBallisticSkill() {
-		int ballisticSkill = profile.getBallisticSkill() - fleshWounds;
-		return ballisticSkill;
-	}
-	
+
 	public int getStrength() {
 		return profile.getStrength();
 	}
-	
+
 	public int getToughness() {
 		return profile.getToughness();
 	}
-	
+
 	public int getWounds() {
 		return profile.getWounds();
 	}
-	
+
 	public int getInitiative() {
 		return profile.getInitiative();
 	}
-	
+
 	public int getAttacks() {
 		return profile.getAttacks();
 	}
-	
+
 	public int getLeadership() {
 		return profile.getLeadership();
 	}
-	
+
 	public boolean isBroken() {
 		return state.equals(State.BROKEN);
 	}
-	
+
 	public boolean isComatose() {
 		return state.equals(State.COMATOSE);
 	}
-	
+
 	public boolean isDown() {
 		return state.equals(State.DOWN);
 	}
-	
+
 	public boolean isNormal() {
 		return state.equals(State.NORMAL);
 	}
-	
+
 	public boolean isOutOfAction() {
 		return state.equals(State.OUT_OF_ACTION);
 	}
-	
+
 	public boolean isPinned() {
 		return state.equals(State.PINNED);
 	}
-	
+
 	public boolean isSedated() {
 		return state.equals(State.SEDATED);
 	}

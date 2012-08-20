@@ -101,7 +101,7 @@ public abstract class Ammunition implements Serializable {
 			int woundRoll = Utils.rollD6();
 	
 			if (woundRoll >= targetWoundRoll) {
-				int wounds = fighter.getRemainingWounds();
+				int wounds = fighter.getProfile().getCurrentWounds();
 				int inflictedWounds = getDamage();
 				wounds -= inflictedWounds;
 	
@@ -117,7 +117,7 @@ public abstract class Ammunition implements Serializable {
 					wounds = 1;
 				}
 	
-				fighter.setRemainingWounds(wounds);
+				fighter.getProfile().setCurrentWounds(wounds);
 			}
 			else {
 				Necromunda.appendToStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded not.", targetWoundRoll, woundRoll));

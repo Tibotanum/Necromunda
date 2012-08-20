@@ -80,7 +80,7 @@ public class Utils {
 		return image;
 	}
 	
-	public static CollisionResult getNearestCollisionFrom(Vector3f origin, Vector3f direction, List<Collidable> collidables) {
+	public static CollisionResult getClosestCollision(Vector3f origin, Vector3f direction, List<Collidable> collidables) {
 		CollisionResults results = new CollisionResults();
 		Ray ray = new Ray(origin, direction);
 

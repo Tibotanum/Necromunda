@@ -20,6 +20,7 @@ public class KrakGrenades extends Grenades {
 		private static final long serialVersionUID = 4540864777900539093L;
 
 		public KrakGrenadesAmmunition() {
+			setName("Krak Grenades");
 			setStrength(6);
 			setDamage(0);
 			setArmorSaveModification(-3);
