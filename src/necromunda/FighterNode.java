@@ -11,9 +11,7 @@ import com.jme3.bullet.collision.shapes.CylinderCollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState.BlendMode;
-import com.jme3.math.FastMath;
-import com.jme3.math.Vector2f;
-import com.jme3.math.Vector3f;
+import com.jme3.math.*;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
 import com.jme3.renderer.queue.RenderQueue.ShadowMode;
 import com.jme3.scene.Geometry;
@@ -27,43 +25,15 @@ import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 
 public class FighterNode extends Node {
-	public static final float BASE_HEIGHT = 17f / 132f;
-	public static final float TOP_BOTTOM_RADIUS_DIFFERENCE = 10f / 132f / 2f;
+	
 	private final static float SYMBOL_HEIGHT = 2;
 	private Fighter fighter;
 	
-	public FighterNode(String name, Fighter fighter, MaterialFactory materialFactory) {
+	public FighterNode(String name, Fighter fighter, MaterialFactory materialFactory, BaseFactory baseFactory) {
 		super(name);
 		this.fighter = fighter;
 
-		float upperBaseRadius = fighter.getBaseRadius() - TOP_BOTTOM_RADIUS_DIFFERENCE;
-		int radialSamples = 20;
-
-		Cylinder cylinder = new Cylinder(4, radialSamples, fighter.getBaseRadius(), upperBaseRadius, BASE_HEIGHT, true, false);
-
-		FloatBuffer texBuffer = cylinder.getFloatBuffer(VertexBuffer.Type.TexCoord);
-		texBuffer.rewind();
-
-		float[] array = new float[texBuffer.capacity()];
-		Arrays.fill(array, -10f);
-		texBuffer.put(array);
-		texBuffer.position(texBuffer.capacity() - 4);
-		texBuffer.put(0.0f + 0.5f).put(0.0f + 0.5f);
-
-		FloatBuffer posBuffer = cylinder.getFloatBuffer(VertexBuffer.Type.Position);
-
-		posBuffer.rewind();
-		texBuffer.rewind();
-
-		for (int i = 0; i < radialSamples + 1; i++) {
-			texBuffer.put(posBuffer.get() + 0.5f).put(posBuffer.get() + 0.5f);
-			posBuffer.get();
-		}
-
-		Geometry base = new Geometry("base", cylinder);
-		base.setMaterial(materialFactory.createMaterial(MaterialIdentifier.NORMAL));
-		base.rotate(FastMath.HALF_PI, 0, 0);
-		base.move(0, BASE_HEIGHT / 2, 0);
+		Geometry roundBase = baseFactory.createRoundBase(fighter.getBaseRadius(), new ColorRGBA(64 / 255f, 147 / 255f, 91 / 255f, 1.0f), "Images/Textures/Base/BaseGrass.png");
 
 		Material figureMaterial = materialFactory.createFigureMaterial(fighter);
 
@@ -71,6 +41,7 @@ public class FighterNode extends Node {
 
 		BasedModelImage basedModelImage = fighter.getFighterImage();
 		
+		float upperBaseRadius = baseFactory.calculateUpperBaseRadius(fighter.getBaseRadius());
 		float pixelsPerInch = basedModelImage.getBaseWidth() / (upperBaseRadius * 2);
 		float imageHeightInInch = modelImage.getHeight() / pixelsPerInch;
 		float xOffsetLeft = -upperBaseRadius - (basedModelImage.getOffset() / pixelsPerInch);
@@ -80,7 +51,7 @@ public class FighterNode extends Node {
 		Quad quad = new Quad(xOffsetRight - xOffsetLeft, imageHeightInInch);
 		Geometry figure = new Geometry("figure", quad);
 		figure.setMaterial(figureMaterial);
-		figure.move(xOffsetLeft, BASE_HEIGHT, 0);
+		figure.move(xOffsetLeft, BaseFactory.BASE_HEIGHT, 0);
 		figure.setQueueBucket(Bucket.Translucent);
 		figure.setShadowMode(ShadowMode.Off);
 
@@ -91,12 +62,12 @@ public class FighterNode extends Node {
 		figureNode.attachChild(figure);
 		figureNode.addControl(billboardControl);
 
-		attachChild(base);
+		attachChild(roundBase);
 		attachChild(figureNode);
 
 		MyBox boundingBox = new MyBox(fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f, fighter.getBaseRadius());
 		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingBox);
-		boundingVolumeGeometry.setMaterial(materialFactory.createMaterial(MaterialIdentifier.SELECTED));
+		boundingVolumeGeometry.setMaterial(materialFactory.createColourMaterial(ColorRGBA.Red));
 		boundingVolumeGeometry.setCullHint(CullHint.Always);
 		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
 		attachChild(boundingVolumeGeometry);

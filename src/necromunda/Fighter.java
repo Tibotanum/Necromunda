@@ -83,7 +83,7 @@ public abstract class Fighter implements Serializable {
 	private BasedModelImage fighterImage;
 	private String name;
 
-	public static Fighter getInstance(Type type, String name, Gang ownGang) {
+	public static Fighter createInstance(Type type, String name, Gang ownGang) {
 		Fighter fighter = null;
 
 		switch (type) {
@@ -457,7 +457,7 @@ public abstract class Fighter implements Serializable {
 	}
 
 	public boolean canMove() {
-		if (!canMove || (profile.getCurrentMovement() == 0) || state.equals(State.COMATOSE) || isWebbed
+		if (!canMove || getRemainingMovement() == 0 || state.equals(State.COMATOSE) || isWebbed
 				|| state.equals(State.PINNED)) {
 			return false;
 		}

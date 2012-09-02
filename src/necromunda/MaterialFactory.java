@@ -14,20 +14,7 @@ import com.jme3.texture.Texture.WrapMode;
 
 public class MaterialFactory {
 	public enum MaterialIdentifier {
-		NORMAL,
-		SELECTED,
-		TARGETED,
-		VALID_PATH,
-		INVALID_PATH,
 		TARGET_LINE,
-		SYMBOL_PINNED,
-		SYMBOL_DOWN,
-		SYMBOL_SEDATED,
-		SYMBOL_COMATOSE,
-		SYMBOL_WEBBED,
-		SYMBOL_HIDDEN,
-		SYMBOL_LADDER,
-		TABLE;
 	}
 	
 	private Map<String, Material> materialCache;
@@ -40,94 +27,11 @@ public class MaterialFactory {
 		
 		this.assetManager = assetManager;
 		
-		Material baseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		baseMaterial.setColor("Specular", ColorRGBA.White);
-		baseMaterial.setColor("Diffuse", new ColorRGBA(64 / 255f, 147 / 255f, 91 / 255f, 1.0f));
-		baseMaterial.setBoolean("UseMaterialColors", true);
-		
-		baseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		Texture modelTexture = assetManager.loadTexture("Images/Textures/Base/BaseGrass.png");
-		baseMaterial.setColor("Specular", ColorRGBA.White);
-		baseMaterial.setColor("Diffuse", new ColorRGBA(64 / 255f, 147 / 255f, 91 / 255f, 1.0f));
-		baseMaterial.setTexture("DiffuseMap", modelTexture);
-		baseMaterial.setFloat("Shininess", 128f);
-		
-		Material selectedBaseMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		selectedBaseMaterial.setFloat("Shininess", 5f);
-		selectedBaseMaterial.setColor("Diffuse", new ColorRGBA(ColorRGBA.Red));
-		selectedBaseMaterial.setBoolean("UseMaterialColors", true);
-
-		Material targetedMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		targetedMaterial.setFloat("Shininess", 5f);
-		targetedMaterial.setColor("Diffuse", new ColorRGBA(ColorRGBA.Yellow));
-		targetedMaterial.setBoolean("UseMaterialColors", true);
-
-		Material validPathMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		validPathMaterial.setFloat("Shininess", 5f);
-		validPathMaterial.setColor("Diffuse", new ColorRGBA(0.5f, 0.5f, 0.5f, 0.5f));
-		validPathMaterial.setBoolean("UseMaterialColors", true);
-		validPathMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		
-		Material invalidPathMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		invalidPathMaterial.setFloat("Shininess", 5f);
-		ColorRGBA invalidPathColor = new ColorRGBA(ColorRGBA.Red);
-		invalidPathColor.a = 0.5f;
-		invalidPathMaterial.setColor("Diffuse", invalidPathColor);
-		invalidPathMaterial.setBoolean("UseMaterialColors", true);
-		invalidPathMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
-		
 		Material targetLineMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
 		targetLineMaterial.setColor("Color", new ColorRGBA(ColorRGBA.Red));
 		targetLineMaterial.setColor("GlowColor", new ColorRGBA(ColorRGBA.Red));
-		
-		String basePath = "Images/Textures/OverheadSymbols/";
 
-		Material pinnedSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture pinnedSymbolTexture = assetManager.loadTexture(basePath + "Pinned.PNG");
-		pinnedSymbolMaterial.setTexture("ColorMap", pinnedSymbolTexture);
-		
-		Material downSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture downSymbolTexture = assetManager.loadTexture(basePath + "Down.PNG");
-		downSymbolMaterial.setTexture("ColorMap", downSymbolTexture);
-		
-		Material sedatedSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture sedatedSymbolTexture = assetManager.loadTexture(basePath + "Sedated.PNG");
-		sedatedSymbolMaterial.setTexture("ColorMap", sedatedSymbolTexture);
-		
-		Material comatoseSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture comatoseSymbolTexture = assetManager.loadTexture(basePath + "Comatose.PNG");
-		comatoseSymbolMaterial.setTexture("ColorMap", comatoseSymbolTexture);
-		
-		Material webbedSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture webbedSymbolTexture = assetManager.loadTexture(basePath + "Webbed.PNG");
-		webbedSymbolMaterial.setTexture("ColorMap", webbedSymbolTexture);
-		
-		Material hiddenSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture hiddenSymbolTexture = assetManager.loadTexture(basePath + "Hidden.PNG");
-		hiddenSymbolMaterial.setTexture("ColorMap", hiddenSymbolTexture);
-		
-		Material ladderSymbolMaterial = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-		Texture ladderSymbolTexture = assetManager.loadTexture(basePath + "Ladder.PNG");
-		ladderSymbolMaterial.setTexture("ColorMap", ladderSymbolTexture);
-		
-		NeoTextureMaterialKey key = new NeoTextureMaterialKey("Images/Textures/Table/" + necromunda3dProvider.getTerrainType());
-		Material tableMaterial = assetManager.loadAsset(key);
-		tableMaterial.setFloat("Shininess", 12f);
-		
-		materialMap.put(MaterialIdentifier.NORMAL, baseMaterial);
-		materialMap.put(MaterialIdentifier.SELECTED, selectedBaseMaterial);
-		materialMap.put(MaterialIdentifier.TARGETED, targetedMaterial);
-		materialMap.put(MaterialIdentifier.VALID_PATH, validPathMaterial);
-		materialMap.put(MaterialIdentifier.INVALID_PATH, invalidPathMaterial);
 		materialMap.put(MaterialIdentifier.TARGET_LINE, targetLineMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_PINNED, pinnedSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_DOWN, downSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_SEDATED, sedatedSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_COMATOSE, comatoseSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_WEBBED, webbedSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_HIDDEN, hiddenSymbolMaterial);
-		materialMap.put(MaterialIdentifier.SYMBOL_LADDER, ladderSymbolMaterial);
-		materialMap.put(MaterialIdentifier.TABLE, tableMaterial);
 	}
 	
 	public Material createMaterial(Enum<MaterialIdentifier> identifier) {
@@ -159,5 +63,53 @@ public class MaterialFactory {
 		figureMaterial.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
 		
 		return figureMaterial;
+	}
+	
+	public Material createTextureMaterial(String filename, ColorRGBA colour) {
+		Material material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		Texture modelTexture = assetManager.loadTexture(filename);
+		material.setColor("Specular", ColorRGBA.White);
+		material.setColor("Diffuse", colour);
+		material.setTexture("DiffuseMap", modelTexture);
+		material.setFloat("Shininess", 128f);
+		
+		return material;
+	}
+	
+	public Material createSymbolMaterial(String filename) {
+		Material material = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+		Texture texture = assetManager.loadTexture(filename);
+		material.setTexture("ColorMap", texture);
+		
+		return material;
+	}
+	
+	public Material createColourMaterial(ColorRGBA colour) {
+		Material material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		material.setFloat("Shininess", 5f);
+		material.setColor("Diffuse", colour);
+		material.setBoolean("UseMaterialColors", true);
+		
+		return material;
+	}
+	
+	public Material createTransparentColourMaterial(ColorRGBA colour, float alpha) {
+		Material material = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		material.setFloat("Shininess", 5f);
+		ColorRGBA transparentColour = new ColorRGBA(colour);
+		transparentColour.a = alpha;
+		material.setColor("Diffuse", transparentColour);
+		material.setBoolean("UseMaterialColors", true);
+		material.getAdditionalRenderState().setBlendMode(BlendMode.Alpha);
+		
+		return material;
+	}
+	
+	public Material createNeoTextureMaterial(String materialIdentifier) {
+		NeoTextureMaterialKey key = new NeoTextureMaterialKey(materialIdentifier);
+		Material material = assetManager.loadAsset(key);
+		material.setFloat("Shininess", 12f);
+		
+		return material;
 	}
 }

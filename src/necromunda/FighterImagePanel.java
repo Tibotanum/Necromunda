@@ -34,7 +34,6 @@ public class FighterImagePanel extends JPanel implements ChangeListener {
 		g.drawImage(image, xPosition, yPosition, this);
 	}
 
-	@Override
 	public void stateChanged(ChangeEvent e) {
 		repaint();
 	}

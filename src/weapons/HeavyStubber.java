@@ -1,6 +1,6 @@
 package weapons;
 
-import necromunda.Utils;
+import necromunda.*;
 
 public class HeavyStubber extends RangeCombatWeapon {
 	public HeavyStubber() {
@@ -47,6 +47,7 @@ public class HeavyStubber extends RangeCombatWeapon {
 		
 		public HeavyStubberSustainedFireAmmunition() {
 			setName("Sustained Fire");
+			setShotHandler(new SustainedFireShotHandler());
 		}
 
 		@Override

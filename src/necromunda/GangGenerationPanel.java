@@ -112,8 +112,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114, House.ESCHER, Ganger.class));
 		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115, House.ESCHER, Ganger.class));
 		basedModelImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129, House.ESCHER, Heavy.class));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherKid01.png", 0, 128, House.ESCHER, Juve.class));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherKid02.png", 9, 131, House.ESCHER, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve01.png", 0, 128, House.ESCHER, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve02.png", 9, 131, House.ESCHER, Juve.class));
 		
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121, House.DELAQUE, Leader.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125, House.DELAQUE, Ganger.class));
@@ -122,8 +122,8 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123, House.DELAQUE, Ganger.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125, House.DELAQUE, Heavy.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114, House.DELAQUE, Heavy.class));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueKid01.png", 34, 124, House.DELAQUE, Juve.class));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueKid02.png", 18, 122, House.DELAQUE, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve01.png", 34, 124, House.DELAQUE, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve02.png", 18, 122, House.DELAQUE, Juve.class));
 
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
@@ -133,8 +133,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		addGangButton = new JButton("Add Gang");
 		addGangButton.addActionListener(new ActionListener() {
-			
-			@Override
+
 			public void actionPerformed(ActionEvent e) {
 				DefaultListModel model = (DefaultListModel)gangList.getModel();
 				
@@ -150,7 +149,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		saveGangButton.setEnabled(false);
 		saveGangButton.addActionListener(new ActionListener() {
 			
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
 			    int returnVal = fileChooser.showOpenDialog(getParent());
@@ -232,7 +230,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterTypeComboBox = new JComboBox(Fighter.Type.class.getEnumConstants());
 		fighterTypeComboBox.addActionListener(new ActionListener() {
 			
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
 				Class<? extends Fighter> fighterClass = fighterType.getAssociatedClass();
@@ -315,7 +312,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterWeaponList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
 		fighterWeaponList.addListSelectionListener(new ListSelectionListener() {
 			
-			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				Object value = fighterWeaponList.getSelectedValue();
 				
@@ -332,7 +328,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		addWeaponButton.setEnabled(false);
 		addWeaponButton.addActionListener(new ActionListener() {
 			
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (fighterList.getSelectedValue() != null) {
 					Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
@@ -364,7 +359,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		removeWeaponButton.setEnabled(false);
 		removeWeaponButton.addActionListener(new ActionListener() {
 			
-			@Override
 			public void actionPerformed(ActionEvent e) {
 				Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
 				Object[] values = fighterWeaponList.getSelectedValues();
@@ -389,7 +383,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		gangList.setPrototypeCellValue("MMMMMMMMMMMMMMMMMMMMMM");
 		gangList.addListSelectionListener(new ListSelectionListener() {
 			
-			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				Gang selectedGang = (Gang)gangList.getSelectedValue();
 				
@@ -428,7 +421,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterList.setCellRenderer(new FighterListCellRenderer());
 		fighterList.addListSelectionListener(new ListSelectionListener() {
 			
-			@Override
+			
 			public void valueChanged(ListSelectionEvent e) {
 				if (fighterList.getSelectedValue() != null) {
 					Fighter selectedFighter = (Fighter)fighterList.getSelectedValue();
@@ -465,7 +458,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		removeGangButton.setEnabled(false);
 		removeGangButton.addActionListener(new ActionListener() {
 			
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				Object[] values = gangList.getSelectedValues();
 				DefaultListModel model = (DefaultListModel)gangList.getModel();
@@ -483,7 +476,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		loadGangButton = new JButton("Load Gang");
 		loadGangButton.addActionListener(new ActionListener() {
 			
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fileChooser = new JFileChooser();
 			    int returnVal = fileChooser.showOpenDialog(getParent());
@@ -535,13 +528,13 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		addFighterButton.setEnabled(false);
 		addFighterButton.addActionListener(new ActionListener() {
 			
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				if (gangList.getSelectedValue() != null) {
 					Gang selectedGang = (Gang)gangList.getSelectedValue();
 					Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
 					
-					Fighter fighter = Fighter.getInstance(fighterType, fighterNameTextField.getText(), selectedGang);
+					Fighter fighter = Fighter.createInstance(fighterType, fighterNameTextField.getText(), selectedGang);
 
 					FighterProfile profile = fighter.getProfile();
 					
@@ -583,7 +576,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		removeFighterButton.setEnabled(false);
 		removeFighterButton.addActionListener(new ActionListener() {
 			
-			@Override
+			
 			public void actionPerformed(ActionEvent e) {
 				Gang selectedGang = (Gang)gangList.getSelectedValue(); 
 				Object[] values = fighterList.getSelectedValues();
@@ -838,7 +831,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			setEnabled(false);
 		}
 
-		@Override
+		
 		public void actionPerformed(ActionEvent e) {
 			DefaultListModel model = (DefaultListModel)gangList.getModel();
 			Enumeration<?> gangs = model.elements();
@@ -847,11 +840,11 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			final Necromunda3dProvider necromunda3dProvider = new Necromunda3dProvider(game);
 			necromunda3dProvider.setInvertMouse(invertMouseCheckBox.isSelected());
 			String materialIdentifier = game.getTerrainTextureMap().get(terrainTypeComboBox.getSelectedItem());
-			necromunda3dProvider.setTerrainType(materialIdentifier);
+			necromunda3dProvider.setTerrainMaterialIdentifier(materialIdentifier);
 
 			Thread thread = new Thread(new Runnable() {
 
-				@Override
+				
 				public void run() {
 					necromunda3dProvider.start();
 				}
@@ -864,7 +857,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		}
 	}
 
-	@Override
+	
 	public void itemStateChanged(ItemEvent e) {
 		ItemSelectable itemSelectable = e.getItemSelectable();
 		
@@ -890,7 +883,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		 */
 		private static final long serialVersionUID = 8983191457622992727L;
 
-		@Override
+		
 		public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			DefaultListCellRenderer renderer = (DefaultListCellRenderer)super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			

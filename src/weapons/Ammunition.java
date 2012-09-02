@@ -37,6 +37,8 @@ public abstract class Ammunition implements Serializable {
 	private boolean templateAttached;
 	private boolean scattering;
 	
+	private ShotHandler shotHandler;
+	
 	public Ammunition() {
 		targeted = true;
 		numberOfShots = 1;
@@ -45,6 +47,10 @@ public abstract class Ammunition implements Serializable {
 	}
 	
 	public void trigger() {
+	}
+	
+	public void handleShot(ShotInfo shotInfo) {
+		shotHandler.handle(shotInfo);
 	}
 	
 	public float getDriftDistance() {
@@ -355,5 +361,13 @@ public abstract class Ammunition implements Serializable {
 
 	public void setScattering(boolean scattering) {
 		this.scattering = scattering;
+	}
+
+	public ShotHandler getShotHandler() {
+		return shotHandler;
+	}
+
+	public void setShotHandler(ShotHandler shotHandler) {
+		this.shotHandler = shotHandler;
 	}
 }

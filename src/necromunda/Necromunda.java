@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NavigableSet;
 import java.util.Observable;
 import java.util.Set;
 
@@ -68,7 +67,6 @@ public class Necromunda extends Observable {
 		
 		SwingUtilities.invokeLater(new Runnable() {
 
-			@Override
 			public void run() {
 				initialiseGUI();
 			}
@@ -95,75 +93,75 @@ public class Necromunda extends Observable {
 		building.putBounds("SmallTowerBounds04");
 		buildings.add(building);
 		
-		/*building = new Building();
+		building = new Building();
 		building.put("MineEntrance");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("LargeTower", "Tower");
+		building.putModel("LargeTower", "Tower");
 		buildings.add(building);
 		
-		building = new Building();
+		/*building = new Building();
 		building.put("AcidPoolTank");
 		building.put("AcidPoolBridge");
-		buildings.add(building);
+		buildings.add(building);*/
 
 		building = new Building();
 		building.put("PsykerHide");
 		buildings.add(building);
 		
-		building = new Building();
+		/*building = new Building();
 		building.put("Container");
-		buildings.add(building);
+		buildings.add(building);*/
 		
 		building = new Building();
 		building.put("Mushrooms");
 		buildings.add(building);
 		
-		building = new Building();
+		/*building = new Building();
 		building.put("Barrels");
-		buildings.add(building);
+		buildings.add(building);*/
 		
-		building = new Building();
-		building.put("WaterPumpControlBody", "WaterPumpControlBody");
-		building.put("WaterPumpControlWheel", "SimpleRedPaint");
-		building.put("WaterPumpControlPipes", "MetalNoir");
-		buildings.add(building);
+		/*building = new Building();
+		building.put("WaterPumpControlBody");
+		building.putModel("WaterPumpControlWheel", "SimpleRedPaint");
+		building.putModel("WaterPumpControlPipes", "MetalNoir");
+		buildings.add(building);*/
 		
-		building = new Building();
+		/*building = new Building();
 		building.put("Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("Pipe90", "Pipe");
+		building.putModel("Pipe90", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeDouble", "Pipe");
+		building.putModel("PipeDouble", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeLittle", "Pipe");
+		building.putModel("PipeLittle", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeLittle90", "Pipe");
+		building.putModel("PipeLittle90", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeLittle45", "Pipe");
+		building.putModel("PipeLittle45", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeT", "Pipe");
+		building.putModel("PipeT", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeX", "Pipe");
+		building.putModel("PipeX", "Pipe");
 		buildings.add(building);
 		
 		building = new Building();
-		building.put("PipeY", "Pipe");
+		building.putModel("PipeY", "Pipe");
 		buildings.add(building);*/
 		
 		return buildings;
