@@ -34,6 +34,7 @@ public class GeneralAppState extends NecromundaAppState {
 			inputManager.addMapping("Climb", new KeyTrigger(KeyInput.KEY_C));
 			inputManager.addMapping("Cycle", new KeyTrigger(KeyInput.KEY_Y));
 			inputManager.addMapping("Mode", new KeyTrigger(KeyInput.KEY_O));
+			inputManager.addMapping("SustainedFireDice", new KeyTrigger(KeyInput.KEY_P));
 			inputManager.addMapping("Shoot", new KeyTrigger(KeyInput.KEY_H));
 			inputManager.addMapping("NextPhase", new KeyTrigger(KeyInput.KEY_N));
 			inputManager.addMapping("EndTurn", new KeyTrigger(KeyInput.KEY_E));
@@ -48,6 +49,7 @@ public class GeneralAppState extends NecromundaAppState {
 			inputManager.addListener(keyboardListener, "Climb");
 			inputManager.addListener(keyboardListener, "Cycle");
 			inputManager.addListener(keyboardListener, "Mode");
+			inputManager.addListener(keyboardListener, "SustainedFireDice");
 			inputManager.addListener(keyboardListener, "Shoot");
 			inputManager.addListener(keyboardListener, "NextPhase");
 			inputManager.addListener(keyboardListener, "EndTurn");
@@ -66,6 +68,7 @@ public class GeneralAppState extends NecromundaAppState {
 			inputManager.deleteMapping("Climb");
 			inputManager.deleteMapping("Cycle");
 			inputManager.deleteMapping("Mode");
+			inputManager.deleteMapping("SustainedFireDice");
 			inputManager.deleteMapping("Shoot");
 			inputManager.deleteMapping("NextPhase");
 			inputManager.deleteMapping("EndTurn");

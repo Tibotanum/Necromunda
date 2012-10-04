@@ -78,7 +78,7 @@ public abstract class Fighter implements Serializable {
 	private boolean isSpotted;
 	private Gang gang;
 	private RangeCombatWeapon selectedRangeCombatWeapon;
-	private List<Weapon> weapons;
+	private CyclicList<Weapon> weapons;
 	private int cost;
 	private BasedModelImage fighterImage;
 	private String name;
@@ -114,7 +114,7 @@ public abstract class Fighter implements Serializable {
 		canShoot = true;
 		isHidden = false;
 		baseRadius = 0.5f;
-		weapons = new ArrayList<Weapon>();
+		weapons = new CyclicList<Weapon>();
 	}
 
 	/*
@@ -352,7 +352,7 @@ public abstract class Fighter implements Serializable {
 		return gang.getGangMembers().contains(fighter);
 	}
 
-	public List<Weapon> getWeapons() {
+	public CyclicList<Weapon> getWeapons() {
 		return weapons;
 	}
 

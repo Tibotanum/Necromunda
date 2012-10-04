@@ -1,6 +1,6 @@
 package weapons;
 
-import necromunda.Utils;
+import necromunda.*;
 
 public class HeavyBolter extends RangeCombatWeapon {
 	public HeavyBolter() {
@@ -59,11 +59,7 @@ public class HeavyBolter extends RangeCombatWeapon {
 		
 		public HeavyBolterSustainedFireAmmunition() {
 			setName("Sustained Fire");
-		}
-
-		@Override
-		public void resetNumberOfShots() {
-			setNumberOfShots(Utils.rollD(3) + Utils.rollD(3));
+			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
 		}
 	}
 }

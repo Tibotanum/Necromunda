@@ -1,14 +1,22 @@
 package necromunda;
 
-public class ShotHandler {
-	private Necromunda3dProvider provider;
+import java.io.Serializable;
+
+public abstract class ShotHandler implements Serializable {
+	transient private Necromunda3dProvider provider;
 	private ShotHandler nextHandler;
+	
+	public ShotHandler(ShotHandler nextHandler) {
+		this.nextHandler = nextHandler;
+	}
 	
 	public void handle(ShotInfo shotInfo) {
 		if (nextHandler != null) {
 			nextHandler.handle(shotInfo);
 		}
 	}
+	
+	public abstract void reset();
 
 	public ShotHandler getNextHandler() {
 		return nextHandler;
@@ -24,5 +32,9 @@ public class ShotHandler {
 
 	public void setProvider(Necromunda3dProvider provider) {
 		this.provider = provider;
+		
+		if (nextHandler != null) {
+			nextHandler.setProvider(provider);
+		}
 	}
 }

@@ -1,22 +1,25 @@
 package necromunda;
 
-import java.util.List;
+import java.util.*;
 
 public class SustainedFireShotHandler extends ShotHandler {
+	private int maximumNumberOfSustainedFireDice;
+	private int numberOfSustainedFireDice = 1;
 	private int remainingShots;
 	private List<FighterNode> validSustainedFireTargetNodes;
-	private ShotInfo shotInfo;
+	
+	public SustainedFireShotHandler(ShotHandler nextHandler) {
+		super(nextHandler);
+		validSustainedFireTargetNodes = new ArrayList<FighterNode>();
+		maximumNumberOfSustainedFireDice = 2;
+	}
 
 	@Override
 	public void handle(ShotInfo shotInfo) {
-		if (shotInfo == null) {
-			this.shotInfo = shotInfo;
-		}
-		
 		Necromunda3dProvider provider = getProvider();
 		FighterNode selectedFighterNode = getProvider().getSelectedFighterNode();
 		FighterNode fighterNodeUnderCursor = getProvider().getFighterNodeUnderCursor();
-		List<FighterNode> targetedFighterNodes = shotInfo.getTargetedFighterNodes();
+		List<FighterNode> targetedFighterNodes = provider.getTargetedFighterNodes();
 		
 		if (fighterNodeUnderCursor != null) {
 			if (validSustainedFireTargetNodes.isEmpty()
@@ -34,13 +37,14 @@ public class SustainedFireShotHandler extends ShotHandler {
 	
 				validSustainedFireTargetNodes.add(fighterNodeUnderCursor);
 				validSustainedFireTargetNodes.addAll(sustainedFireNeighbours);
-	
 				remainingShots--;
+				targetAdded();
 			}
 			else {
 				if (validSustainedFireTargetNodes.contains(fighterNodeUnderCursor)) {
 					targetedFighterNodes.add(fighterNodeUnderCursor);
 					remainingShots--;
+					targetAdded();
 				}
 				else {
 					Necromunda.setStatusMessage("This target is not a valid target for sustained fire.");
@@ -52,6 +56,28 @@ public class SustainedFireShotHandler extends ShotHandler {
 			}
 		}
 	}
+	
+	private void targetAdded() {
+		if (remainingShots > 0) {
+			Necromunda.setStatusMessage(String.format("%s sustained fire shots remaining.", remainingShots));
+		}
+		else {
+			Necromunda.setStatusMessage("");
+		}
+	}
+	
+	public void setNumberOfSustainedFireDice(int number) {
+		numberOfSustainedFireDice = number;
+		remainingShots = 0;
+		
+		for (int i = 0; i < number; i++) {
+			remainingShots += Utils.rollD(3);
+		}
+	}
+
+	public int getNumberOfSustainedFireDice() {
+		return numberOfSustainedFireDice;
+	}
 
 	public int getRemainingShots() {
 		return remainingShots;
@@ -59,5 +85,18 @@ public class SustainedFireShotHandler extends ShotHandler {
 
 	public void setRemainingShots(int remainingShots) {
 		this.remainingShots = remainingShots;
+	}
+	
+	public void reset() {
+		validSustainedFireTargetNodes.clear();
+		setNumberOfSustainedFireDice(getNumberOfSustainedFireDice());
+	}
+
+	public int getMaximumNumberOfSustainedFireDice() {
+		return maximumNumberOfSustainedFireDice;
+	}
+
+	public void setMaximumNumberOfSustainedFireDice(int maximumNumberOfSustainedFireDice) {
+		this.maximumNumberOfSustainedFireDice = maximumNumberOfSustainedFireDice;
 	}
 }

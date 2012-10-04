@@ -25,9 +25,9 @@ public class Necromunda extends Observable {
 	public static Necromunda game;
 	private static String statusMessage;
 	
-	private List<Gang> gangs;
+	private CyclicList<Gang> gangs;
 	private List<Building> buildings;
-	private LinkedList<Fighter> deployQueue;
+	private CyclicList<Fighter> deployQueue;
 	private Gang currentGang;
 	private int turn;
 	private Phase phase;
@@ -57,13 +57,13 @@ public class Necromunda extends Observable {
 	}
 	
 	public Necromunda() {
-		gangs = new ArrayList<Gang>();
+		gangs = new CyclicList<Gang>();
 		turn = 1;
 		statusMessage = "";
 		buildings = createBuildings();
 		terrainTextureMap = createTerrainTextureMapping();
 		
-		deployQueue = new LinkedList<Fighter>();
+		deployQueue = new CyclicList<Fighter>();
 		
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -208,25 +208,11 @@ public class Necromunda extends Observable {
 			turn++;
 		}
 		
-		currentGang = getNextGang();
+		currentGang = gangs.next();
 
 		currentGang.turnStarted();
 		
 		phase = Phase.MOVEMENT;
-	}
-	
-	private Gang getNextGang() {
-		Gang gang = null;
-		int gangIndex = gangs.indexOf(currentGang);
-		
-		if ((gangIndex + 1) == gangs.size()) {
-			gang = gangs.get(0);
-		}
-		else {
-			gang = gangs.get(gangIndex + 1);
-		}
-		
-		return gang;
 	}
 	
 	public void nextPhase() {
@@ -249,9 +235,9 @@ public class Necromunda extends Observable {
 			this.gangs.add(nextGang);
 		}
 	}
-	
-	public Fighter getNextFighter() {
-		return deployQueue.poll();
+
+	public CyclicList<Fighter> getDeployQueue() {
+		return deployQueue;
 	}
 
 	public Gang getCurrentGang() {
@@ -260,10 +246,6 @@ public class Necromunda extends Observable {
 
 	public void setCurrentGang(Gang currentGang) {
 		this.currentGang = currentGang;
-	}
-
-	public List<Gang> getGangs() {
-		return gangs;
 	}
 
 	public JFrame getNecromundaFrame() {
@@ -291,7 +273,13 @@ public class Necromunda extends Observable {
 	}
 	
 	public static void appendToStatusMessage(String statusMessage) {
-			Necromunda.statusMessage = String.format("%s %s", Necromunda.statusMessage, statusMessage);
+		String space = "";
+		
+		if ((Necromunda.statusMessage != null) && (Necromunda.statusMessage.length() > 0)) {
+			space = " ";
+		}
+			
+		Necromunda.statusMessage = String.format("%s%s%s", Necromunda.statusMessage, space, statusMessage);
 	}
 	
 	public List<Fighter> getHostileGangers() {

@@ -27,6 +27,10 @@ public abstract class Weapon implements Serializable {
 	}
 	
 	public void turnStarted() {
+		reset();
+	}
+	
+	public void reset() {
 	}
 	
 	@Override

@@ -47,12 +47,7 @@ public class HeavyStubber extends RangeCombatWeapon {
 		
 		public HeavyStubberSustainedFireAmmunition() {
 			setName("Sustained Fire");
-			setShotHandler(new SustainedFireShotHandler());
-		}
-
-		@Override
-		public void resetNumberOfShots() {
-			setNumberOfShots(Utils.rollD(3) + Utils.rollD(3));
+			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
 		}
 	}
 }

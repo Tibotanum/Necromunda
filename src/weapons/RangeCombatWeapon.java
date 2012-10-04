@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import necromunda.Fighter;
-import necromunda.Necromunda;
-import necromunda.Utils;
+import necromunda.*;
 import necromunda.Fighter.State;
 
 public abstract class RangeCombatWeapon extends Weapon {
@@ -39,19 +37,19 @@ public abstract class RangeCombatWeapon extends Weapon {
 	}
 
 	@Override
+	public void reset() {
+		for (Ammunition ammunition : getAmmunitions()) {
+			ammunition.reset();
+		}
+	}
+
+	@Override
 	public String getProfileString() {
 		return currentAmmunition.getProfileString();
 	}
 	
-	public void targetAdded() {
-		setNumberOfShots(getNumberOfShots() - 1);
-
-		if (getNumberOfShots() > 0) {
-			Necromunda.setStatusMessage(String.format("%s sustained fire shots remaining.", getNumberOfShots()));
-		}
-		else {
-			Necromunda.setStatusMessage("");
-		}
+	public void handleShot(ShotInfo shotInfo) {
+		currentAmmunition.handleShot(shotInfo);
 	}
 
 	@Override
@@ -138,20 +136,6 @@ public abstract class RangeCombatWeapon extends Weapon {
 
 	public boolean isTargeted() {
 		return currentAmmunition.isTargeted();
-	}
-	
-	public int getNumberOfShots() {
-		return currentAmmunition.getNumberOfShots();
-	}
-	
-	public void setNumberOfShots(int numberOfShots) {
-		currentAmmunition.setNumberOfShots(numberOfShots);
-	}
-
-	public void resetNumberOfShots() {
-		for (Ammunition ammunition : getAmmunitions()) {
-			ammunition.resetNumberOfShots();
-		}
 	}
 
 	public boolean isMoveOrFire() {

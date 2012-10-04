@@ -6,7 +6,7 @@ public abstract class PlasmaWeapon extends RangeCombatWeapon {
 	protected int turnCounter = 0;
 	
 	@Override
-	public void turnStarted() {
+	public void reset() {
 		if (turnCounter > 0) {
 			turnCounter--;
 		}

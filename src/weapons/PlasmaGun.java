@@ -1,7 +1,6 @@
 package weapons;
 
-import necromunda.Necromunda;
-import necromunda.Utils;
+import necromunda.*;
 
 public class PlasmaGun extends PlasmaWeapon {
 	public PlasmaGun() {
@@ -57,6 +56,7 @@ public class PlasmaGun extends PlasmaWeapon {
 			setHitRollModificationLong(0);
 			setAmmoRoll(4);
 			setCost(0);
+			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
 		}
 		
 		@Override
@@ -65,10 +65,5 @@ public class PlasmaGun extends PlasmaWeapon {
 			setEnabled(false);
 			Necromunda.appendToStatusMessage(String.format("Your %s cannot be fired for one turn.", getWeapon().getName()));
 		}
-		
-		@Override
-		public void resetNumberOfShots() {
-			setNumberOfShots(Utils.rollD6());
-		}	
 	}
 }

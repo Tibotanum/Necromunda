@@ -1,6 +1,6 @@
 package weapons;
 
-import necromunda.Utils;
+import necromunda.*;
 
 public class Autocannon extends RangeCombatWeapon {
 	public Autocannon() {
@@ -59,11 +59,7 @@ public class Autocannon extends RangeCombatWeapon {
 
 		public AutocannonSustainedFireAmmunition() {
 			setName("Sustained Fire");
-		}
-		
-		@Override
-		public void resetNumberOfShots() {
-			setNumberOfShots(Utils.rollD(3));
+			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
 		}
 	}
 }

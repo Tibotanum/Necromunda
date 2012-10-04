@@ -25,7 +25,6 @@ public abstract class Ammunition implements Serializable {
 	private int hitRollModificationLong;
 	private int ammoRoll;
 	private boolean targeted;
-	private int numberOfShots;
 	private float additionalTargetRange;
 	private boolean templated;
 	private boolean templatePersistent;
@@ -41,9 +40,10 @@ public abstract class Ammunition implements Serializable {
 	
 	public Ammunition() {
 		targeted = true;
-		numberOfShots = 1;
 		additionalTargetRange = 0;
 		templateColor = new Color(1.0f, 0.5f, 0f, 0.5f);
+		
+		setShotHandler(new SingleShotHandler(new StandardShotHandler(null)));
 	}
 	
 	public void trigger() {
@@ -61,8 +61,8 @@ public abstract class Ammunition implements Serializable {
 		return 0;
 	}
 	
-	public void resetNumberOfShots() {
-		setNumberOfShots(1);
+	public void reset() {
+		shotHandler.reset();
 	}
 	
 	public void sustainMalfunction() {
@@ -264,14 +264,6 @@ public abstract class Ammunition implements Serializable {
 	
 	public void setTargeted(boolean targeted) {
 		this.targeted = targeted;
-	}
-	
-	public int getNumberOfShots() {
-		return numberOfShots;
-	}
-	
-	public void setNumberOfShots(int numberOfShots) {
-		this.numberOfShots = numberOfShots;
 	}
 
 	public float getAdditionalTargetRange() {
