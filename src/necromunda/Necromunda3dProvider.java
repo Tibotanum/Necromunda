@@ -2050,7 +2050,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 			if (weapon != null) {
 				String broken = weapon.isBroken() ? " (Broken), " : ", ";
-				String mode = (weapon.getAmmunitions().size() > 1) ? String.format(" Ammunition: %s, ", weapon
+				String mode = (weapon.getAmmunitions().size() > 1) ? String.format("Ammunition: %s, ", weapon
 						.getCurrentAmmunition().getName()) : "";
 				String numberOfSustainedFireDice = "";
 				
@@ -2059,11 +2059,11 @@ public class Necromunda3dProvider extends SimpleApplication {
 					
 					if (shotHandler instanceof SustainedFireShotHandler) {
 						SustainedFireShotHandler sustainedFireShotHandler = (SustainedFireShotHandler)shotHandler;
-						numberOfSustainedFireDice = String.valueOf(sustainedFireShotHandler.getNumberOfSustainedFireDice());
+						numberOfSustainedFireDice = "Sustained Fire Dice: " + sustainedFireShotHandler.getNumberOfSustainedFireDice() + ", ";
 					}
 				}
 				
-				statusText.append(String.format("%s%s%s%s%s\n", weapon, broken, mode, ", Sustained Fire Dice: " + numberOfSustainedFireDice + ", ", weapon.getProfileString()));
+				statusText.append(String.format("%s%s%s%s%s\n", weapon, broken, mode, numberOfSustainedFireDice, weapon.getProfileString()));
 			}
 			else {
 				statusText.append("No weapon selected\n");

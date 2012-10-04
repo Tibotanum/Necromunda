@@ -47,7 +47,7 @@ public class HeavyStubber extends RangeCombatWeapon {
 		
 		public HeavyStubberSustainedFireAmmunition() {
 			setName("Sustained Fire");
-			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
+			setShotHandler(new SustainedFireShotHandler(2, new StandardShotHandler(null)));
 		}
 	}
 }

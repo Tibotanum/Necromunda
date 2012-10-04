@@ -59,7 +59,7 @@ public class HeavyBolter extends RangeCombatWeapon {
 		
 		public HeavyBolterSustainedFireAmmunition() {
 			setName("Sustained Fire");
-			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
+			setShotHandler(new SustainedFireShotHandler(2, new StandardShotHandler(null)));
 		}
 	}
 }

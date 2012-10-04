@@ -7,14 +7,13 @@ public abstract class PlasmaWeapon extends RangeCombatWeapon {
 	
 	@Override
 	public void reset() {
+		super.reset();
+		
 		if (turnCounter > 0) {
 			turnCounter--;
 		}
-		else {
-			turnCounter = 0;
-		}
 		
-		if (turnCounter <= 0) {
+		if (turnCounter == 0) {
 			setEnabled(true);
 		}
 		else {

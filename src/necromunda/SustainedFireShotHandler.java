@@ -8,10 +8,10 @@ public class SustainedFireShotHandler extends ShotHandler {
 	private int remainingShots;
 	private List<FighterNode> validSustainedFireTargetNodes;
 	
-	public SustainedFireShotHandler(ShotHandler nextHandler) {
+	public SustainedFireShotHandler(int maximumNumberOfSustainedFireDice, ShotHandler nextHandler) {
 		super(nextHandler);
 		validSustainedFireTargetNodes = new ArrayList<FighterNode>();
-		maximumNumberOfSustainedFireDice = 2;
+		this.maximumNumberOfSustainedFireDice = maximumNumberOfSustainedFireDice;
 	}
 
 	@Override

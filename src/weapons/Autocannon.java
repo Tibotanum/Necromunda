@@ -59,7 +59,7 @@ public class Autocannon extends RangeCombatWeapon {
 
 		public AutocannonSustainedFireAmmunition() {
 			setName("Sustained Fire");
-			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
+			setShotHandler(new SustainedFireShotHandler(1, new StandardShotHandler(null)));
 		}
 	}
 }

@@ -56,7 +56,7 @@ public class PlasmaGun extends PlasmaWeapon {
 			setHitRollModificationLong(0);
 			setAmmoRoll(4);
 			setCost(0);
-			setShotHandler(new SustainedFireShotHandler(new StandardShotHandler(null)));
+			setShotHandler(new SustainedFireShotHandler(1, new StandardShotHandler(null)));
 		}
 		
 		@Override
