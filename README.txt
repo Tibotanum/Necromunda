@@ -23,9 +23,10 @@ C:                      Climb a ladder (during regular or run movement; press re
 I:                      Hide
 Y:                      Cycle weapons, "Yes"
 O:                      Cycle weapon mode
+P:                      Cycle number of sustained fire dice
 H:                      Start shooting
 N:                      Cycle to next phase, "No"
-E:                      End current turn
+E:                      End current turn, end building deployment
 
 Note: When climbing you first have to start a regular or run movement. If you are standing close enough to a ladder you can press 'C'. After this you have to stop the movement first by clicking the left mouse button. If you have not yet moved all of the allowed distance you can continue moving or running by pressing 'M' or 'R' again.
 
