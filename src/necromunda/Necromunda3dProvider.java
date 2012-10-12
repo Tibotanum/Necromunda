@@ -180,7 +180,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		stateManager.attach(screenshotAppState);
 
 		assetManager.registerLocator("", ClasspathLocator.class.getName());
-		//assetManager.registerLoader("com.jme3.material.plugins.NeoTextureMaterialLoader", "tgr");
+		assetManager.registerLoader("com.jme3.material.plugins.NeoTextureMaterialLoader", "tgr");
 
 		materialFactory = new MaterialFactory(assetManager, this);
 		baseFactory = new BaseFactory(materialFactory);
@@ -198,7 +198,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		rootNode.attachChild(buildingsNode);
 		rootNode.attachChild(buildingsBoundsNode);
 
-		setDisplayFps(true);
+		setDisplayFps(false);
 		setDisplayStatView(false);
 
 		DirectionalLight sun = new DirectionalLight();
@@ -254,10 +254,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	private Node createTableNode() {
 		Box box = new Box(new Vector3f(24, -0.5f, 24), 24, 0.5f, 24);
-		// box.scaleTextureCoordinates(new Vector2f(10, 10));
 		Geometry tableGeometry = new Geometry("tableGeometry", box);
-		//tableGeometry.setMaterial(materialFactory.createNeoTextureMaterial("Images/Textures/Table/" + getTerrainMaterialIdentifier()));
-		tableGeometry.setMaterial(materialFactory.createColourMaterial(ColorRGBA.Green));
+		tableGeometry.setMaterial(materialFactory.createNeoTextureMaterial("Images/Textures/Table/" + getTerrainMaterialIdentifier()));
 		tableGeometry.setShadowMode(ShadowMode.Receive);
 
 		Node tableNode = new Node("tableNode");
@@ -772,16 +770,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 	
 	private void createFighterNode(Vector3f position) {
-		System.out.println(game.getDeployQueue().size());
-		
-		Fighter fighter = null;
-		
-		if (selectedFighterNode == null) {
-			fighter = game.getDeployQueue().get(0);
-		}
-		else {
-			fighter = game.getDeployQueue().current();
-		}
+		Fighter fighter = game.getDeployQueue().current();
 		
 		selectedFighterNode = new FighterNode("fighterNode", fighter, materialFactory, baseFactory);
 		
@@ -869,6 +858,9 @@ public class Necromunda3dProvider extends SimpleApplication {
 			else {
 				Necromunda.setStatusMessage("This ganger cannot climb that far.");
 			}
+		}
+		else {
+			System.out.println("No valid position");
 		}
 	}
 
