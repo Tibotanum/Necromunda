@@ -115,7 +115,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve01.png", 0, 128, House.ESCHER, Juve.class));
 		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve02.png", 9, 131, House.ESCHER, Juve.class));
 		
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 2, 121, House.DELAQUE, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 0, 121, House.DELAQUE, Leader.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125, House.DELAQUE, Ganger.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129, House.DELAQUE, Ganger.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123, House.DELAQUE, Ganger.class));
@@ -125,6 +125,64 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve01.png", 34, 124, House.DELAQUE, Juve.class));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve02.png", 18, 122, House.DELAQUE, Juve.class));
 
+		/* The first number is the offset of the left base edge to 
+		   the left edge of the image in pixels. 
+		   The second is the base width on the image in pixels. 
+		   This is for scaling the images correctly.			*/
+
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss01.png", 47, 130, House.ORLOCK, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss02.png", 100, 135, House.ORLOCK, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger01.png", 22, 142, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger02.png", 40, 140, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger03.png", 1, 133, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger04.png", 5, 130, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger05.png", 1, 136, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger06.png", 1, 135, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger07.png", 2, 134, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger08.png", 30, 135, House.ORLOCK, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy01.png", 2, 143, House.ORLOCK, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy02.png", 3, 133, House.ORLOCK, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy03.png", 4, 141, House.ORLOCK, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve01.png", 44, 142, House.ORLOCK, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve02.png", 65, 122, House.ORLOCK, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve03.png", 12, 149, House.ORLOCK, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve04.png", 0, 145, House.ORLOCK, Juve.class));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathBoss01.png", 38, 77, House.GOLIATH, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger01.png", 65, 125, House.GOLIATH, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger02.png", 5, 128, House.GOLIATH, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger03.png", 24, 78, House.GOLIATH, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger04.png", 10, 75, House.GOLIATH, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathHeavy01.png", 10, 125, House.GOLIATH, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve01.png", 10, 123, House.GOLIATH, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve02.png", 39, 79, House.GOLIATH, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve03.png", 2, 77, House.GOLIATH, Juve.class));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorBoss01.png", 20, 135, House.CAWDOR, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger01.png", 0, 127, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger02.png", 0, 125, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger03.png", 0, 135, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger04.png", 0, 135, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger05.png", 0, 120, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger06.png", 0, 110, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger07.png", 0, 107, House.CAWDOR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorHeavy01.png", 5, 130, House.CAWDOR, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve01.png", 18, 132, House.CAWDOR, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve02.png", 0, 130, House.CAWDOR, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve03.png", 17, 119, House.CAWDOR, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve04.png", 0, 118, House.CAWDOR, Juve.class));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarBoss01.png", 19, 126, House.VAN_SAAR, Leader.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger01.png", 0, 130, House.VAN_SAAR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger02.png", 0, 130, House.VAN_SAAR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger03.png", 0, 120, House.VAN_SAAR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger04.png", 0, 125, House.VAN_SAAR, Ganger.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarHeavy01.png", 0, 131, House.VAN_SAAR, Heavy.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve01.png", 15, 125, House.VAN_SAAR, Juve.class));
+		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve02.png", 20, 130, House.VAN_SAAR, Juve.class));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.BOUNTY, Leader.class));
+		
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
 		

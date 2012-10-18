@@ -1,12 +1,13 @@
 package necromunda;
 
 public enum House {
-	//ORLOCK("Orlock"),
-	//GOLIATH("Goliath"),
+	ORLOCK("Orlock"),
+	GOLIATH("Goliath"),
 	ESCHER("Escher"),
-	//VAN_SAAR("Van Saar"),
-	DELAQUE("Delaque");//,
-	//CAWDOR("Cawdor");
+	VAN_SAAR("Van Saar"),
+	DELAQUE("Delaque"),
+	CAWDOR("Cawdor"),
+	BOUNTY("Bounty Hunters");
 	
 	private String literal;
 	
