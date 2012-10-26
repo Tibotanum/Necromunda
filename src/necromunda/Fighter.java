@@ -40,7 +40,11 @@ public abstract class Fighter implements Serializable {
 		LEADER("Leader", Leader.class),
 		GANGER("Ganger", Ganger.class),
 		JUVE("Juve", Juve.class),
-		HEAVY("Heavy", Heavy.class);
+		HEAVY("Heavy", Heavy.class),
+		BOUNTY_HUNTER("Bounty Hunter", BountyHunter.class),
+		SCAVVY_LEADER("Scavvy Leader", ScavvyBoss.class),
+		SCAVVY("Scavvy", Scavvy.class),
+		SCALEY("Scaley", Scaley.class);
 
 		private String literal;
 		private Class<? extends Fighter> associatedClass;
@@ -87,17 +91,29 @@ public abstract class Fighter implements Serializable {
 		Fighter fighter = null;
 
 		switch (type) {
-		case LEADER:
-			fighter = new Leader(name, new LeaderProfile(), ownGang);
-			break;
-		case GANGER:
-			fighter = new Ganger(name, new GangerProfile(), ownGang);
-			break;
-		case JUVE:
-			fighter = new Juve(name, new JuveProfile(), ownGang);
-			break;
-		case HEAVY:
-			fighter = new Heavy(name, new HeavyProfile(), ownGang);
+			case LEADER:
+				fighter = new Leader(name, new LeaderProfile(), ownGang);
+				break;
+			case GANGER:
+				fighter = new Ganger(name, new GangerProfile(), ownGang);
+				break;
+			case JUVE:
+				fighter = new Juve(name, new JuveProfile(), ownGang);
+				break;
+			case HEAVY:
+				fighter = new Heavy(name, new HeavyProfile(), ownGang);
+				break;
+			case BOUNTY_HUNTER:
+				fighter = new BountyHunter(name, new BountyHunterProfile(), ownGang);
+				break;
+			case SCAVVY_LEADER:
+				fighter = new ScavvyBoss(name, new ScavvyBossProfile(), ownGang);
+				break;
+			case SCAVVY:
+				fighter = new Scavvy(name, new ScavvyProfile(), ownGang);
+				break;
+			case SCALEY:
+				fighter = new Scaley(name, new ScavvyProfile(), ownGang);
 		}
 
 		return fighter;

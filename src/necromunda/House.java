@@ -7,7 +7,9 @@ public enum House {
 	VAN_SAAR("Van Saar"),
 	DELAQUE("Delaque"),
 	CAWDOR("Cawdor"),
-	BOUNTY("Bounty Hunters");
+	BOUNTY_HUNTERS("Bounty Hunters"),
+	REDEMPTIONISTS("Redemptionists"),
+	SCAVVIES("Scavvies");
 	
 	private String literal;
 	

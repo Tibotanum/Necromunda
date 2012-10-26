@@ -101,6 +101,11 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		
 		basedModelImages = new ArrayList<BasedModelImage>();
 		
+		/* The first number is the offset of the left base edge to 
+		   the left edge of the image in pixels. 
+		   The second is the base width on the image in pixels. 
+		   This is for scaling the images correctly.			*/
+		
 		basedModelImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134, House.ESCHER, Fighter.Type.LEADER));
 		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130, House.ESCHER, Fighter.Type.GANGER));
 		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127, House.ESCHER, Fighter.Type.GANGER));
@@ -124,11 +129,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114, House.DELAQUE, Fighter.Type.HEAVY));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve01.png", 34, 124, House.DELAQUE, Fighter.Type.JUVE));
 		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve02.png", 18, 122, House.DELAQUE, Fighter.Type.JUVE));
-
-		/* The first number is the offset of the left base edge to 
-		   the left edge of the image in pixels. 
-		   The second is the base width on the image in pixels. 
-		   This is for scaling the images correctly.			*/
 
 		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss01.png", 47, 130, House.ORLOCK, Fighter.Type.LEADER));
 		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss02.png", 100, 135, House.ORLOCK, Fighter.Type.LEADER));
@@ -181,7 +181,20 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve01.png", 15, 125, House.VAN_SAAR, Fighter.Type.JUVE));
 		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve02.png", 20, 130, House.VAN_SAAR, Fighter.Type.JUVE));
 		
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.BOUNTY, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistBoss01.png", 85, 118, House.REDEMPTIONISTS, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistGanger01.png", 43, 124, House.REDEMPTIONISTS, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistGanger02.png", 14, 120, House.REDEMPTIONISTS, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistGanger03.png", 0, 120, House.REDEMPTIONISTS, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistGanger04.png", 0, 120, House.REDEMPTIONISTS, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistHeavy01.png", 0, 124, House.REDEMPTIONISTS, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistJuve01.png", 0, 120, House.REDEMPTIONISTS, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistJuve02.png", 0, 124, House.REDEMPTIONISTS, Fighter.Type.JUVE));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "ScavvyBoss01.png", 85, 118, House.SCAVVIES, Fighter.Type.SCAVVY_LEADER));
+		basedModelImages.add(new BasedModelImage(basePath + "ScavvyBoss01.png", 85, 118, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath + "ScavvyBoss01.png", 85, 118, House.SCAVVIES, Fighter.Type.SCALEY));
+		
+		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.BOUNTY_HUNTERS, Fighter.Type.BOUNTY_HUNTER));
 		
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
@@ -798,7 +811,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		List<BasedModelImage> filteredBasedModelImages = new ArrayList<BasedModelImage>();
 		
 		for (BasedModelImage basedModelImage : basedModelImages) {
-			if ((basedModelImage.getHouse().equals(house) && basedModelImage.getFighterType().equals(fighterType)) || basedModelImage.getHouse().equals(House.BOUNTY)) {
+			if ((basedModelImage.getHouse().equals(house) && basedModelImage.getFighterType().equals(fighterType)) || basedModelImage.getHouse().equals(House.BOUNTY_HUNTERS)) {
 				filteredBasedModelImages.add(basedModelImage);
 			}
 		}
@@ -813,13 +826,16 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 			if (selectedGang != null) {
 				House house = selectedGang.getHouse();
 				Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
+				List<BasedModelImage> filteredBasedModelImages = filterBasedModelImages(basedModelImages, house, fighterType);
 		
-				SpinnerListModel spinnerListModel = new SpinnerListModel(filterBasedModelImages(basedModelImages, house, fighterType));
-				fighterImageSpinner.setModel(spinnerListModel);
-				fighterImagePanel = new FighterImagePanel(spinnerListModel);
-				fighterImageSpinner.removeChangeListener((ChangeListener)fighterImageSpinner.getEditor());
-				fighterImageSpinner.setEditor(fighterImagePanel);
-				fighterImageSpinner.addChangeListener(fighterImagePanel);
+				if (!filteredBasedModelImages.isEmpty()) {
+					SpinnerListModel spinnerListModel = new SpinnerListModel(filteredBasedModelImages);
+					fighterImageSpinner.setModel(spinnerListModel);
+					fighterImagePanel = new FighterImagePanel(spinnerListModel);
+					fighterImageSpinner.removeChangeListener((ChangeListener)fighterImageSpinner.getEditor());
+					fighterImageSpinner.setEditor(fighterImagePanel);
+					fighterImageSpinner.addChangeListener(fighterImagePanel);
+				}
 			}
 		}
 		

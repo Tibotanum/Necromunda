@@ -44,3 +44,4 @@ Contributors
 ------------
 Tibotanum (source code, building models)
 Skurcey (building models)
+Wobbles909 (source code, fighter models)
