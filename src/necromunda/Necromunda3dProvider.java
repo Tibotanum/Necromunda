@@ -1744,22 +1744,33 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		if (currentPath == null) {
 			objectPosition = selectedFighterNode.getLocalTranslation();
+			
+			if (nearestIntersection == null) {
+				nearestIntersection = objectPosition;
+			}
 		}
 		else {
 			objectPosition = currentPath.getOrigin();
-		}
-
-		if (nearestIntersection == null) {
-			return;
+			
+			if (nearestIntersection == null) {
+				return;
+			}
 		}
 
 		float slope = FastMath.abs(nearestIntersection.getY() - objectPosition.getY());
 
-		if (slope > MAX_SLOPE) {
-			return;
-		}
-
 		if (currentPath == null) {
+			if (slope > MAX_SLOPE) {
+				nearestIntersection = objectPosition;
+			}
+			
+			currentPath = new Line(objectPosition.clone(), nearestIntersection);
+		}
+		else {
+			if (slope > MAX_SLOPE) {
+				return;
+			}
+			
 			currentPath = new Line(objectPosition.clone(), nearestIntersection);
 		}
 

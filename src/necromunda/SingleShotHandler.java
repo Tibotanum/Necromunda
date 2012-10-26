@@ -17,9 +17,11 @@ public class SingleShotHandler extends ShotHandler {
 			return;
 		}
 	
-		getProvider().getTargetedFighterNodes().add(fighterNodeUnderCursor);
-		
-		super.handle(shotInfo);
+		if (fighterNodeUnderCursor != null) {
+			getProvider().getTargetedFighterNodes().add(fighterNodeUnderCursor);
+			
+			super.handle(shotInfo);
+		}
 	}
 
 	@Override
