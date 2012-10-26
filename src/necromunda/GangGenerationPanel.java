@@ -252,6 +252,26 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterImageSpinner.setPreferredSize(new Dimension(150, 150));
 		fighterImageSpinner.setEditor(fighterImagePanel);
 		fighterImageSpinner.addChangeListener(fighterImagePanel);
+		fighterImageSpinner.addChangeListener(new ChangeListener() {
+			
+			public void stateChanged(ChangeEvent e) {
+				BasedModelImage image = (BasedModelImage)fighterImageSpinner.getModel().getValue();
+					
+				Fighter fighter = Fighter.createInstance(image.getFighterType(), fighterNameTextField.getText(), null);
+
+				FighterProfile profile = fighter.getProfile();
+				
+				movementTextField.setText(String.valueOf(profile.getMovement()));
+				weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
+				ballisticSkillTextField.setText(String.valueOf(profile.getBallisticSkill()));
+				strengthTextField.setText(String.valueOf(profile.getStrength()));
+				toughnessTextField.setText(String.valueOf(profile.getToughness()));
+				woundsTextField.setText(String.valueOf(profile.getWounds()));
+				initiativeTextField.setText(String.valueOf(profile.getInitiative()));
+				attacksTextField.setText(String.valueOf(profile.getAttacks()));
+				leadershipTextField.setText(String.valueOf(profile.getLeadership()));
+			}
+		});
 		
 		movementLabel = new JLabel("Movement");
 		weaponSkillLabel = new JLabel("Weapon Skill");
@@ -289,44 +309,6 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		fighterTypeComboBox.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				Fighter.Type fighterType = (Fighter.Type)fighterTypeComboBox.getSelectedItem();
-				Class<? extends Fighter> fighterClass = fighterType.getAssociatedClass();
-				
-				try {
-					Method method = fighterClass.getMethod("getTemplateProfile", new Class<?>[0]);
-					FighterProfile profile = (FighterProfile)method.invoke(null, new Object[0]);
-					
-					movementTextField.setText(String.valueOf(profile.getMovement()));
-					weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
-					ballisticSkillTextField.setText(String.valueOf(profile.getBallisticSkill()));
-					strengthTextField.setText(String.valueOf(profile.getStrength()));
-					toughnessTextField.setText(String.valueOf(profile.getToughness()));
-					woundsTextField.setText(String.valueOf(profile.getWounds()));
-					initiativeTextField.setText(String.valueOf(profile.getInitiative()));
-					attacksTextField.setText(String.valueOf(profile.getAttacks()));
-					leadershipTextField.setText(String.valueOf(profile.getLeadership()));
-				}
-				catch (SecurityException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				catch (NoSuchMethodException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				catch (IllegalArgumentException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				catch (IllegalAccessException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				catch (InvocationTargetException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
 				updateFighterImages();
 			}
 		});
@@ -839,6 +821,28 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				fighterImageSpinner.setEditor(fighterImagePanel);
 				fighterImageSpinner.addChangeListener(fighterImagePanel);
 			}
+		}
+		
+		updateProfileTextFields();
+	}
+	
+	private void updateProfileTextFields() {
+		BasedModelImage image = (BasedModelImage)fighterImageSpinner.getModel().getValue();
+		
+		if (image != null) {
+			Fighter fighter = Fighter.createInstance(image.getFighterType(), fighterNameTextField.getText(), null);
+	
+			FighterProfile profile = fighter.getProfile();
+			
+			movementTextField.setText(String.valueOf(profile.getMovement()));
+			weaponSkillTextField.setText(String.valueOf(profile.getWeaponSkill()));
+			ballisticSkillTextField.setText(String.valueOf(profile.getBallisticSkill()));
+			strengthTextField.setText(String.valueOf(profile.getStrength()));
+			toughnessTextField.setText(String.valueOf(profile.getToughness()));
+			woundsTextField.setText(String.valueOf(profile.getWounds()));
+			initiativeTextField.setText(String.valueOf(profile.getInitiative()));
+			attacksTextField.setText(String.valueOf(profile.getAttacks()));
+			leadershipTextField.setText(String.valueOf(profile.getLeadership()));
 		}
 	}
 	
