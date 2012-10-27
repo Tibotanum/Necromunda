@@ -353,20 +353,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 			}
 		}
 
-		if (currentPath != null) {
-			List<Geometry> boundingVolumes = getFighterNodeBoundingVolumes();
-			boundingVolumes.addAll(getBuildingNodeBoundingVolumes());
-			boundingVolumes.remove(selectedFighterNode.getBoundingVolume());
-			boundingVolumes.remove(getCurrentPathBoxGeometry());
-			
-			if (!intersect(getCurrentPathBoxGeometry(), boundingVolumes) && !intersect(selectedFighterNode.getBoundingVolume(), boundingVolumes)) {
-				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.5f), 0.5f));
-			}
-			else {
-				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Red, 0.5f));
-			}
-		}
-
 		updateModels();
 		
 		if (selectionMode == SelectionMode.DEPLOY_BUILDING) {
@@ -411,6 +397,20 @@ public class Necromunda3dProvider extends SimpleApplication {
 			}
 
 			selectedBuildingNode.setLocalTranslation(nearestIntersection);
+		}
+		
+		if (currentPath != null) {
+			List<Geometry> boundingVolumes = getFighterNodeBoundingVolumes();
+			boundingVolumes.addAll(getBuildingNodeBoundingVolumes());
+			boundingVolumes.remove(selectedFighterNode.getBoundingVolume());
+			boundingVolumes.remove(getCurrentPathBoxGeometry());
+			
+			if (!intersect(getCurrentPathBoxGeometry(), boundingVolumes) && !intersect(selectedFighterNode.getBoundingVolume(), boundingVolumes)) {
+				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.5f), 0.5f));
+			}
+			else {
+				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Red, 0.5f));
+			}
 		}
 	}
 
