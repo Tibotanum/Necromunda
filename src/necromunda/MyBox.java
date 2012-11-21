@@ -11,11 +11,11 @@ public class MyBox extends Box {
 	public MyBox(float x, float y, float z) {
 		super(x, y, z);
 	}
-	
+
 	public MyBox(Vector3f center, float x, float y, float z) {
 		super(center, x, y, z);
 	}
-	
+
 	@Override
 	protected void duUpdateGeometryIndices() {
 		ShortBuffer sib = BufferUtils.createShortBuffer(36);
@@ -52,6 +52,7 @@ public class MyBox extends Box {
         setBuffer(Type.Normal, 3, fpb);
 	}
 
+	@Override
 	protected void duUpdateGeometryVertices() {
         FloatBuffer fpb = BufferUtils.createVector3Buffer(8);
         Vector3f[] v = computeVertices();
