@@ -1181,8 +1181,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private Vector3f getHalfExtentsOf(FighterNode fighterNode) {
-		MyBox boundingBox = (MyBox) fighterNode.getBoundingVolume().getMesh();
-		Vector3f halfExtents = new Vector3f(boundingBox.xExtent, boundingBox.yExtent, boundingBox.zExtent);
+		Cylinder boundingVolume = (Cylinder) fighterNode.getBoundingVolume().getMesh();
+		Vector3f halfExtents = new Vector3f(boundingVolume.getRadius(), boundingVolume.getHeight() / 2, boundingVolume.getRadius());
 
 		return halfExtents;
 	}

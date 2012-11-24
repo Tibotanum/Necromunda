@@ -65,11 +65,19 @@ public class FighterNode extends Node {
 		attachChild(roundBase);
 		attachChild(figureNode);
 
-		MyBox boundingBox = new MyBox(fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f, fighter.getBaseRadius());
+		/*MyBox boundingBox = new MyBox(fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f, fighter.getBaseRadius());
 		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingBox);
 		boundingVolumeGeometry.setMaterial(materialFactory.createColourMaterial(ColorRGBA.Red));
 		boundingVolumeGeometry.setCullHint(CullHint.Always);
 		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
+		attachChild(boundingVolumeGeometry);*/
+		
+		Cylinder boundingVolume = new Cylinder(4, 10, fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f * 2, true, false);
+		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);
+		boundingVolumeGeometry.setMaterial(materialFactory.createColourMaterial(ColorRGBA.Red));
+		boundingVolumeGeometry.setCullHint(CullHint.Always);
+		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
+		boundingVolumeGeometry.rotate(FastMath.HALF_PI, 0, 0);
 		attachChild(boundingVolumeGeometry);
 	}
 	
