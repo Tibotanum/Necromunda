@@ -42,16 +42,16 @@ public class TemplateNode extends Node {
 		TemplateNode templateNode = new TemplateNode("templateNode", ammunition);
 		
 		List<Geometry> spheres = new ArrayList<Geometry>();
-		List<Geometry> boundingBoxes = new ArrayList<Geometry>();
+		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
 
 		if (ammunition.getTemplateLength() == 0) {
 			Sphere sphere = new Sphere(10, 10, ammunition.getTemplateRadius());
 			Geometry geometry = new Geometry("sphere", sphere);
 			spheres.add(geometry);
 			
-			Box boundingBox = new Box(ammunition.getTemplateRadius(), ammunition.getTemplateRadius(), ammunition.getTemplateRadius());
-			Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
-			boundingBoxes.add(boundingBoxGeometry);
+			Sphere boundingVolume = new Sphere(4, 10, ammunition.getTemplateRadius());
+			Geometry boundingVolumeGeometry = new Geometry("boundingBox", boundingVolume);
+			boundingVolumes.add(boundingVolumeGeometry);
 		}
 		else {
 			float radiusToLengthRatio = ammunition.getTemplateRadius() / ammunition.getTemplateLength();
@@ -66,10 +66,10 @@ public class TemplateNode extends Node {
 				spheres.add(geometry);
 				geometry.setLocalTranslation(vector);
 				
-				MyBox boundingBox = new MyBox(currentRadiusToLengthRatio, currentRadiusToLengthRatio, currentRadiusToLengthRatio);
-				Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
-				boundingBoxes.add(boundingBoxGeometry);
-				boundingBoxGeometry.setLocalTranslation(vector);
+				Sphere boundingVolume = new Sphere(4, 10, currentRadiusToLengthRatio);
+				Geometry boundingVolumeGeometry = new Geometry("boundingBox", boundingVolume);
+				boundingVolumes.add(boundingVolumeGeometry);
+				boundingVolumeGeometry.setLocalTranslation(vector);
 			}
 		}
 		
@@ -81,7 +81,7 @@ public class TemplateNode extends Node {
 			templateNode.attachChild(geometry);
 		}
 		
-		for (Geometry geometry : boundingBoxes) {
+		for (Geometry geometry : boundingVolumes) {
 			geometry.setMaterial(material);
 			geometry.setQueueBucket(Bucket.Transparent);
 			//geometry.setCullHint(CullHint.Always);
@@ -89,7 +89,7 @@ public class TemplateNode extends Node {
 		}
 		
 		templateNode.setSpheres(spheres);
-		templateNode.setBoundingVolumes(boundingBoxes);
+		templateNode.setBoundingVolumes(boundingVolumes);
 		
 		return templateNode;
 	}
