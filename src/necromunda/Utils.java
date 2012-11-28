@@ -91,7 +91,19 @@ public class Utils {
 		return results.getClosestCollision();
 	}
 	
-	public static boolean intersect(Geometry geometry1, Geometry geometry2) {
+	public static boolean intersect(NecromundaNode node1, NecromundaNode node2) {
+		for (Geometry geometry1 : node1.getBoundingVolumes()) {
+			for (Geometry geometry2 : node2.getBoundingVolumes()) {
+				if (intersect(geometry1, geometry2)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private static boolean intersect(Geometry geometry1, Geometry geometry2) {
 		geometry1 = localToWorld(geometry1);
 		geometry2 = localToWorld(geometry2);
 		

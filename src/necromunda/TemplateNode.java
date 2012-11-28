@@ -23,7 +23,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.*;
 
-public class TemplateNode extends Node {
+public class TemplateNode extends Node implements NecromundaNode {
 	private static float TRAIL_STEPWIDTH = 1.0f;
 	
 	private Ammunition ammunition;

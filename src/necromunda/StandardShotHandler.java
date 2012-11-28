@@ -25,7 +25,7 @@ public class StandardShotHandler extends ShotHandler {
 			collidables.removeAll(currentTemplateNode.getBoundingVolumes());
 		}
 
-		collidables.add(provider.getBuildingsBoundsNode());
+		collidables.addAll(provider.getBuildingBoundingVolumes());
 
 		List<FighterNode> otherFighterNodes = new ArrayList<FighterNode>(provider.getFighterNodes());
 		otherFighterNodes.remove(selectedFighterNode);

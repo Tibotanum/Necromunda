@@ -64,11 +64,12 @@ public class Necromunda3dProvider extends SimpleApplication {
 	private SelectionMode selectionMode;
 
 	private Node buildingsNode;
-	private Node buildingsBoundsNode;
 	private BuildingNode selectedBuildingNode;
 
 	private Line currentPath;
 	private ClimbPath currentClimbPath;
+	private PathNode currentPathNode;
+	
 	private TemplateNode currentTemplateNode;
 	private List<NodeRemover> nodeRemovers;
 	private List<Node> nodesToBeRemoved;
@@ -81,7 +82,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	private boolean rightButtonDown;
 
-	private CyclicList<BuildingNode> buildingNodes;
+	private CyclicList<BuildingNode> templateBuildingNodes;
 	private LadderNode currentLadder;
 	private List<LadderNode> currentLadders;
 
@@ -101,9 +102,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		buildingsNode = new Node("buildingsNode");
 
-		buildingsBoundsNode = new Node("buildingsBoundsNode");
-
-		buildingNodes = new CyclicList<BuildingNode>();
+		templateBuildingNodes = new CyclicList<BuildingNode>();
 
 		nodeRemovers = new ArrayList<NodeRemover>();
 		
@@ -188,7 +187,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		Node tableNode = createTableNode();
 		rootNode.attachChild(tableNode);
 
-		buildingNodes = createBuildings(game.getBuildings());
+		templateBuildingNodes = createBuildings(game.getBuildings());
 
 		Node objectsNode = new Node("objectsNode");
 		objectsNode.setShadowMode(ShadowMode.CastAndReceive);
@@ -196,9 +195,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 		rootNode.attachChild(objectsNode);
 		buildingsNode.setShadowMode(ShadowMode.CastAndReceive);
 		rootNode.attachChild(buildingsNode);
-		rootNode.attachChild(buildingsBoundsNode);
 
-		setDisplayFps(false);
+		setDisplayFps(true);
 		setDisplayStatView(false);
 
 		DirectionalLight sun = new DirectionalLight();
@@ -328,10 +326,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 	private List<LadderNode> getLadders(Node buildingsNode) {
 		List<LadderNode> ladders = new ArrayList<LadderNode>();
 
-		List<Spatial> buildingNodes = buildingsNode.getChildren();
-
-		for (Spatial buildingNode : buildingNodes) {
-			ladders.addAll(((BuildingNode) buildingNode).getLadderNodes());
+		for (BuildingNode buildingNode : getBuildingNodes()) {
+			ladders.addAll(buildingNode.getLadderNodes());
 		}
 
 		return ladders;
@@ -392,7 +388,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 			}
 
 			if (selectedBuildingNode == null) {
-				selectedBuildingNode = buildingNodes.get(0);
+				selectedBuildingNode = templateBuildingNodes.get(0);
 				buildingsNode.attachChild(selectedBuildingNode);
 			}
 
@@ -400,26 +396,19 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 		
 		if (currentPath != null) {
-			List<Geometry> boundingVolumes = getFighterNodeBoundingVolumes();
-			boundingVolumes.addAll(getBuildingNodeBoundingVolumes());
-			boundingVolumes.remove(selectedFighterNode.getBoundingVolume());
-			boundingVolumes.remove(getCurrentPathBoxGeometry());
+			List<NecromundaNode> otherNodes = new ArrayList<NecromundaNode>(); 
+			otherNodes.addAll(getFighterNodes());
+			otherNodes.addAll(getBuildingNodes());
+			otherNodes.remove(selectedFighterNode);
+			otherNodes.remove(currentPathNode);
 			
-			if (!intersect(getCurrentPathBoxGeometry(), boundingVolumes) && !intersect(selectedFighterNode.getBoundingVolume(), boundingVolumes)) {
-				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.5f), 0.5f));
+			if (!intersect(currentPathNode, otherNodes) && !intersect(selectedFighterNode, otherNodes)) {
+				currentPathNode.setMaterial(materialFactory.createTransparentColourMaterial(new ColorRGBA(0.5f, 0.5f, 0.5f, 0.5f), 0.5f));
 			}
 			else {
-				getCurrentPathBoxGeometry().setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Red, 0.5f));
+				currentPathNode.setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Red, 0.5f));
 			}
 		}
-	}
-
-	private Node getCurrentPathBoxNode() {
-		return (Node) rootNode.getChild("currentPathBoxNode");
-	}
-
-	private Geometry getCurrentPathBoxGeometry() {
-		return (Geometry) getCurrentPathBoxNode().getChild("pathBoxGeometry");
 	}
 
 	private void updateModels() {
@@ -523,10 +512,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	public Node getBuildingsNode() {
 		return (Node) rootNode.getChild("buildingsNode");
-	}
-
-	public Node getBuildingsBoundsNode() {
-		return (Node) rootNode.getChild("buildingsBoundsNode");
 	}
 
 	private Node getTableNode() {
@@ -684,13 +669,10 @@ public class Necromunda3dProvider extends SimpleApplication {
 		}
 
 		BuildingNode buildingNode = selectedBuildingNode.clone(false);
-		Node boundsNode = (Node) buildingNode.getChild("bounds");
 
 		buildingNode.setLocalTranslation(nearestIntersection);
-		boundsNode.setLocalTransform(buildingNode.getLocalTransform());
 
 		buildingsNode.attachChild(buildingNode);
-		buildingsBoundsNode.attachChild(boundsNode);
 	}
 
 	private void skipBuilding() {
@@ -702,8 +684,8 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		buildingsNode.detachChild(selectedBuildingNode);
 
-		if (!buildingNodes.isEmpty()) {
-			selectedBuildingNode = buildingNodes.next();
+		if (!templateBuildingNodes.isEmpty()) {
+			selectedBuildingNode = templateBuildingNodes.next();
 		}
 		
 		selectedBuildingNode.setLocalTranslation(nearestIntersection);
@@ -808,7 +790,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		 * rootNode.attachChild(geometry); }
 		 */
 
-		if ((contactPoint != null) && (selectedFighterNode != null) && hasValidPosition(selectedFighterNode.getBoundingVolume())) {
+		if ((contactPoint != null) && (selectedFighterNode != null) && hasValidPosition(selectedFighterNode)) {
 			game.getDeployQueue().remove(selectedFighterNode.getFighter());
 			
 			if (!game.getDeployQueue().isEmpty()) {
@@ -826,12 +808,13 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void move() {
-		List<Geometry> boundingVolumes = getFighterNodeBoundingVolumes();
-		boundingVolumes.addAll(getBuildingNodeBoundingVolumes());
-		boundingVolumes.remove(selectedFighterNode.getBoundingVolume());
-		boundingVolumes.remove(getCurrentPathBoxGeometry());
+		List<NecromundaNode> otherNodes = new ArrayList<NecromundaNode>();
+		otherNodes.addAll(getFighterNodes());
+		otherNodes.addAll(getBuildingNodes());
+		otherNodes.remove(selectedFighterNode);
+		otherNodes.remove(currentPathNode);
 		
-		if (!intersect(selectedFighterNode.getBoundingVolume(), boundingVolumes) && !intersect(getCurrentPathBoxGeometry(), boundingVolumes)) {
+		if (!intersect(selectedFighterNode, otherNodes) && !intersect(currentPathNode, otherNodes)) {
 			if (selectedFighterNode.getFighter().isGoingToRun()) {
 				List<FighterNode> fighterNodes = getHostileFighterNodes(getFighterNodes());
 				fighterNodes = getFighterNodesWithinDistance(selectedFighterNode, fighterNodes, Necromunda.RUN_SPOT_DISTANCE);
@@ -851,7 +834,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 	}
 
 	private void climb() {
-		if (hasValidPosition(selectedFighterNode.getBoundingVolume())) {
+		if (hasValidPosition(selectedFighterNode)) {
 			if (currentClimbPath.getLength() <= selectedFighterNode.getFighter().getRemainingMovement()) {
 				commitClimb();
 			}
@@ -884,7 +867,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	private boolean isHideable(FighterNode fighterNode) {
 		List<Collidable> collidables = getTemplateBoundingVolumes();
-		collidables.add(getBuildingsBoundsNode());
+		collidables.addAll(getBuildingBoundingVolumes());
 
 		boolean hideable = true;
 
@@ -1029,11 +1012,12 @@ public class Necromunda3dProvider extends SimpleApplication {
 			selectedFighterNode.setLocalTranslation(currentClimbPath.getStart());
 		}
 
-		if (getCurrentPathBoxNode() != null) {
-			rootNode.detachChild(getCurrentPathBoxNode());
+		if (currentPathNode != null) {
+			rootNode.detachChild(currentPathNode);
 		}
 
 		currentPath = null;
+		currentPathNode = null;
 	}
 
 	private void abortClimbing() {
@@ -1102,7 +1086,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	private void revealHiddenFighters() {
 		List<Collidable> collidables = getTemplateBoundingVolumes();
-		collidables.add(getBuildingsBoundsNode());
+		collidables.addAll(getBuildingBoundingVolumes());
 
 		List<FighterNode> hostileFighterNodes = getHostileFighterNodes(getFighterNodes());
 
@@ -1202,24 +1186,19 @@ public class Necromunda3dProvider extends SimpleApplication {
 		fighterNode.setBaseMaterial(baseMaterial);
 	}
 
-	private boolean hasValidPosition(Geometry boundingVolume) {
-		List<Geometry> boundingVolumes = getFighterNodeBoundingVolumes();
-		boundingVolumes.addAll(getBuildingNodeBoundingVolumes());
-		boundingVolumes.remove(boundingVolume);
+	private boolean hasValidPosition(NecromundaNode node) {
+		List<NecromundaNode> otherNodes = new ArrayList<NecromundaNode>();
+		otherNodes.add(node);
+		otherNodes.addAll(getBuildingNodes());
+		otherNodes.add(node);
 		
-		for (Geometry otherBoundingVolume : boundingVolumes) {
-			if (Utils.intersect(boundingVolume, otherBoundingVolume)) {
-				System.out.println("Position invalid...");
-				return false;
-			}
-		}
-		
-		return true;
+		return intersect(node, otherNodes);
 	}
 	
-	private boolean intersect(Geometry boundingVolume, List<Geometry> boundingVolumes) {
-		for (Geometry otherBoundingVolume : boundingVolumes) {
-			if (Utils.intersect(boundingVolume, otherBoundingVolume)) {
+	private boolean intersect(NecromundaNode node, List<NecromundaNode> otherNodes) {
+		for (NecromundaNode otherNode : otherNodes) {
+			if (Utils.intersect(node, otherNode)) {
+				System.out.println("Position invalid...");
 				return true;
 			}
 		}
@@ -1227,29 +1206,28 @@ public class Necromunda3dProvider extends SimpleApplication {
 		return false;
 	}
 	
-	private List<Geometry> getFighterNodeBoundingVolumes() {
+	public List<Geometry> getBuildingBoundingVolumes() {
 		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
 		
-		for (FighterNode fighterNode : getFighterNodes()) {
-			boundingVolumes.add(fighterNode.getBoundingVolume());
+		for (Spatial spatial : getBuildingsNode().getChildren()) {
+			NecromundaNode buildingNode = (NecromundaNode) spatial;
+			boundingVolumes.addAll(buildingNode.getBoundingVolumes());
 		}
 		
 		return boundingVolumes;
 	}
 	
-	private List<Geometry> getBuildingNodeBoundingVolumes() {
-		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
+	private List<BuildingNode> getBuildingNodes() {
+		List<BuildingNode> buildingNodes = new ArrayList<BuildingNode>();
 		
-		for (Spatial buildingBoundsNodeSpatial : getBuildingsBoundsNode().getChildren()) {
-			Node buildingBoundsNode = (Node) buildingBoundsNodeSpatial;
-
-			for (Spatial boundingVolumeSpatial : buildingBoundsNode.getChildren()) {
-				Geometry boundingVolume = (Geometry) boundingVolumeSpatial;
-				boundingVolumes.add(boundingVolume);
+		for (Spatial child : getBuildingsNode().getChildren()) {
+			if (child instanceof BuildingNode) {
+				BuildingNode buildingNode = (BuildingNode)child;
+				buildingNodes.add(buildingNode);
 			}
 		}
 		
-		return boundingVolumes;
+		return buildingNodes;
 	}
 
 	private void moveAlongPath(FighterNode fighterNode, Vector3f endPosition) {
@@ -1346,7 +1324,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 	private Vector3f getSceneryCollisionPoint() {
 		List<Collidable> collidables = new ArrayList<Collidable>();
 		collidables.add(getTableNode());
-		collidables.add(getBuildingsBoundsNode());
+		collidables.addAll(getBuildingBoundingVolumes());
 		CollisionResult closestCollision = Utils.getClosestCollision(cam.getLocation(), cam.getDirection(), collidables);
 
 		if ((closestCollision != null)
@@ -1788,19 +1766,19 @@ public class Necromunda3dProvider extends SimpleApplication {
 	private void updateCurrentPathBox() {
 		rootNode.detachChildNamed("currentPathBoxNode");
 
-		Node currentPathBoxNode = getPathBoxNode(currentPath.getOrigin(), currentPath.getDirection(), selectedFighterNode);
-		currentPathBoxNode.setName("currentPathBoxNode");
-		rootNode.attachChild(currentPathBoxNode);
+		currentPathNode = getPathBoxNode(currentPath.getOrigin(), currentPath.getDirection(), selectedFighterNode);
+		currentPathNode.setName("currentPathBoxNode");
+		rootNode.attachChild(currentPathNode);
 
 		selectedFighterNode.setLocalTranslation(currentPath.getDirection());
 	}
 
-	private Node getPathBoxNode(Vector3f start, Vector3f end, FighterNode fighterNode) {
+	private PathNode getPathBoxNode(Vector3f start, Vector3f end, FighterNode fighterNode) {
 		Line path = new Line(start, end);
 		Vector3f halfExtents = getPathHalfExtents(fighterNode, path);
 		Geometry pathBoxGeometry = getPathBoxGeometry(halfExtents);
 
-		Node pathBoxNode = new Node("pathBoxNode");
+		PathNode pathBoxNode = new PathNode("pathBoxNode");
 		pathBoxNode.attachChild(pathBoxGeometry);
 
 		Vector3f translation = path.getOrigin().add(path.getVector().mult(0.5f)).addLocal(selectedFighterNode.getLocalCenter());
@@ -1954,7 +1932,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		List<FighterNode> visibleFighterNodes = new ArrayList<FighterNode>();
 
 		List<Collidable> collidables = getTemplateBoundingVolumes();
-		collidables.add(getBuildingsBoundsNode());
+		collidables.addAll(getBuildingBoundingVolumes());
 
 		for (FighterNode fighterNode : fighterNodes) {
 			VisibilityInfo visibilityInfo = getVisibilityInfo(source, fighterNode.getCollisionShapePointCloud(), collidables);
@@ -2019,13 +1997,9 @@ public class Necromunda3dProvider extends SimpleApplication {
 		List<FighterNode> fighterNodesUnderTemplate = new ArrayList<FighterNode>();
 
 		for (FighterNode fighterNode : fighterNodes) {
-			Geometry fighterBoundingBox = fighterNode.getBoundingVolume();
-
-			for (Geometry templateBoundingBox : templateNode.getBoundingVolumes()) {
-				if (Utils.intersect(fighterBoundingBox, templateBoundingBox)) {
-					fighterNodesUnderTemplate.add(fighterNode);
-					break;
-				}
+			if (Utils.intersect(fighterNode, templateNode)) {
+				fighterNodesUnderTemplate.add(fighterNode);
+				break;
 			}
 		}
 

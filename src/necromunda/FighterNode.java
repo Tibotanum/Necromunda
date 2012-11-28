@@ -24,7 +24,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 
-public class FighterNode extends Node {
+public class FighterNode extends Node implements NecromundaNode {
 	
 	private final static float SYMBOL_HEIGHT = 2;
 	private Fighter fighter;
@@ -192,5 +192,11 @@ public class FighterNode extends Node {
 
 	public void setFighter(Fighter fighter) {
 		this.fighter = fighter;
+	}
+
+	public List<Geometry> getBoundingVolumes() {
+		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
+		boundingVolumes.add(getBoundingVolume());
+		return boundingVolumes;
 	}
 }
