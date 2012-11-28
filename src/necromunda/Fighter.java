@@ -509,7 +509,7 @@ public abstract class Fighter implements Serializable {
 		 * runSpotDistanceBetweenPositions) { return false; } }
 		 */
 
-		if (!this.canMove || !this.canRun || !state.equals(State.NORMAL)) {
+		if (!this.canMove || getRemainingMovement() == 0 || !this.canRun || !state.equals(State.NORMAL)) {
 			return false;
 		}
 		else {
