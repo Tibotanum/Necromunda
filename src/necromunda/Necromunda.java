@@ -25,6 +25,8 @@ public class Necromunda extends Observable {
 	public static Necromunda game;
 	private static String statusMessage;
 	
+	private boolean debug;
+	
 	private CyclicList<Gang> gangs;
 	private List<Building> buildings;
 	private CyclicList<Fighter> deployQueue;
@@ -54,6 +56,12 @@ public class Necromunda extends Observable {
 	 */
 	public static void main(String[] args) {
 		Necromunda game = Necromunda.getInstance();
+		
+		for (String arg : args) {
+			if (arg.equals("-debug")) {
+				game.setDebug(true);
+			}
+		}
 	}
 	
 	public Necromunda() {
@@ -303,5 +311,13 @@ public class Necromunda extends Observable {
 
 	public Map<String, String> getTerrainTextureMap() {
 		return terrainTextureMap;
+	}
+
+	public boolean isDebug() {
+		return debug;
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 }

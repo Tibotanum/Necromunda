@@ -9,7 +9,7 @@ import java.util.Set;
 
 import com.jme3.scene.*;
 
-public class BuildingNode extends Node implements NecromundaNode {
+public class BuildingNode extends NecromundaNode {
 	public BuildingNode(String name) {
 		super(name);
 	}
@@ -58,6 +58,14 @@ public class BuildingNode extends Node implements NecromundaNode {
 		}
 		
 		return ladderNodes;
+	}
+
+	@Override
+	public List<Spatial> getVisualSpatials() {
+		List<Spatial> spatials = new ArrayList<Spatial>();
+		spatials.addAll(getChildren());
+		spatials.remove(getChild("bounds"));
+		return spatials;
 	}
 
 	public List<Geometry> getBoundingVolumes() {

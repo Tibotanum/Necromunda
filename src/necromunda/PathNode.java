@@ -5,7 +5,7 @@ import java.util.*;
 import com.jme3.material.Material;
 import com.jme3.scene.*;
 
-public class PathNode extends Node implements NecromundaNode {
+public class PathNode extends NecromundaNode {
 	public PathNode(String name) {
 		super(name);
 	}
@@ -20,5 +20,12 @@ public class PathNode extends Node implements NecromundaNode {
 		Geometry boundingVolume = (Geometry)getChild("pathBoxGeometry");
 		boundingVolumes.add(boundingVolume);
 		return boundingVolumes;
+	}
+
+	@Override
+	public List<Spatial> getVisualSpatials() {
+		List<Spatial> spatials = new ArrayList<Spatial>();
+		spatials.add(getChild("pathBoxGeometry"));
+		return spatials;
 	}
 }

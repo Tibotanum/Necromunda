@@ -24,7 +24,7 @@ import com.jme3.scene.shape.Quad;
 import com.jme3.texture.Image;
 import com.jme3.texture.Texture;
 
-public class FighterNode extends Node implements NecromundaNode {
+public class FighterNode extends NecromundaNode {
 	
 	private final static float SYMBOL_HEIGHT = 2;
 	private Fighter fighter;
@@ -64,13 +64,6 @@ public class FighterNode extends Node implements NecromundaNode {
 
 		attachChild(roundBase);
 		attachChild(figureNode);
-
-		/*MyBox boundingBox = new MyBox(fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f, fighter.getBaseRadius());
-		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingBox);
-		boundingVolumeGeometry.setMaterial(materialFactory.createColourMaterial(ColorRGBA.Red));
-		boundingVolumeGeometry.setCullHint(CullHint.Always);
-		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
-		attachChild(boundingVolumeGeometry);*/
 		
 		Cylinder boundingVolume = new Cylinder(4, 10, fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f * 2, true, false);
 		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);
@@ -192,6 +185,14 @@ public class FighterNode extends Node implements NecromundaNode {
 
 	public void setFighter(Fighter fighter) {
 		this.fighter = fighter;
+	}
+	
+	@Override
+	public List<Spatial> getVisualSpatials() {
+		List<Spatial> spatials = new ArrayList<Spatial>();
+		spatials.add(getChild("base"));
+		spatials.add(getChild("figureNode"));
+		return spatials;
 	}
 
 	public List<Geometry> getBoundingVolumes() {

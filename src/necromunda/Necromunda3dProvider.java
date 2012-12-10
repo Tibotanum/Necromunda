@@ -196,8 +196,14 @@ public class Necromunda3dProvider extends SimpleApplication {
 		buildingsNode.setShadowMode(ShadowMode.CastAndReceive);
 		rootNode.attachChild(buildingsNode);
 
-		setDisplayFps(true);
-		setDisplayStatView(false);
+		if (game.isDebug()) {
+			setDisplayFps(true);
+			setDisplayStatView(true);
+		}
+		else {
+			setDisplayFps(false);
+			setDisplayStatView(false);
+		}
 
 		DirectionalLight sun = new DirectionalLight();
 		sun.setDirection(lightDirection);
@@ -267,6 +273,12 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		for (Building building : buildings) {
 			BuildingNode buildingNode = createBuildingNode(building);
+			
+			if (game.isDebug()) {
+				buildingNode.displayBoundingVolumes(true);
+				buildingNode.displayVisualSpatials(false);
+			}
+			
 			buildingNodes.add(buildingNode);
 		}
 
@@ -295,7 +307,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 			for (Spatial spatial : bound.getChildren()) {
 				boundsNode.attachChild((Geometry) spatial);
-				spatial.setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Blue, 0));
+				spatial.setMaterial(materialFactory.createTransparentColourMaterial(ColorRGBA.Blue, 1));
 			}
 		}
 		
@@ -703,7 +715,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		
 		selectedBuildingNode = null;
 		
-		if (PHYSICS_DEBUG_ENABLED) {
+		if (game.isDebug()) {
 			createLadderLines();
 		}
 
@@ -755,6 +767,11 @@ public class Necromunda3dProvider extends SimpleApplication {
 		Fighter fighter = game.getDeployQueue().current();
 		
 		selectedFighterNode = new FighterNode("fighterNode", fighter, materialFactory, baseFactory);
+		
+		if (game.isDebug()) {
+			selectedFighterNode.displayVisualSpatials(false);
+			selectedFighterNode.displayBoundingVolumes(true);
+		}
 		
 		for (Weapon weapon : selectedFighterNode.getFighter().getWeapons()) {
 			RangeCombatWeapon rangeCombatWeapon = (RangeCombatWeapon)weapon;
@@ -1668,7 +1685,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		removeTemplates();
 		moveTemplates();
 		applyTemplateEffects();
-		removeTemplateTrails();
+		//removeTemplateTrails();
 	}
 
 	private void removeTemplates() {
@@ -1852,8 +1869,13 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 		if (line != null) {
 			if (currentTemplateNode == null) {
-				currentTemplateNode = TemplateNode.createTemplateNode(assetManager, getSelectedRangeCombatWeapon()
+				currentTemplateNode = TemplateNode.createTemplateNode(assetManager, selectedFighterNode, getSelectedRangeCombatWeapon()
 						.getCurrentAmmunition());
+				
+				if (game.isDebug()) {
+					currentTemplateNode.displayVisualSpatials(false);
+					currentTemplateNode.displayBoundingVolumes(true);
+				}
 			}
 			else if (!nodesToBeRemoved.contains(currentTemplateNode)) {
 				rootNode.detachChild(currentTemplateNode);
@@ -1999,7 +2021,6 @@ public class Necromunda3dProvider extends SimpleApplication {
 		for (FighterNode fighterNode : fighterNodes) {
 			if (Utils.intersect(fighterNode, templateNode)) {
 				fighterNodesUnderTemplate.add(fighterNode);
-				break;
 			}
 		}
 

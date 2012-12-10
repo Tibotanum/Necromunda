@@ -1,8 +1,7 @@
 package necromunda;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import weapons.Ammunition;
 
@@ -18,78 +17,74 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue.Bucket;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.*;
 import com.jme3.scene.shape.*;
 
-public class TemplateNode extends Node implements NecromundaNode {
-	private static float TRAIL_STEPWIDTH = 1.0f;
-	
+public class TemplateNode extends NecromundaNode {
 	private Ammunition ammunition;
-	private List<Geometry> spheres;
-	private List<Geometry> boundingVolumes;
+	public List<Geometry> spheres = new ArrayList<Geometry>();
+	public List<Geometry> boundingVolumes = new ArrayList<Geometry>();
 	private ColorRGBA color;
 	
 	private TemplateNode(String name, Ammunition ammunition) {
 		super(name);
 		this.ammunition = ammunition;
-		spheres = new ArrayList<Geometry>();
-		boundingVolumes = new ArrayList<Geometry>();
 	}
 	
-	public static TemplateNode createTemplateNode(AssetManager assetManager, Ammunition ammunition) {
+	public static TemplateNode createTemplateNode(AssetManager assetManager, FighterNode fighterNode, Ammunition ammunition) {
 		TemplateNode templateNode = new TemplateNode("templateNode", ammunition);
-		
-		List<Geometry> spheres = new ArrayList<Geometry>();
-		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
+		Material material = createTemplateMaterial(assetManager, ammunition.getTemplateColor());
 
 		if (ammunition.getTemplateLength() == 0) {
 			Sphere sphere = new Sphere(10, 10, ammunition.getTemplateRadius());
 			Geometry geometry = new Geometry("sphere", sphere);
-			spheres.add(geometry);
+			geometry.setMaterial(material);
+			//geometry.setCullHint(CullHint.Always);
+			geometry.setQueueBucket(Bucket.Transparent);
+			templateNode.attachChild(geometry);
+			templateNode.spheres.add(geometry);
 			
 			Sphere boundingVolume = new Sphere(4, 10, ammunition.getTemplateRadius());
-			Geometry boundingVolumeGeometry = new Geometry("boundingBox", boundingVolume);
-			boundingVolumes.add(boundingVolumeGeometry);
+			Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);			
+			boundingVolumeGeometry.setMaterial(material);
+			boundingVolumeGeometry.setQueueBucket(Bucket.Transparent);
+			boundingVolumeGeometry.setCullHint(CullHint.Always);
+			templateNode.attachChild(boundingVolumeGeometry);
+			templateNode.boundingVolumes.add(boundingVolumeGeometry);
 		}
 		else {
-			float radiusToLengthRatio = ammunition.getTemplateRadius() / ammunition.getTemplateLength();
+			float offset = ammunition.getTemplateLength();
 			
-			for (int i = 1; i <= ammunition.getTemplateLength(); i++) {
-				float currentRadiusToLengthRatio = radiusToLengthRatio * i;
-				
-				Vector3f vector = Vector3f.UNIT_X.mult(i);
-				
-				Sphere sphere = new Sphere(10, 10, currentRadiusToLengthRatio);
-				Geometry geometry = new Geometry("sphere", sphere);
-				spheres.add(geometry);
-				geometry.setLocalTranslation(vector);
-				
-				Sphere boundingVolume = new Sphere(4, 10, currentRadiusToLengthRatio);
-				Geometry boundingVolumeGeometry = new Geometry("boundingBox", boundingVolume);
-				boundingVolumes.add(boundingVolumeGeometry);
-				boundingVolumeGeometry.setLocalTranslation(vector);
+			if (fighterNode != null) {
+				offset += fighterNode.getFighter().getBaseRadius();
 			}
-		}
-		
-		Material material = createTemplateMaterial(assetManager, ammunition.getTemplateColor());
-		
-		for (Geometry geometry : spheres) {
+			
+			Sphere sphere = new Sphere(10, 10, ammunition.getTemplateRadius());
+			List<Vector3f> vectors = Utils.getPoints(sphere);
+			vectors.add(Vector3f.UNIT_X.mult(-ammunition.getTemplateLength()));
+			
+			Mesh mesh = Utils.convexHull(vectors);
+			
+			Geometry geometry = new Geometry("mesh", mesh);
+			geometry.setLocalTranslation(Vector3f.UNIT_X.mult(offset));
 			geometry.setMaterial(material);
-			geometry.setQueueBucket(Bucket.Transparent);
-			templateNode.attachChild(geometry);
-		}
-		
-		for (Geometry geometry : boundingVolumes) {
-			geometry.setMaterial(material);
-			geometry.setQueueBucket(Bucket.Transparent);
 			//geometry.setCullHint(CullHint.Always);
+			geometry.setQueueBucket(Bucket.Transparent);
 			templateNode.attachChild(geometry);
+			
+			Sphere sphere2 = new Sphere(4, 10, ammunition.getTemplateRadius());
+			List<Vector3f> vectors2 = Utils.getPoints(sphere2);			
+			vectors2.add(Vector3f.UNIT_X.mult(-ammunition.getTemplateLength()));
+			
+			Mesh boundingVolume = Utils.convexHull(vectors2);
+			
+			Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);
+			boundingVolumeGeometry.setLocalTranslation(Vector3f.UNIT_X.mult(offset));
+			boundingVolumeGeometry.setMaterial(material);
+			boundingVolumeGeometry.setQueueBucket(Bucket.Transparent);
+			boundingVolumeGeometry.setCullHint(CullHint.Always);
+			templateNode.attachChild(boundingVolumeGeometry);
 		}
-		
-		templateNode.setSpheres(spheres);
-		templateNode.setBoundingVolumes(boundingVolumes);
 		
 		return templateNode;
 	}
@@ -166,22 +161,16 @@ public class TemplateNode extends Node implements NecromundaNode {
 		float radius = ammunition.getTemplateRadius();
 		
 		Vector3f nodeToEndVector = end.subtract(getLocalTranslation());
-		float distance = nodeToEndVector.length();
-		Vector3f vector = nodeToEndVector.normalize();
+			
+		Sphere sphere = new Sphere(10, 10, radius);
+		Geometry geometry = new Geometry("sphere", sphere);
+		spheres.add(geometry);
+		geometry.setLocalTranslation(nodeToEndVector);
 		
-		for (float i = distance; i > 0; i -= TRAIL_STEPWIDTH) {
-			Vector3f tempVector = vector.mult(i);
-			
-			Sphere sphere = new Sphere(10, 10, radius);
-			Geometry geometry = new Geometry("sphere", sphere);
-			spheres.add(geometry);
-			geometry.setLocalTranslation(tempVector);
-			
-			MyBox boundingBox = new MyBox(radius, radius, radius);
-			Geometry boundingBoxGeometry = new Geometry("boundingBox", boundingBox);
-			boundingVolumes.add(boundingBoxGeometry);
-			boundingBoxGeometry.setLocalTranslation(tempVector);
-		}
+		Sphere boundingVolume = new Sphere(4, 10, radius);
+		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);
+		boundingVolumes.add(boundingVolumeGeometry);
+		boundingVolumeGeometry.setLocalTranslation(nodeToEndVector);
 		
 		updateGeometry();
 	}
@@ -191,9 +180,9 @@ public class TemplateNode extends Node implements NecromundaNode {
 		spheres.clear();
 		spheres.add(firstSphere);
 		
-		Geometry firstBoundingBox = boundingVolumes.get(0);
+		Geometry firstBoundingVolume = boundingVolumes.get(0);
 		boundingVolumes.clear();
-		boundingVolumes.add(firstBoundingBox);
+		boundingVolumes.add(firstBoundingVolume);
 		
 		updateGeometry();
 	}
@@ -204,36 +193,32 @@ public class TemplateNode extends Node implements NecromundaNode {
 		
 		detachAllChildren();
 		
+		List<Vector3f> points = new ArrayList<Vector3f>();
+		
 		for (Geometry geometry : spheres) {
-			geometry.setMaterial(material);
-			geometry.setQueueBucket(Bucket.Transparent);
-			attachChild(geometry);
+			points.addAll(Utils.getPoints(geometry));
 		}
+		
+		List<Vector3f> boundingVolumePoints = new ArrayList<Vector3f>();
 		
 		for (Geometry geometry : boundingVolumes) {
-			geometry.setMaterial(material);
-			geometry.setQueueBucket(Bucket.Transparent);
-			//geometry.setCullHint(CullHint.Always);
-			attachChild(geometry);
+			boundingVolumePoints.addAll(Utils.getPoints(geometry));		
 		}
 		
+		Mesh trail = Utils.convexHull(points);
+		Geometry trailGeometry = new Geometry("trail", trail);
+		trailGeometry.setMaterial(material);
+		trailGeometry.setQueueBucket(Bucket.Transparent);
+		attachChild(trailGeometry);
+		
+		Mesh boundingVolumeTrail = Utils.convexHull(boundingVolumePoints);
+		Geometry boundingVolumeTrailGeometry = new Geometry("boundingVolume", boundingVolumeTrail);
+		boundingVolumeTrailGeometry.setMaterial(material);
+		boundingVolumeTrailGeometry.setQueueBucket(Bucket.Transparent);
+		boundingVolumeTrailGeometry.setCullHint(CullHint.Always);
+		attachChild(boundingVolumeTrailGeometry);
+		
 		setTransformRefresh();
-	}
-
-	public List<Geometry> getSpheres() {
-		return spheres;
-	}
-
-	public void setSpheres(List<Geometry> spheres) {
-		this.spheres = spheres;
-	}
-
-	public List<Geometry> getBoundingVolumes() {
-		return boundingVolumes;
-	}
-
-	public void setBoundingVolumes(List<Geometry> boundingVolumes) {
-		this.boundingVolumes = boundingVolumes;
 	}
 
 	public ColorRGBA getColor() {
@@ -266,5 +251,36 @@ public class TemplateNode extends Node implements NecromundaNode {
 	
 	public boolean isTemplateMoving() {
 		return ammunition.isTemplateMoving();
+	}
+
+	@Override
+	public List<Spatial> getVisualSpatials() {
+		List<Spatial> spatials = new ArrayList<Spatial>();
+		
+		Spatial sphere = getChild("sphere");
+		Spatial mesh = getChild("mesh");
+		
+		if (sphere != null) {
+			spatials.add(sphere);
+		}
+		
+		if (mesh != null) {
+			spatials.add(mesh);
+		}
+		
+		return spatials;
+	}
+
+	public List<Geometry> getBoundingVolumes() {
+		List<Geometry> boundingVolumes = new ArrayList<Geometry>();
+		
+		for (Spatial spatial : getChildren()) {
+			if ((spatial instanceof Geometry) && (spatial.getName().equals("boundingVolume"))) {
+				Geometry boundingVolume = (Geometry)spatial;
+				boundingVolumes.add(boundingVolume);
+			}
+		}
+		
+		return boundingVolumes;
 	}
 }

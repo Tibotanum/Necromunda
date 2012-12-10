@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+import quickhull3d.*;
+
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.collision.Collidable;
 import com.jme3.collision.CollisionResult;
@@ -91,6 +93,85 @@ public class Utils {
 		return results.getClosestCollision();
 	}
 	
+	public static List<Vector3f> getPoints(Mesh mesh) {
+		List<Vector3f> points = new ArrayList<Vector3f>();
+		VertexBuffer positionBuffer = mesh.getBuffer(VertexBuffer.Type.Position);
+		
+		for (int i = 0; i < positionBuffer.getNumElements(); i++) {
+			float x = (Float)positionBuffer.getElementComponent(i, 0);
+			float y = (Float)positionBuffer.getElementComponent(i, 1);
+			float z = (Float)positionBuffer.getElementComponent(i, 2);
+			
+			points.add(new Vector3f(x, y, z));
+		}
+		
+		return points;
+	}
+	
+	public static List<Vector3f> getPoints(Geometry geometry) {
+		List<Vector3f> points = Utils.getPoints(geometry.getMesh());
+		
+		for (Vector3f point : points) {
+			point.addLocal(geometry.getLocalTranslation());
+		}
+		
+		return points;
+	}
+	
+	public static Mesh convexHull(List<Vector3f> points) {
+		Point3d[] convertedPoints = convertPoints(points);
+		
+		QuickHull3D hull = new QuickHull3D(convertedPoints);
+		hull.triangulate();
+		
+		Mesh mesh = new Mesh();
+		
+		ShortBuffer sib = BufferUtils.createShortBuffer(hull.getNumFaces() * 3);
+		FloatBuffer fnb = BufferUtils.createVector3Buffer(hull.getNumVertices());
+		FloatBuffer fpb = BufferUtils.createVector3Buffer(hull.getNumVertices());
+		
+		int[][] hullFaces = hull.getFaces();
+		
+		for (int i = 0; i < hullFaces.length; i++) {
+			sib.put((short)hullFaces[i][0]);
+			sib.put((short)hullFaces[i][1]);
+			sib.put((short)hullFaces[i][2]);
+		}
+		
+		Point3d[] hullPoints = hull.getVertices();
+		
+		for (Point3d hullPoint : hullPoints) {
+			Vector3f vector = new Vector3f((float)hullPoint.x, (float)hullPoint.y, (float)hullPoint.z).normalize();
+			
+			fnb.put(vector.x);
+			fnb.put(vector.y);
+			fnb.put(vector.z);
+			
+			fpb.put((float)hullPoint.x);
+			fpb.put((float)hullPoint.y);
+			fpb.put((float)hullPoint.z);
+		}
+		
+		mesh.setBuffer(Type.Index, 3, sib);
+		mesh.setBuffer(Type.Normal, 3, fnb);
+		mesh.setBuffer(Type.Position, 3, fpb);
+		
+		mesh.updateBound();
+		
+		return mesh;
+	}
+	
+	private static Point3d[] convertPoints(List<Vector3f> points) {
+		Point3d[] convertedPoints = new Point3d[points.size()];
+		
+		for (int i = 0; i < convertedPoints.length; i++) {
+			Vector3f point = points.get(i);
+			convertedPoints[i] = new Point3d(point.x, point.y, point.z);
+		}
+		
+		return convertedPoints;
+	}
+	
 	public static boolean intersect(NecromundaNode node1, NecromundaNode node2) {
 		for (Geometry geometry1 : node1.getBoundingVolumes()) {
 			for (Geometry geometry2 : node2.getBoundingVolumes()) {
@@ -112,14 +193,6 @@ public class Utils {
 		
 		List<Vector3f> points1 = points(mesh1);
 		List<Vector3f> points2 = points(mesh2);
-		
-		/*for (Vector3f point : points1) {
-			System.out.println(point);
-		}*/
-		
-		/*for (Vector3f point : points2) {
-			System.out.println(point);
-		}*/
 		
 		for (int i = 0; i < mesh1.getTriangleCount(); i++) {
 			Triangle triangle = new Triangle();
