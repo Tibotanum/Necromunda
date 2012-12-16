@@ -1206,11 +1206,11 @@ public class Necromunda3dProvider extends SimpleApplication {
 
 	private boolean hasValidPosition(NecromundaNode node) {
 		List<NecromundaNode> otherNodes = new ArrayList<NecromundaNode>();
-		otherNodes.add(node);
 		otherNodes.addAll(getBuildingNodes());
-		otherNodes.add(node);
+		otherNodes.addAll(getFighterNodes());
+		otherNodes.remove(node);
 		
-		return intersect(node, otherNodes);
+		return !intersect(node, otherNodes);
 	}
 	
 	private boolean intersect(NecromundaNode node, List<NecromundaNode> otherNodes) {
