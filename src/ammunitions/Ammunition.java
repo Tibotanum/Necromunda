@@ -1,9 +1,13 @@
-package weapons;
+package ammunitions;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+
+import javax.swing.JButton;
+
+import weapons.RangeCombatWeapon;
 
 import com.jme3.math.ColorRGBA;
 
@@ -39,9 +43,14 @@ public abstract class Ammunition implements Serializable {
 	private ShotHandler shotHandler;
 	
 	public Ammunition() {
+		this(null);
+	}
+	
+	public Ammunition(RangeCombatWeapon weapon) {
 		targeted = true;
 		additionalTargetRange = 0;
 		templateColor = new Color(1.0f, 0.5f, 0f, 0.5f);
+		this.weapon = weapon;
 		
 		setShotHandler(new SingleShotHandler(new StandardShotHandler(null)));
 	}

@@ -3,7 +3,8 @@ package necromunda;
 import java.awt.Color;
 import java.util.*;
 
-import weapons.Ammunition;
+
+import ammunitions.Ammunition;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bounding.BoundingSphere;

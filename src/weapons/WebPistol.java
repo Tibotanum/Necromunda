@@ -1,5 +1,6 @@
 package weapons;
 
+import ammunitions.WebPistolAmmunition;
 import necromunda.Fighter;
 import necromunda.Necromunda;
 
@@ -8,11 +9,10 @@ public class WebPistol extends RangeCombatWeapon {
 		setName("Web Pistol");
 		setRangeCombatWeaponType(RangeCombatWeaponType.PISTOL);
 		setCost(134);
-	}
-	
-	@Override
-	public void addAmmunitions() {
-		getAmmunitions().add(new WebPistolAmmunition());
+		
+		getAmmunitions().add(new WebPistolAmmunition(this));
+		
+		setCurrentAmmunition(getAmmunitions().get(0));
 	}
 	
 	public static void dealWebDamage(Fighter fighter) {
@@ -31,42 +31,5 @@ public class WebPistol extends RangeCombatWeapon {
 		}
 		
 		fighter.getProfile().setCurrentWounds(remainingWounds);
-	}
-
-	private class WebPistolAmmunition extends Ammunition {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = 8735765701503759368L;
-
-		public WebPistolAmmunition() {
-			setStrength(0);
-			setDamage(0);
-			setArmorSaveModification(0);
-			setRangeShortLowerBound(0);
-			setRangeShortUpperBound(4);
-			setRangeLongLowerBound(4);
-			setRangeLongUpperBound(8);
-			setHitRollModificationShort(0);
-			setHitRollModificationLong(-1);
-			setAmmoRoll(6);
-			setCost(0);
-		}
-		
-		@Override
-		public boolean dealDamageTo(Fighter... fighters) {
-			for (Fighter fighter : fighters) {
-				fighter.setWebbed(true);
-				Necromunda.appendToStatusMessage(String.format("%s has been webbed.", fighter));
-			}
-			
-			return true;
-		}
-		
-		@Override
-		public void explode() {
-			getOwner().setWebbed(true);
-			Necromunda.appendToStatusMessage(String.format("%s has been webbed by his own weapon.", getOwner()));
-		}
 	}
 }

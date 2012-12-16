@@ -1,9 +1,11 @@
-package weapons;
+package ammunitions;
 
+import weapons.RangeCombatWeapon;
 import necromunda.Necromunda;
 
 public class GrenadesAmmunition extends Ammunition {
-	public GrenadesAmmunition() {
+	public GrenadesAmmunition(RangeCombatWeapon weapon) {
+		super(weapon);
 		setScattering(true);
 	}
 	

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import ammunitions.Ammunition;
+
 import necromunda.*;
 import necromunda.Fighter.State;
 
@@ -19,27 +21,27 @@ public abstract class RangeCombatWeapon extends Weapon {
 	private boolean moveOrFire;
 	private List<Ammunition> ammunitions;
 	private Ammunition currentAmmunition;
+	private int turnCounter = 0;
 	
 	public RangeCombatWeapon() {
-		ammunitions = new ArrayList<Ammunition>();		
-		addAmmunitions();
-		setAmmunitionProperties();
-	}
-	
-	public abstract void addAmmunitions();
-	
-	public void setAmmunitionProperties() {	
-		setCurrentAmmunition(getAmmunitions().get(0));
-		
-		for (Ammunition ammunition : getAmmunitions()) {
-			ammunition.setWeapon(this);
-		}
+		ammunitions = new ArrayList<Ammunition>();
 	}
 
 	@Override
 	public void reset() {
 		for (Ammunition ammunition : getAmmunitions()) {
 			ammunition.reset();
+		}
+		
+		if (turnCounter > 0) {
+			turnCounter--;
+		}
+		
+		if (turnCounter == 0) {
+			setEnabled(true);
+		}
+		else {
+			setEnabled(false);
 		}
 	}
 
@@ -181,5 +183,13 @@ public abstract class RangeCombatWeapon extends Weapon {
 	@Override
 	public String getDamageText() {
 		return currentAmmunition.getDamageText();
+	}
+
+	public int getTurnCounter() {
+		return turnCounter;
+	}
+
+	public void setTurnCounter(int turnCounter) {
+		this.turnCounter = turnCounter;
 	}
 }

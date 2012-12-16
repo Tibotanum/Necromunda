@@ -16,6 +16,7 @@ import necromunda.Fighter.State;
 import necromunda.MaterialFactory.MaterialIdentifier;
 import weapons.*;
 
+import ammunitions.Ammunition;
 import appstate.*;
 
 import com.jme3.app.*;

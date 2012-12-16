@@ -1,49 +1,16 @@
 package weapons;
 
-import necromunda.Utils;
+import ammunitions.MeltaGunAmmunition;
+
 
 public class MeltaGun extends RangeCombatWeapon {
 	public MeltaGun() {
 		setName("Melta-Gun");
 		setRangeCombatWeaponType(RangeCombatWeaponType.SPECIAL);
 		setCost(95);
-	}
-	
-	@Override
-	public void addAmmunitions() {
-		getAmmunitions().add(new MeltaGunAmmunition());
-	}
-
-	private class MeltaGunAmmunition extends Ammunition {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -8876412069246242754L;
-
-		public MeltaGunAmmunition() {
-			setStrength(8);
-			setDamage(0);
-			setArmorSaveModification(-4);
-			setRangeShortLowerBound(0);
-			setRangeShortUpperBound(6);
-			setRangeLongLowerBound(6);
-			setRangeLongUpperBound(12);
-			setHitRollModificationShort(1);
-			setHitRollModificationLong(0);
-			setAmmoRoll(4);
-			setCost(0);
-		}
 		
-		@Override
-		public String getDamageText() {
-			return "D6";
-		}
+		getAmmunitions().add(new MeltaGunAmmunition(this));
 		
-		@Override
-		public int getDamage() {
-			int damage = Utils.rollD6();
-
-			return damage;
-		}
+		setCurrentAmmunition(getAmmunitions().get(0));
 	}
 }

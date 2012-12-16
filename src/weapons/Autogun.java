@@ -1,15 +1,16 @@
 package weapons;
 
+import ammunitions.Ammunition;
+
 public class Autogun extends RangeCombatWeapon {
 	public Autogun() {
 		setName("Autogun");
 		setRangeCombatWeaponType(RangeCombatWeaponType.BASIC);
 		setCost(20);
-	}
-	
-	@Override
-	public void addAmmunitions() {
-		getAmmunitions().add(new AutogunAmmunition());		
+		
+		getAmmunitions().add(new AutogunAmmunition(this));
+		
+		setCurrentAmmunition(getAmmunitions().get(0));
 	}
 	
 	private class AutogunAmmunition extends Ammunition {
@@ -18,7 +19,8 @@ public class Autogun extends RangeCombatWeapon {
 		 */
 		private static final long serialVersionUID = -2513570087094030686L;
 
-		public AutogunAmmunition() {
+		public AutogunAmmunition(RangeCombatWeapon weapon) {
+			super(weapon);
 			setStrength(3);
 			setDamage(1);
 			setArmorSaveModification(0);
