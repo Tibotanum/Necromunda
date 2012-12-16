@@ -61,9 +61,13 @@ public class FighterNode extends NecromundaNode {
 		Node figureNode = new Node("figureNode");
 		figureNode.attachChild(figure);
 		figureNode.addControl(billboardControl);
-
-		attachChild(roundBase);
-		attachChild(figureNode);
+		
+		Node geometryNode = new Node("geometryNode");
+		
+		geometryNode.attachChild(roundBase);
+		geometryNode.attachChild(figureNode);
+		
+		attachChild(geometryNode);
 		
 		Cylinder boundingVolume = new Cylinder(4, 10, fighter.getBaseRadius(), fighter.getBaseRadius() * 1.5f * 2, true, false);
 		Geometry boundingVolumeGeometry = new Geometry("boundingVolume", boundingVolume);
@@ -71,7 +75,11 @@ public class FighterNode extends NecromundaNode {
 		boundingVolumeGeometry.setCullHint(CullHint.Always);
 		boundingVolumeGeometry.setLocalTranslation(0, fighter.getBaseRadius() * 1.5f, 0);
 		boundingVolumeGeometry.rotate(FastMath.HALF_PI, 0, 0);
-		attachChild(boundingVolumeGeometry);
+		
+		Node boundingVolumeNode = new Node("boundingVolumeNode");
+		boundingVolumeNode.attachChild(boundingVolumeGeometry);
+		
+		attachChild(boundingVolumeNode);
 	}
 	
 	public void addSymbol(Material material) {
@@ -190,8 +198,7 @@ public class FighterNode extends NecromundaNode {
 	@Override
 	public List<Spatial> getVisualSpatials() {
 		List<Spatial> spatials = new ArrayList<Spatial>();
-		spatials.add(getChild("base"));
-		spatials.add(getChild("figureNode"));
+		spatials.add(getChild("geometryNode"));
 		return spatials;
 	}
 
