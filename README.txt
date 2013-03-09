@@ -36,9 +36,56 @@ This is an unofficial implementation of Necromunda. The copyright of Necromunda 
 
 The BSD License for the included jMonkeyEngine libraries is held in "jMonkeyBSDLicense.txt".
 
-Developer notice
-----------------
-To get the project started you need the jMonkeyPlatform libraries on your classpath. You can get them on "http://jmonkeyengine.com".
+Eclipse Setup
+-------------
+First you have to download and install the newest version of the jME3 SDK from "http://jmonkeyengine.org/downloads".
+Next you have to download the Quickhull 3D library from "http://www.cs.ubc.ca/~lloyd/java/quickhull3d.html". Choose the JAR file download.
+
+Clone the project from "https://github.com/Tibotanum/Necromunda.git".
+
+Start Eclipse.
+Select "File - New - Java Project".
+Deselect "Use default location".
+Click "Browse".
+Select the folder of the cloned project.
+Select "Use default location".
+Click "Next".
+Select the "Source" tab.
+Select "assets".
+Click "Add folder 'assets' to build path".
+Click "Finish".
+Right-click on the project in the Package Explorer.
+Select "Properties".
+Select the "Libraries" tab.
+Select "Add library...".
+Select "User Library".
+Click "Next".
+Select "User Libraries...".
+Select "New...".
+Enter "jME3" as the name.
+Click "OK".
+Select the new library.
+Click "Add External JARs...".
+Navigate to your jME installation folder.
+Navigate to the "lib" folder.
+Select all JARs within this folder.
+Click "Open".
+Click "OK".
+Tick the newly created user library.
+Click "Finish".
+Click "OK".
+
+Put the "quickhull3d.jar" into the "lib" folder of the project.
+Right-click on the project in the Package Explorer.
+Select "Properties".
+Select the "Libraries" tab.
+Select "Add JARs...".
+Navigate to the "lib" folder of the project.
+Select "quickhull3d.jar".
+Click "OK".
+Click "OK".
+
+The project is set up now. The main class is in "Necromunda.java". Just open this class and select "Run".
 
 Contributors
 ------------
