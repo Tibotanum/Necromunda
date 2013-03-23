@@ -974,7 +974,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 		List<Collidable> collidables = new ArrayList<Collidable>();
 
 		for (FighterNode fighterNode : getFighterNodes()) {
-			collidables.add(fighterNode.getBoundingVolume());
+			collidables.addAll(fighterNode.getBoundingVolumes());
 		}
 
 		CollisionResult closestCollision = Utils.getClosestCollision(cam.getLocation(), cam.getDirection(), collidables);
