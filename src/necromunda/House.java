@@ -9,7 +9,8 @@ public enum House {
 	CAWDOR("Cawdor"),
 	BOUNTY_HUNTERS("Bounty Hunters"),
 	REDEMPTIONISTS("Redemptionists"),
-	SCAVVIES("Scavvies");
+	SCAVVIES("Scavvies"),
+	RATSKINS("Ratskins");
 	
 	private String literal;
 	

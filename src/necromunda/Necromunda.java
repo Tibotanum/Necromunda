@@ -105,6 +105,8 @@ public class Necromunda extends Observable {
 		building.put("MineEntrance");
 		buildings.add(building);*/
 		
+		//options
+		
 		building = new Building();
 		building.putModel("LargeTower", "Tower");
 		building.putBounds("LargeTowerBounds01");
@@ -192,7 +194,11 @@ public class Necromunda extends Observable {
 		map.put("Grass", "Grass.tgr");
 		map.put("Toxic Ash", "ToxicAsh.tgr");
 		map.put("Dark Ash", "DarkAsh.tgr");
-		
+		map.put("Ash Waste", "AshWaste.tgr");
+		map.put("Scorched Earth", "ScorchedAsh.tgr");
+		/*map.put("Rust Dunes", "RedDunes.tgr");*/
+		map.put("Acid Dunes", "GreenDunes.tgr");
+				
 		return map;
 	}
 	

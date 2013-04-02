@@ -13,7 +13,7 @@ public abstract class RangeCombatWeapon extends Weapon {
 	public static float MINIMUM_TEMPLATE_SIZE = 0.01f;
 
 	public enum RangeCombatWeaponType {
-		PISTOL, BASIC, SPECIAL, HEAVY, GRENADE
+		PISTOL, BASIC, SPECIAL, HEAVY, GRENADE, SCALY
 	}
 
 	private RangeCombatWeaponType rangeCombatWeaponType;

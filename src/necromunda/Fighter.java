@@ -44,7 +44,19 @@ public abstract class Fighter implements Serializable {
 		BOUNTY_HUNTER("Bounty Hunter", BountyHunter.class),
 		SCAVVY_LEADER("Scavvy Leader", ScavvyBoss.class),
 		SCAVVY("Scavvy", Scavvy.class),
-		SCALEY("Scaley", Scaley.class);
+		SCALY("Scaly", ScavvyScaly.class),
+		SCAVVY_ZOMBIE("Scavvy Zombie", ScavvyZombie.class),
+		SCAVVY_GHOUL("Scavvy Ghoul", ScavvyGhoul.class),
+		SCAVVY_DOG("Scavvy Dog", ScavvyDog.class),
+		PRIEST("Priest", RedemptionistPriest.class),
+		CRUSADER("Crusader", RedemptionistCrusader.class),
+		ZEALOT("Zealot", RedemptionistZealot.class),
+		DEACON("Deacon", RedemptionistDeacon.class),
+		DEVOTEE("Devotee", RedemptionistDevotee.class),
+		CHIEF("Chief", RatskinChief.class),
+		RATSKIN("Ratskin", Ratskin.class),
+		BRAVE("Brave", RatskinBrave.class),
+		WARRIOR("Totem Warrior", RatskinTotemWarrior.class);
 
 		private String literal;
 		private Class<? extends Fighter> associatedClass;
@@ -112,8 +124,45 @@ public abstract class Fighter implements Serializable {
 			case SCAVVY:
 				fighter = new Scavvy(name, new ScavvyProfile(), ownGang);
 				break;
-			case SCALEY:
-				fighter = new Scaley(name, new ScavvyProfile(), ownGang);
+			case SCALY:
+				fighter = new ScavvyScaly(name, new ScavvyScalyProfile(), ownGang);
+				break;
+			case SCAVVY_ZOMBIE:
+				fighter = new ScavvyZombie(name, new ScavvyZombieProfile(), ownGang);
+				break;
+			case SCAVVY_GHOUL:
+				fighter = new ScavvyGhoul(name, new ScavvyGhoulProfile(), ownGang);
+				break;
+			case SCAVVY_DOG:
+				fighter = new ScavvyDog(name, new ScavvyDogProfile(), ownGang);
+				break;
+			case PRIEST:
+				fighter = new RedemptionistPriest(name, new RedemptionistPriestProfile(), ownGang);
+				break;
+			case CRUSADER:
+				fighter = new RedemptionistCrusader(name, new RedemptionistCrusaderProfile(), ownGang);
+				break;
+			case ZEALOT:
+				fighter = new RedemptionistZealot(name, new RedemptionistZealotProfile(), ownGang);
+				break;
+			case DEACON:
+				fighter = new RedemptionistDeacon(name, new RedemptionistDeaconProfile(), ownGang);
+				break;
+			case DEVOTEE:
+				fighter = new RedemptionistDevotee(name, new RedemptionistDevoteeProfile(), ownGang);
+				break;
+			case CHIEF:
+				fighter = new RatskinChief(name, new RatskinChiefProfile(), ownGang);
+				break;
+			case RATSKIN:
+				fighter = new Ratskin(name, new RatskinProfile(), ownGang);
+				break;
+			case BRAVE:
+				fighter = new RatskinBrave(name, new RatskinBraveProfile(), ownGang);
+				break;
+			case WARRIOR:
+				fighter = new RatskinTotemWarrior(name, new RatskinTotemWarriorProfile(), ownGang);
+				break;
 		}
 
 		return fighter;
@@ -286,7 +335,7 @@ public abstract class Fighter implements Serializable {
 			setRemainingMovement(0);
 		}
 		else {
-			setRemainingMovement(profile.getMovement());
+			setRemainingMovement(profile.getCurrentMovement());
 		}
 	}
 

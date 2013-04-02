@@ -2,7 +2,7 @@
 #BeginNodes 1
 601 211
 engine.graphics.synthesis.texture.PatternPerlinNoise
-ExportName "DiffuseMap" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 3 0.4117647 0.54509807 0.003921569 1.0 0.0 0.5921569 0.8235294 0.19215687 1.0 0.531401 0.7137255 1.0 0.28627452 1.0 1.0 ScaleX 1000.0 ScaleY 1000.0 ValueScale 1.0 Persistence 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
+ExportName "DiffuseMap" Transformation 1.0 0.0 0.0 0.0 1.0 0.0 0.0 0.0 1.0 Color_Mapping 3 0.4117647 0.54509807 0.003921569 1.0 0.0 0.5921569 0.8235294 0.19215687 1.0 0.531401 0.7137255 1.0 0.28627452 1.0 1.0 ScaleX 400.0 ScaleY 400.0 ValueScale 0.9 Persistence 0.5 StartBand 1 EndBand 8 Seed -1 Periodic true endparameters
 #EndNodes
 #BeginConnections 0
 #EndConnections
