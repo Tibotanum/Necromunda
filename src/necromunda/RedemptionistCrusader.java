@@ -5,8 +5,8 @@ public class RedemptionistCrusader extends Fighter {
 		return new RedemptionistCrusaderProfile();
 	}
 	
-	public RedemptionistCrusader(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public RedemptionistCrusader(String name, Gang ownGang) {
+		super(name, new RedemptionistCrusaderProfile(), ownGang);
 		setCost(50);
 	}
 }

@@ -5,8 +5,8 @@ public class Ganger extends Fighter {
 		return new GangerProfile();
 	}
 	
-	public Ganger(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public Ganger(String name, Gang ownGang) {
+		super(name, new GangerProfile(), ownGang);
 		setCost(50);
 	}
 }

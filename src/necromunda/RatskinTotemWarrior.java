@@ -5,8 +5,8 @@ public class RatskinTotemWarrior extends Fighter {
 		return new RatskinTotemWarriorProfile();
 	}
 	
-	public RatskinTotemWarrior(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public RatskinTotemWarrior(String name, Gang ownGang) {
+		super(name, new RatskinTotemWarriorProfile(), ownGang);
 		setCost(60);
 	}
 }

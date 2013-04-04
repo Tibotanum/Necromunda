@@ -7,8 +7,8 @@ public class ScavvyZombie extends Fighter {
 		return new ScavvyZombieProfile();
 	}
 	
-	public ScavvyZombie(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public ScavvyZombie(String name, Gang ownGang) {
+		super(name, new ScavvyZombieProfile(), ownGang);
 		setCost(0);
 	}
 

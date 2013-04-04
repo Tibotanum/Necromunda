@@ -5,8 +5,8 @@ public class RatskinBrave extends Fighter {
 		return new RatskinBraveProfile();
 	}
 	
-	public RatskinBrave(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public RatskinBrave(String name, Gang ownGang) {
+		super(name, new RatskinBraveProfile(), ownGang);
 		setCost(25);
 	}
 

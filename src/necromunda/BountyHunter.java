@@ -5,8 +5,8 @@ public class BountyHunter extends Fighter {
 		return new BountyHunterProfile();
 	}
 	
-	public BountyHunter(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public BountyHunter(String name, Gang ownGang) {
+		super(name, new BountyHunterProfile(), ownGang);
 		setCost(175);
 	}
 }

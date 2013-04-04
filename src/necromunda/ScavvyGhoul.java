@@ -5,8 +5,8 @@ public class ScavvyGhoul extends Fighter {
 		return new ScavvyGhoulProfile();
 	}
 	
-	public ScavvyGhoul(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public ScavvyGhoul(String name, Gang ownGang) {
+		super(name, new ScavvyGhoulProfile(), ownGang);
 		setCost(0);
 	}
 }

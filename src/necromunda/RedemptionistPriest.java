@@ -5,8 +5,8 @@ public class RedemptionistPriest extends Fighter {
 		return new RedemptionistPriestProfile();
 	}
 	
-	public RedemptionistPriest(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public RedemptionistPriest(String name, Gang ownGang) {
+		super(name, new RedemptionistPriestProfile(), ownGang);
 		setCost(160);
 	}
 }

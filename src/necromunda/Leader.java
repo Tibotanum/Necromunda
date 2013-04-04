@@ -5,8 +5,8 @@ public class Leader extends Fighter {
 		return new LeaderProfile();
 	}
 	
-	public Leader(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public Leader(String name, Gang ownGang) {
+		super(name, new LeaderProfile(), ownGang);
 		setCost(120);
 	}
 }

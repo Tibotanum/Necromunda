@@ -5,8 +5,8 @@ public class Juve extends Fighter {
 		return new JuveProfile();
 	}
 	
-	public Juve(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public Juve(String name, Gang ownGang) {
+		super(name, new JuveProfile(), ownGang);
 		setCost(25);
 	}
 

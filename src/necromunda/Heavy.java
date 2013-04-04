@@ -5,8 +5,8 @@ public class Heavy extends Fighter {
 		return new HeavyProfile();
 	}
 	
-	public Heavy(String name, FighterProfile profile, Gang ownGang) {
-		super(name, profile, ownGang);
+	public Heavy(String name, Gang ownGang) {
+		super(name, new HeavyProfile(), ownGang);
 		setCost(60);
 	}
 }

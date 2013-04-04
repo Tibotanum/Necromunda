@@ -196,21 +196,21 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 				Fighter.Type.BOUNTY_HUNTER));
 
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistPriest01.png", 85, 118, House.REDEMPTIONISTS,
-				Fighter.Type.PRIEST));
+				Fighter.Type.REDEMPTIONIST_PRIEST));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader01.png", 43, 124, House.REDEMPTIONISTS,
-				Fighter.Type.CRUSADER));
+				Fighter.Type.REDEMPTIONIST_CRUSADER));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader02.png", 14, 120, House.REDEMPTIONISTS,
-				Fighter.Type.CRUSADER));
+				Fighter.Type.REDEMPTIONIST_CRUSADER));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader03.png", 0, 120, House.REDEMPTIONISTS,
-				Fighter.Type.CRUSADER));
+				Fighter.Type.REDEMPTIONIST_CRUSADER));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistZealot01.png", 0, 120, House.REDEMPTIONISTS,
-				Fighter.Type.ZEALOT));
+				Fighter.Type.REDEMPTIONIST_ZEALOT));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDeacon01.png", 0, 124, House.REDEMPTIONISTS,
-				Fighter.Type.DEACON));
+				Fighter.Type.REDEMPTIONIST_DEACON));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDevotee01.png", 0, 120, House.REDEMPTIONISTS,
-				Fighter.Type.DEVOTEE));
+				Fighter.Type.REDEMTIONIST_DEVOTEE));
 		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDevotee02.png", 0, 124, House.REDEMPTIONISTS,
-				Fighter.Type.DEVOTEE));
+				Fighter.Type.REDEMTIONIST_DEVOTEE));
 		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.REDEMPTIONISTS,
 				Fighter.Type.BOUNTY_HUNTER));
 
@@ -226,7 +226,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.SCAVVIES,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinChief01.png", 0, 130, House.RATSKINS, Fighter.Type.CHIEF));
+		basedModelImages.add(new BasedModelImage(basePath + "RatskinChief01.png", 0, 130, House.RATSKINS, Fighter.Type.RATSKIN_CHIEF));
 		basedModelImages
 				.add(new BasedModelImage(basePath + "RatskinRatskin01.png", 46, 126, House.RATSKINS, Fighter.Type.RATSKIN));
 		basedModelImages
@@ -236,9 +236,9 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		basedModelImages
 				.add(new BasedModelImage(basePath + "RatskinRatskin04.png", 0, 127, House.RATSKINS, Fighter.Type.RATSKIN));
 		basedModelImages.add(new BasedModelImage(basePath + "RatskinTotemWarrior01.png", 43, 122, House.RATSKINS,
-				Fighter.Type.WARRIOR));
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave01.png", 13, 127, House.RATSKINS, Fighter.Type.BRAVE));
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave02.png", 0, 122, House.RATSKINS, Fighter.Type.BRAVE));
+				Fighter.Type.RATSKIN_WARRIOR));
+		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave01.png", 13, 127, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
+		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave02.png", 0, 122, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
 		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.RATSKINS,
 				Fighter.Type.BOUNTY_HUNTER));
 
