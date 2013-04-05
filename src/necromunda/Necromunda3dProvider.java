@@ -907,7 +907,7 @@ public class Necromunda3dProvider extends SimpleApplication {
                 commitClimb();
             }
             else {
-                Necromunda.setStatusMessage("This ganger cannot climb that far.");
+                Necromunda.setStatusMessage("This fighter cannot climb that far.");
             }
         }
         else {
@@ -917,7 +917,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
     private void hide() {
         if (selectedFighterNode.getFighter().hasRun()) {
-            Necromunda.setStatusMessage("This ganger cannot hide as he has run this turn.");
+            Necromunda.setStatusMessage("This fighter cannot hide as he has run this turn.");
             return;
         }
 
@@ -1508,7 +1508,7 @@ public class Necromunda3dProvider extends SimpleApplication {
             if ((selectionMode == SelectionMode.SELECT) && isMemberOfCurrentGang(selectedFighterNode)) {
                 if (name.equals("Break") && game.getPhase().equals(Phase.MOVEMENT)) {
                     if (selectedFighter.isPinned()) {
-                        Necromunda.setStatusMessage("This ganger cannot break the web.");
+                        Necromunda.setStatusMessage("This fighter cannot break the web.");
                     }
                     else {
                         selectedFighter.breakWeb();
@@ -1524,7 +1524,7 @@ public class Necromunda3dProvider extends SimpleApplication {
                         setUpMovement();
                     }
                     else {
-                        Necromunda.setStatusMessage("This ganger cannot move.");
+                        Necromunda.setStatusMessage("This fighter cannot move.");
                     }
                 }
                 else if (name.equals("Run") && game.getPhase().equals(Phase.MOVEMENT)) {
@@ -1537,7 +1537,7 @@ public class Necromunda3dProvider extends SimpleApplication {
                         setUpMovement();
                     }
                     else {
-                        Necromunda.setStatusMessage("This ganger cannot run.");
+                        Necromunda.setStatusMessage("This fighter cannot run.");
                     }
                 }
                 else if (name.equals("Hide") && game.getPhase().equals(Phase.MOVEMENT)) {
@@ -1571,11 +1571,11 @@ public class Necromunda3dProvider extends SimpleApplication {
                             }
                         }
                         else {
-                            Necromunda.setStatusMessage("This ganger has no weapons.");
+                            Necromunda.setStatusMessage("This fighter has no weapons.");
                         }
                     }
                     else {
-                        Necromunda.setStatusMessage("This ganger cannot shoot.");
+                        Necromunda.setStatusMessage("This fighter cannot shoot.");
                     }
                 }
                 else if (name.equals("Cycle")) {
@@ -1585,7 +1585,7 @@ public class Necromunda3dProvider extends SimpleApplication {
                         selectedFighter.setSelectedRangeCombatWeapon((RangeCombatWeapon) weapons.next());
                     }
                     else {
-                        Necromunda.setStatusMessage("This ganger has no weapons.");
+                        Necromunda.setStatusMessage("This fighter has no weapons.");
                     }
                 }
                 else if (name.equals("Mode")) {
@@ -1995,7 +1995,7 @@ public class Necromunda3dProvider extends SimpleApplication {
         for (FighterNode fighterNode : fighterNodes) {
             Fighter fighter = fighterNode.getFighter();
 
-            if (game.getHostileGangers().contains(fighter)) {
+            if (game.getHostileFighters().contains(fighter)) {
                 hostileFighterNodes.add(fighterNode);
             }
         }

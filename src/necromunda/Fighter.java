@@ -312,14 +312,14 @@ public abstract class Fighter implements Serializable {
 
 			if ((webRoll + getStrength()) >= 9) {
 				setWebbed(false);
-				Necromunda.appendToStatusMessage("This ganger has broken the web.");
+				Necromunda.appendToStatusMessage("This fighter has broken the web.");
 			}
 			else {
 				WebPistol.dealWebDamage(this);
 			}
 		}
 		else {
-			Necromunda.setStatusMessage("This ganger is not webbed.");
+			Necromunda.setStatusMessage("This fighter is not webbed.");
 		}
 	}
 
@@ -491,8 +491,8 @@ public abstract class Fighter implements Serializable {
 		return fighterImage;
 	}
 
-	public void setFighterImage(BasedModelImage gangerPicture) {
-		this.fighterImage = gangerPicture;
+	public void setFighterImage(BasedModelImage fighterImage) {
+		this.fighterImage = fighterImage;
 	}
 
 	public boolean isReliable() {

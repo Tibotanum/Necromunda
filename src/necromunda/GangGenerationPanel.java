@@ -1061,8 +1061,10 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
             Fighter newFighter = Fighter.createInstance(fighterType, name, selectedGang);
             
             String imageName = imageNames[Utils.rollD(imageNames.length) - 1];
+            
             ArrayList<BasedModelImage> basedModelImages = new ArrayList<BasedModelImage>(this.basedModelImages);
             basedModelImages.addAll(hiddenBasedModelImages);
+            
             BasedModelImage fighterImage = getImageByName(imageName, basedModelImages);
             newFighter.setFighterImage(fighterImage);
             addFighter(newFighter);

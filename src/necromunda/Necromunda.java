@@ -215,7 +215,7 @@ public class Necromunda extends Observable {
 		
 		JOptionPane.showMessageDialog(gangGenerationPanel, "This is an unofficial implementation of Necromunda.\n" +
 				" The copyright of Necromunda and all its related\n" +
-				" artwork including the ganger pictures contained\n" +
+				" artwork including the miniature images contained\n" +
 				" in this software is owned by Games Workshop Limited\n" +
 				" and is used without permission.");
 	}
@@ -307,8 +307,8 @@ public class Necromunda extends Observable {
 		Necromunda.statusMessage = String.format("%s%s%s", Necromunda.statusMessage, space, statusMessage);
 	}
 	
-	public List<Fighter> getHostileGangers() {
-		return currentGang.getHostileGangers(gangs);
+	public List<Fighter> getHostileFighters() {
+		return currentGang.getHostileFighters(gangs);
 	}
 
 	public List<Building> getBuildings() {

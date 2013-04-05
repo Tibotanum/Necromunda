@@ -38,24 +38,24 @@ public class Gang implements Serializable {
 		gangMembers = new HashSet<Fighter>();
 	}
 	
-	public List<Fighter> getHostileGangers(List<Gang> gangs) {
-		List<Fighter> hostileGangers = new ArrayList<Fighter>();
+	public List<Fighter> getHostileFighters(List<Gang> gangs) {
+		List<Fighter> hostileFighters = new ArrayList<Fighter>();
 		
 		for (Gang gang : gangs) {
 			if (gang != this) {
-				hostileGangers.addAll(gang.getGangMembers());
+				hostileFighters.addAll(gang.getGangMembers());
 			}
 		}
 		
-		return hostileGangers;
+		return hostileFighters;
 	}
 
-	public void addFighter(Fighter ganger) {
-		gangMembers.add(ganger);
+	public void addFighter(Fighter fighter) {
+		gangMembers.add(fighter);
 	}
 	
-	public void removeFighter(Fighter ganger) {
-		gangMembers.remove(ganger);
+	public void removeFighter(Fighter fighter) {
+		gangMembers.remove(fighter);
 	}
 	
 	public Set<Fighter> getGangMembers() {
@@ -82,14 +82,14 @@ public class Gang implements Serializable {
 	}
 	
 	public void turnStarted() {
-		for (Fighter ganger : gangMembers) {
-			ganger.turnStarted();
+		for (Fighter fighter : gangMembers) {
+			fighter.turnStarted();
 		}
 	}
 	
 	public void turnEnded() {
-		for (Fighter ganger : gangMembers) {
-			ganger.turnEnded();
+		for (Fighter fighter : gangMembers) {
+			fighter.turnEnded();
 		}
 	}
 
