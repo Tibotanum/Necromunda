@@ -90,6 +90,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 	private JSpinner fighterImageSpinner;
 
 	private List<BasedModelImage> basedModelImages;
+	private List<BasedModelImage> hiddenBasedModelImages;
 
 	public GangGenerationPanel(final Necromunda game) {
 		mainPanel = new JPanel();
@@ -101,6 +102,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		String basePath = "/Images/Textures/Fighters/";
 
 		basedModelImages = new ArrayList<BasedModelImage>();
+		hiddenBasedModelImages = new ArrayList<BasedModelImage>();
 
 		/*
 		 * The first number is the offset of the left base edge to the left edge
@@ -108,144 +110,161 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		 * pixels. This is for scaling the images correctly.
 		 */
 
-		basedModelImages.add(new BasedModelImage(basePath + "EscherBoss01.png", 33, 134, House.ESCHER, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger01.png", 9, 130, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger02.png", 2, 127, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger03.png", 17, 128, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger04.png", 0, 129, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger05.png", 0, 113, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger06.png", 32, 115, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger07.png", 0, 116, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger08.png", 30, 114, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherGanger09.png", 18, 115, House.ESCHER, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherHeavy01.png", 0, 129, House.ESCHER, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve01.png", 0, 128, House.ESCHER, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "EscherJuve02.png", 9, 131, House.ESCHER, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter02.png", 53, 173, House.ESCHER,
+		basedModelImages.add(new BasedModelImage(basePath, "EscherBoss01.png", 33, 134, House.ESCHER, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger01.png", 9, 130, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger02.png", 2, 127, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger03.png", 17, 128, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger04.png", 0, 129, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger05.png", 0, 113, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger06.png", 32, 115, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger07.png", 0, 116, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger08.png", 30, 114, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherGanger09.png", 18, 115, House.ESCHER, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherHeavy01.png", 0, 129, House.ESCHER, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherJuve01.png", 0, 128, House.ESCHER, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "EscherJuve02.png", 9, 131, House.ESCHER, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter02.png", 53, 173, House.ESCHER,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueBoss01.png", 0, 121, House.DELAQUE, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger01.png", 1, 125, House.DELAQUE, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger02.png", 1, 129, House.DELAQUE, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger03.png", 1, 123, House.DELAQUE, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueGanger04.png", 1, 123, House.DELAQUE, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy01.png", 1, 125, House.DELAQUE, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueHeavy02.png", 21, 114, House.DELAQUE, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve01.png", 34, 124, House.DELAQUE, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "DelaqueJuve02.png", 18, 122, House.DELAQUE, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.DELAQUE,
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueBoss01.png", 0, 121, House.DELAQUE, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueGanger01.png", 1, 125, House.DELAQUE, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueGanger02.png", 1, 129, House.DELAQUE, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueGanger03.png", 1, 123, House.DELAQUE, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueGanger04.png", 1, 123, House.DELAQUE, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueHeavy01.png", 1, 125, House.DELAQUE, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueHeavy02.png", 21, 114, House.DELAQUE, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueJuve01.png", 34, 124, House.DELAQUE, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "DelaqueJuve02.png", 18, 122, House.DELAQUE, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.DELAQUE,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss01.png", 47, 130, House.ORLOCK, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockBoss02.png", 100, 135, House.ORLOCK, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger01.png", 22, 142, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger02.png", 40, 140, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger03.png", 1, 133, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger04.png", 5, 130, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger05.png", 1, 136, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger06.png", 1, 135, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger07.png", 2, 134, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockGanger08.png", 30, 135, House.ORLOCK, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy01.png", 2, 143, House.ORLOCK, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy02.png", 3, 133, House.ORLOCK, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockHeavy03.png", 4, 141, House.ORLOCK, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve01.png", 44, 142, House.ORLOCK, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve02.png", 65, 122, House.ORLOCK, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve03.png", 12, 149, House.ORLOCK, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "OrlockJuve04.png", 0, 145, House.ORLOCK, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.ORLOCK,
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockBoss01.png", 47, 130, House.ORLOCK, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockBoss02.png", 100, 135, House.ORLOCK, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger01.png", 22, 142, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger02.png", 40, 140, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger03.png", 1, 133, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger04.png", 5, 130, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger05.png", 1, 136, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger06.png", 1, 135, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger07.png", 2, 134, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockGanger08.png", 30, 135, House.ORLOCK, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockHeavy01.png", 2, 143, House.ORLOCK, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockHeavy02.png", 3, 133, House.ORLOCK, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockHeavy03.png", 4, 141, House.ORLOCK, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockJuve01.png", 44, 142, House.ORLOCK, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockJuve02.png", 65, 122, House.ORLOCK, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockJuve03.png", 12, 149, House.ORLOCK, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "OrlockJuve04.png", 0, 145, House.ORLOCK, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.ORLOCK,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathBoss01.png", 38, 77, House.GOLIATH, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger01.png", 65, 125, House.GOLIATH, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger02.png", 5, 128, House.GOLIATH, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger03.png", 24, 78, House.GOLIATH, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathGanger04.png", 10, 75, House.GOLIATH, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathHeavy01.png", 10, 125, House.GOLIATH, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve01.png", 10, 123, House.GOLIATH, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve02.png", 39, 79, House.GOLIATH, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "GoliathJuve03.png", 2, 77, House.GOLIATH, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.GOLIATH,
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathBoss01.png", 38, 77, House.GOLIATH, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathGanger01.png", 65, 125, House.GOLIATH, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathGanger02.png", 5, 128, House.GOLIATH, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathGanger03.png", 24, 78, House.GOLIATH, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathGanger04.png", 10, 75, House.GOLIATH, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathHeavy01.png", 10, 125, House.GOLIATH, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathJuve01.png", 10, 123, House.GOLIATH, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathJuve02.png", 39, 79, House.GOLIATH, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "GoliathJuve03.png", 2, 77, House.GOLIATH, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.GOLIATH,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorBoss01.png", 20, 135, House.CAWDOR, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger01.png", 0, 127, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger02.png", 0, 125, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger03.png", 0, 135, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger04.png", 0, 135, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger05.png", 0, 120, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger06.png", 0, 110, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorGanger07.png", 0, 107, House.CAWDOR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorHeavy01.png", 5, 130, House.CAWDOR, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve01.png", 18, 132, House.CAWDOR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve02.png", 0, 130, House.CAWDOR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve03.png", 17, 119, House.CAWDOR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "CawdorJuve04.png", 0, 118, House.CAWDOR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.CAWDOR,
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorBoss01.png", 20, 135, House.CAWDOR, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger01.png", 0, 127, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger02.png", 0, 125, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger03.png", 0, 135, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger04.png", 0, 135, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger05.png", 0, 120, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger06.png", 0, 110, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorGanger07.png", 0, 107, House.CAWDOR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorHeavy01.png", 5, 130, House.CAWDOR, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorJuve01.png", 18, 132, House.CAWDOR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorJuve02.png", 0, 130, House.CAWDOR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorJuve03.png", 17, 119, House.CAWDOR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "CawdorJuve04.png", 0, 118, House.CAWDOR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.CAWDOR,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarBoss01.png", 19, 126, House.VAN_SAAR, Fighter.Type.LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger01.png", 0, 130, House.VAN_SAAR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger02.png", 0, 130, House.VAN_SAAR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger03.png", 0, 120, House.VAN_SAAR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarGanger04.png", 0, 125, House.VAN_SAAR, Fighter.Type.GANGER));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarHeavy01.png", 0, 131, House.VAN_SAAR, Fighter.Type.HEAVY));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve01.png", 15, 125, House.VAN_SAAR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "VanSaarJuve02.png", 20, 130, House.VAN_SAAR, Fighter.Type.JUVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.VAN_SAAR,
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarBoss01.png", 19, 126, House.VAN_SAAR, Fighter.Type.LEADER));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarGanger01.png", 0, 130, House.VAN_SAAR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarGanger02.png", 0, 130, House.VAN_SAAR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarGanger03.png", 0, 120, House.VAN_SAAR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarGanger04.png", 0, 125, House.VAN_SAAR, Fighter.Type.GANGER));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarHeavy01.png", 0, 131, House.VAN_SAAR, Fighter.Type.HEAVY));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarJuve01.png", 15, 125, House.VAN_SAAR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "VanSaarJuve02.png", 20, 130, House.VAN_SAAR, Fighter.Type.JUVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.VAN_SAAR,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistPriest01.png", 85, 118, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistPriest01.png", 85, 118, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_PRIEST));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader01.png", 43, 124, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistCrusader01.png", 43, 124, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_CRUSADER));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader02.png", 14, 120, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistCrusader02.png", 14, 120, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_CRUSADER));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistCrusader03.png", 0, 120, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistCrusader03.png", 0, 120, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_CRUSADER));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistZealot01.png", 0, 120, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistZealot01.png", 0, 120, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_ZEALOT));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDeacon01.png", 0, 124, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistDeacon01.png", 0, 124, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMPTIONIST_DEACON));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDevotee01.png", 0, 120, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistDevotee01.png", 0, 120, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMTIONIST_DEVOTEE));
-		basedModelImages.add(new BasedModelImage(basePath + "RedemptionistDevotee02.png", 0, 124, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "RedemptionistDevotee02.png", 0, 124, House.REDEMPTIONISTS,
 				Fighter.Type.REDEMTIONIST_DEVOTEE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.REDEMPTIONISTS,
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.REDEMPTIONISTS,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyBoss01.png", 61, 130, House.SCAVVIES,
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyBoss01.png", 61, 130, House.SCAVVIES,
 				Fighter.Type.SCAVVY_LEADER));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy01.png", 49, 123, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy02.png", 16, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy03.png", 66, 127, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy04.png", 0, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy05.png", 0, 123, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScavvy06.png", 0, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
-		basedModelImages.add(new BasedModelImage(basePath + "ScavvyScaly01.png", 9, 126, House.SCAVVIES, Fighter.Type.SCALY));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.SCAVVIES,
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy01.png", 49, 123, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy02.png", 16, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy03.png", 66, 127, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy04.png", 0, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy05.png", 0, 123, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScavvy06.png", 0, 125, House.SCAVVIES, Fighter.Type.SCAVVY));
+		basedModelImages.add(new BasedModelImage(basePath, "ScavvyScaly01.png", 9, 126, House.SCAVVIES, Fighter.Type.SCALY));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.SCAVVIES,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinChief01.png", 0, 130, House.RATSKINS, Fighter.Type.RATSKIN_CHIEF));
+		basedModelImages.add(new BasedModelImage(basePath, "RatskinChief01.png", 0, 130, House.RATSKINS, Fighter.Type.RATSKIN_CHIEF));
 		basedModelImages
-				.add(new BasedModelImage(basePath + "RatskinRatskin01.png", 46, 126, House.RATSKINS, Fighter.Type.RATSKIN));
+				.add(new BasedModelImage(basePath, "RatskinRatskin01.png", 46, 126, House.RATSKINS, Fighter.Type.RATSKIN));
 		basedModelImages
-				.add(new BasedModelImage(basePath + "RatskinRatskin02.png", 5, 121, House.RATSKINS, Fighter.Type.RATSKIN));
+				.add(new BasedModelImage(basePath, "RatskinRatskin02.png", 5, 121, House.RATSKINS, Fighter.Type.RATSKIN));
 		basedModelImages
-				.add(new BasedModelImage(basePath + "RatskinRatskin03.png", 0, 128, House.RATSKINS, Fighter.Type.RATSKIN));
+				.add(new BasedModelImage(basePath, "RatskinRatskin03.png", 0, 128, House.RATSKINS, Fighter.Type.RATSKIN));
 		basedModelImages
-				.add(new BasedModelImage(basePath + "RatskinRatskin04.png", 0, 127, House.RATSKINS, Fighter.Type.RATSKIN));
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinTotemWarrior01.png", 43, 122, House.RATSKINS,
+				.add(new BasedModelImage(basePath, "RatskinRatskin04.png", 0, 127, House.RATSKINS, Fighter.Type.RATSKIN));
+		basedModelImages.add(new BasedModelImage(basePath, "RatskinTotemWarrior01.png", 43, 122, House.RATSKINS,
 				Fighter.Type.RATSKIN_WARRIOR));
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave01.png", 13, 127, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
-		basedModelImages.add(new BasedModelImage(basePath + "RatskinBrave02.png", 0, 122, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.RATSKINS,
+		basedModelImages.add(new BasedModelImage(basePath, "RatskinBrave01.png", 13, 127, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
+		basedModelImages.add(new BasedModelImage(basePath, "RatskinBrave02.png", 0, 122, House.RATSKINS, Fighter.Type.RATSKIN_BRAVE));
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.RATSKINS,
 				Fighter.Type.BOUNTY_HUNTER));
 
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter01.png", 48, 196, House.BOUNTY_HUNTERS,
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter01.png", 48, 196, House.BOUNTY_HUNTERS,
 				Fighter.Type.BOUNTY_HUNTER));
-		basedModelImages.add(new BasedModelImage(basePath + "BountyHunter02.png", 53, 173, House.BOUNTY_HUNTERS,
+		basedModelImages.add(new BasedModelImage(basePath, "BountyHunter02.png", 53, 173, House.BOUNTY_HUNTERS,
 				Fighter.Type.BOUNTY_HUNTER));
+		
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
+                Fighter.Type.SCAVVY_ZOMBIE));
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyZombie02.png", 0, 160, House.SCAVVIES,
+                Fighter.Type.SCAVVY_ZOMBIE));
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyZombie03.png", 0, 160, House.SCAVVIES,
+                Fighter.Type.SCAVVY_ZOMBIE));
+		
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyDog01.png", 0, 192, House.SCAVVIES,
+                Fighter.Type.SCAVVY_DOG));
+		
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyGhoul01.png", 17, 160, House.SCAVVIES,
+                Fighter.Type.SCAVVY_GHOUL));
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyGhoul02.png", 5, 163, House.SCAVVIES,
+                Fighter.Type.SCAVVY_GHOUL));
+		hiddenBasedModelImages.add(new BasedModelImage(basePath, "ScavvyGhoul03.png", 0, 160, House.SCAVVIES,
+                Fighter.Type.SCAVVY_GHOUL));
 
 		gangNameLabel = new JLabel("Gang Name");
 		gangNameTextField = new JTextField();
@@ -672,7 +691,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 
 					addFighter(fighter);
 					
-					generateScavvyFollowers();
+					executePostCreationActions(fighter);
 					
 					updateGangRating();
 				}
@@ -1015,607 +1034,52 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		weaponProfileStringLabel.setText(selectedWeapon.getProfileString());
 	}
 
-	// Scavvy follower generation
-
-	public void generateScavvyFollowers() {
-		// If the model added is a Scavvy Boss then generate his wasteland
-		// followers.
-		// The code is placed here so that it only runs once when the Boss has
-		// been added to the roster
-		// and doesn't overwrite his stats.
-
-		Fighter.Type fighterType = (Fighter.Type) fighterTypeComboBox.getSelectedItem();
-
-		if (fighterType == Fighter.Type.SCAVVY_LEADER) {
-
+	public void executePostCreationActions(Fighter fighter) {
+		if (fighter instanceof ScavvyBoss) {
 			switch (Utils.rollD(3)) {
 			case 1:
-				switch (Utils.rollD(3)) {
-				case 1:
-					generateThreeZombies();
-					break;
-				case 2:
-					generateFourZombies();
-					break;
-				case 3:
-					generateFiveZombies();
-					break;
-				}
+				generateFighters(Utils.rollD(3) + 2, Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", "ScavvyZombie01.png", "ScavvyZombie02.png", "ScavvyZombie03.png");
 				break;
 			case 2:
-				switch (Utils.rollD(3)) {
-				case 1:
-					generateTwoDogs();
-					break;
-				case 2:
-					generateThreeDogs();
-					break;
-				case 3:
-					generateFourDogs();
-					break;
-				}
+			    generateFighters(Utils.rollD(3) + 1, Fighter.Type.SCAVVY_DOG, "Scavvy Dog", "ScavvyDog01.png");
 				break;
 			case 3:
-				switch (Utils.rollD(3)) {
-				case 1:
-					generateGhoul();
-					break;
-				case 2:
-					generateTwoGhouls();
-					break;
-				case 3:
-					generateThreeGhouls();
-					break;
-				}
+			    generateFighters(Utils.rollD(3), Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", "ScavvyGhoul01.png", "ScavvyGhoul02.png", "ScavvyGhoul03.png");
 				break;
 			}
 		}
+		else if (fighter instanceof BountyHunter) {
+		    BountyHunterProfile profile = (BountyHunterProfile)fighter.getProfile();
+		    profile.doAdvanceRolls();
+		}
 	}
-
-	// //Scavvy Zombies
-
-	public void generateThreeZombies() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage zombieImage01 = new BasedModelImage(basePath + "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage02 = new BasedModelImage(basePath + "ScavvyZombie02.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage03 = new BasedModelImage(basePath + "ScavvyZombie03.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-
-		Fighter zombie01 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie02 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie03 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-
-		FighterProfile zombieProfile01 = zombie01.getProfile();
-		FighterProfile zombieProfile02 = zombie02.getProfile();
-		FighterProfile zombieProfile03 = zombie03.getProfile();
-
-		zombieProfile01.setMovement(zombieProfile01.getMovement());
-		zombieProfile01.setWeaponSkill(zombieProfile01.getWeaponSkill());
-		zombieProfile01.setBallisticSkill(zombieProfile01.getBallisticSkill());
-		zombieProfile01.setStrength(zombieProfile01.getStrength());
-		zombieProfile01.setToughness(zombieProfile01.getToughness());
-		zombieProfile01.setWounds(zombieProfile01.getWounds());
-		zombieProfile01.setInitiative(zombieProfile01.getInitiative());
-		zombieProfile01.setAttacks(zombieProfile01.getAttacks());
-		zombieProfile01.setLeadership(zombieProfile01.getLeadership());
-
-		zombieProfile02.setMovement(zombieProfile02.getMovement());
-		zombieProfile02.setWeaponSkill(zombieProfile02.getWeaponSkill());
-		zombieProfile02.setBallisticSkill(zombieProfile02.getBallisticSkill());
-		zombieProfile02.setStrength(zombieProfile02.getStrength());
-		zombieProfile02.setToughness(zombieProfile02.getToughness());
-		zombieProfile02.setWounds(zombieProfile02.getWounds());
-		zombieProfile02.setInitiative(zombieProfile02.getInitiative());
-		zombieProfile02.setAttacks(zombieProfile02.getAttacks());
-		zombieProfile02.setLeadership(zombieProfile02.getLeadership());
-
-		zombieProfile03.setMovement(zombieProfile03.getMovement());
-		zombieProfile03.setWeaponSkill(zombieProfile03.getWeaponSkill());
-		zombieProfile03.setBallisticSkill(zombieProfile03.getBallisticSkill());
-		zombieProfile03.setStrength(zombieProfile03.getStrength());
-		zombieProfile03.setToughness(zombieProfile03.getToughness());
-		zombieProfile03.setWounds(zombieProfile03.getWounds());
-		zombieProfile03.setInitiative(zombieProfile03.getInitiative());
-		zombieProfile03.setAttacks(zombieProfile03.getAttacks());
-		zombieProfile03.setLeadership(zombieProfile03.getLeadership());
-
-		zombie01.setFighterImage(zombieImage01);
-		zombie02.setFighterImage(zombieImage02);
-		zombie03.setFighterImage(zombieImage03);
-
-		addFighter(zombie01);
-		addFighter(zombie02);
-		addFighter(zombie03);
+	
+	public void generateFighters(int number, Fighter.Type fighterType, String name, String ... imageNames) {
+        Gang selectedGang = (Gang) gangList.getSelectedValue();
+        
+        for (int i = 0; i < number; i++) {
+            Fighter newFighter = Fighter.createInstance(fighterType, name, selectedGang);
+            
+            String imageName = imageNames[Utils.rollD(imageNames.length) - 1];
+            ArrayList<BasedModelImage> basedModelImages = new ArrayList<BasedModelImage>(this.basedModelImages);
+            basedModelImages.addAll(hiddenBasedModelImages);
+            BasedModelImage fighterImage = getImageByName(imageName, basedModelImages);
+            newFighter.setFighterImage(fighterImage);
+            addFighter(newFighter);
+        }
 	}
-
-	public void generateFourZombies() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage zombieImage01 = new BasedModelImage(basePath + "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage02 = new BasedModelImage(basePath + "ScavvyZombie02.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage03 = new BasedModelImage(basePath + "ScavvyZombie03.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage04 = new BasedModelImage(basePath + "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-
-		Fighter zombie01 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie02 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie03 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie04 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-
-		FighterProfile zombieProfile01 = zombie01.getProfile();
-		FighterProfile zombieProfile02 = zombie02.getProfile();
-		FighterProfile zombieProfile03 = zombie03.getProfile();
-		FighterProfile zombieProfile04 = zombie04.getProfile();
-
-		zombieProfile01.setMovement(zombieProfile01.getMovement());
-		zombieProfile01.setWeaponSkill(zombieProfile01.getWeaponSkill());
-		zombieProfile01.setBallisticSkill(zombieProfile01.getBallisticSkill());
-		zombieProfile01.setStrength(zombieProfile01.getStrength());
-		zombieProfile01.setToughness(zombieProfile01.getToughness());
-		zombieProfile01.setWounds(zombieProfile01.getWounds());
-		zombieProfile01.setInitiative(zombieProfile01.getInitiative());
-		zombieProfile01.setAttacks(zombieProfile01.getAttacks());
-		zombieProfile01.setLeadership(zombieProfile01.getLeadership());
-
-		zombieProfile02.setMovement(zombieProfile02.getMovement());
-		zombieProfile02.setWeaponSkill(zombieProfile02.getWeaponSkill());
-		zombieProfile02.setBallisticSkill(zombieProfile02.getBallisticSkill());
-		zombieProfile02.setStrength(zombieProfile02.getStrength());
-		zombieProfile02.setToughness(zombieProfile02.getToughness());
-		zombieProfile02.setWounds(zombieProfile02.getWounds());
-		zombieProfile02.setInitiative(zombieProfile02.getInitiative());
-		zombieProfile02.setAttacks(zombieProfile02.getAttacks());
-		zombieProfile02.setLeadership(zombieProfile02.getLeadership());
-
-		zombieProfile03.setMovement(zombieProfile03.getMovement());
-		zombieProfile03.setWeaponSkill(zombieProfile03.getWeaponSkill());
-		zombieProfile03.setBallisticSkill(zombieProfile03.getBallisticSkill());
-		zombieProfile03.setStrength(zombieProfile03.getStrength());
-		zombieProfile03.setToughness(zombieProfile03.getToughness());
-		zombieProfile03.setWounds(zombieProfile03.getWounds());
-		zombieProfile03.setInitiative(zombieProfile03.getInitiative());
-		zombieProfile03.setAttacks(zombieProfile03.getAttacks());
-		zombieProfile03.setLeadership(zombieProfile03.getLeadership());
-
-		zombieProfile04.setMovement(zombieProfile04.getMovement());
-		zombieProfile04.setWeaponSkill(zombieProfile04.getWeaponSkill());
-		zombieProfile04.setBallisticSkill(zombieProfile04.getBallisticSkill());
-		zombieProfile04.setStrength(zombieProfile04.getStrength());
-		zombieProfile04.setToughness(zombieProfile04.getToughness());
-		zombieProfile04.setWounds(zombieProfile04.getWounds());
-		zombieProfile04.setInitiative(zombieProfile04.getInitiative());
-		zombieProfile04.setAttacks(zombieProfile04.getAttacks());
-		zombieProfile04.setLeadership(zombieProfile04.getLeadership());
-
-		zombie01.setFighterImage(zombieImage01);
-		zombie02.setFighterImage(zombieImage02);
-		zombie03.setFighterImage(zombieImage03);
-		zombie04.setFighterImage(zombieImage04);
-
-		addFighter(zombie01);
-		addFighter(zombie02);
-		addFighter(zombie03);
-		addFighter(zombie04);
-	}
-
-	public void generateFiveZombies() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage zombieImage01 = new BasedModelImage(basePath + "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage02 = new BasedModelImage(basePath + "ScavvyZombie02.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage03 = new BasedModelImage(basePath + "ScavvyZombie03.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage04 = new BasedModelImage(basePath + "ScavvyZombie01.png", 21, 154, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-		BasedModelImage zombieImage05 = new BasedModelImage(basePath + "ScavvyZombie02.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_ZOMBIE);
-
-		Fighter zombie01 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie02 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie03 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie04 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-		Fighter zombie05 = Fighter.createInstance(Fighter.Type.SCAVVY_ZOMBIE, "Scavvy Zombie", selectedGang);
-
-		FighterProfile zombieProfile01 = zombie01.getProfile();
-		FighterProfile zombieProfile02 = zombie02.getProfile();
-		FighterProfile zombieProfile03 = zombie03.getProfile();
-		FighterProfile zombieProfile04 = zombie04.getProfile();
-		FighterProfile zombieProfile05 = zombie05.getProfile();
-
-		zombieProfile01.setMovement(zombieProfile01.getMovement());
-		zombieProfile01.setWeaponSkill(zombieProfile01.getWeaponSkill());
-		zombieProfile01.setBallisticSkill(zombieProfile01.getBallisticSkill());
-		zombieProfile01.setStrength(zombieProfile01.getStrength());
-		zombieProfile01.setToughness(zombieProfile01.getToughness());
-		zombieProfile01.setWounds(zombieProfile01.getWounds());
-		zombieProfile01.setInitiative(zombieProfile01.getInitiative());
-		zombieProfile01.setAttacks(zombieProfile01.getAttacks());
-		zombieProfile01.setLeadership(zombieProfile01.getLeadership());
-
-		zombieProfile02.setMovement(zombieProfile02.getMovement());
-		zombieProfile02.setWeaponSkill(zombieProfile02.getWeaponSkill());
-		zombieProfile02.setBallisticSkill(zombieProfile02.getBallisticSkill());
-		zombieProfile02.setStrength(zombieProfile02.getStrength());
-		zombieProfile02.setToughness(zombieProfile02.getToughness());
-		zombieProfile02.setWounds(zombieProfile02.getWounds());
-		zombieProfile02.setInitiative(zombieProfile02.getInitiative());
-		zombieProfile02.setAttacks(zombieProfile02.getAttacks());
-		zombieProfile02.setLeadership(zombieProfile02.getLeadership());
-
-		zombieProfile03.setMovement(zombieProfile03.getMovement());
-		zombieProfile03.setWeaponSkill(zombieProfile03.getWeaponSkill());
-		zombieProfile03.setBallisticSkill(zombieProfile03.getBallisticSkill());
-		zombieProfile03.setStrength(zombieProfile03.getStrength());
-		zombieProfile03.setToughness(zombieProfile03.getToughness());
-		zombieProfile03.setWounds(zombieProfile03.getWounds());
-		zombieProfile03.setInitiative(zombieProfile03.getInitiative());
-		zombieProfile03.setAttacks(zombieProfile03.getAttacks());
-		zombieProfile03.setLeadership(zombieProfile03.getLeadership());
-
-		zombieProfile04.setMovement(zombieProfile04.getMovement());
-		zombieProfile04.setWeaponSkill(zombieProfile04.getWeaponSkill());
-		zombieProfile04.setBallisticSkill(zombieProfile04.getBallisticSkill());
-		zombieProfile04.setStrength(zombieProfile04.getStrength());
-		zombieProfile04.setToughness(zombieProfile04.getToughness());
-		zombieProfile04.setWounds(zombieProfile04.getWounds());
-		zombieProfile04.setInitiative(zombieProfile04.getInitiative());
-		zombieProfile04.setAttacks(zombieProfile04.getAttacks());
-		zombieProfile04.setLeadership(zombieProfile04.getLeadership());
-
-		zombieProfile05.setMovement(zombieProfile05.getMovement());
-		zombieProfile05.setWeaponSkill(zombieProfile05.getWeaponSkill());
-		zombieProfile05.setBallisticSkill(zombieProfile05.getBallisticSkill());
-		zombieProfile05.setStrength(zombieProfile05.getStrength());
-		zombieProfile05.setToughness(zombieProfile05.getToughness());
-		zombieProfile05.setWounds(zombieProfile05.getWounds());
-		zombieProfile05.setInitiative(zombieProfile05.getInitiative());
-		zombieProfile05.setAttacks(zombieProfile05.getAttacks());
-		zombieProfile05.setLeadership(zombieProfile05.getLeadership());
-
-		zombie01.setFighterImage(zombieImage01);
-		zombie02.setFighterImage(zombieImage02);
-		zombie03.setFighterImage(zombieImage03);
-		zombie04.setFighterImage(zombieImage04);
-		zombie05.setFighterImage(zombieImage05);
-
-		addFighter(zombie01);
-		addFighter(zombie02);
-		addFighter(zombie03);
-		addFighter(zombie04);
-		addFighter(zombie05);
-	}
-
-	// ////Scavvy Dogs
-
-	public void generateTwoDogs() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage dogImage01 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage02 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-
-		Fighter dog01 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog02 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-
-		FighterProfile dogProfile01 = dog01.getProfile();
-		FighterProfile dogProfile02 = dog02.getProfile();
-
-		dogProfile01.setMovement(dogProfile01.getMovement());
-		dogProfile01.setWeaponSkill(dogProfile01.getWeaponSkill());
-		dogProfile01.setBallisticSkill(dogProfile01.getBallisticSkill());
-		dogProfile01.setStrength(dogProfile01.getStrength());
-		dogProfile01.setToughness(dogProfile01.getToughness());
-		dogProfile01.setWounds(dogProfile01.getWounds());
-		dogProfile01.setInitiative(dogProfile01.getInitiative());
-		dogProfile01.setAttacks(dogProfile01.getAttacks());
-		dogProfile01.setLeadership(dogProfile01.getLeadership());
-
-		dogProfile02.setMovement(dogProfile02.getMovement());
-		dogProfile02.setWeaponSkill(dogProfile02.getWeaponSkill());
-		dogProfile02.setBallisticSkill(dogProfile02.getBallisticSkill());
-		dogProfile02.setStrength(dogProfile02.getStrength());
-		dogProfile02.setToughness(dogProfile02.getToughness());
-		dogProfile02.setWounds(dogProfile02.getWounds());
-		dogProfile02.setInitiative(dogProfile02.getInitiative());
-		dogProfile02.setAttacks(dogProfile02.getAttacks());
-		dogProfile02.setLeadership(dogProfile02.getLeadership());
-
-		dog01.setFighterImage(dogImage01);
-		dog02.setFighterImage(dogImage02);
-
-		addFighter(dog01);
-		addFighter(dog02);
-	}
-
-	public void generateThreeDogs() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage dogImage01 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage02 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage03 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-
-		Fighter dog01 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog02 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog03 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-
-		FighterProfile dogProfile01 = dog01.getProfile();
-		FighterProfile dogProfile02 = dog02.getProfile();
-		FighterProfile dogProfile03 = dog03.getProfile();
-
-		dogProfile01.setMovement(dogProfile01.getMovement());
-		dogProfile01.setWeaponSkill(dogProfile01.getWeaponSkill());
-		dogProfile01.setBallisticSkill(dogProfile01.getBallisticSkill());
-		dogProfile01.setStrength(dogProfile01.getStrength());
-		dogProfile01.setToughness(dogProfile01.getToughness());
-		dogProfile01.setWounds(dogProfile01.getWounds());
-		dogProfile01.setInitiative(dogProfile01.getInitiative());
-		dogProfile01.setAttacks(dogProfile01.getAttacks());
-		dogProfile01.setLeadership(dogProfile01.getLeadership());
-
-		dogProfile02.setMovement(dogProfile02.getMovement());
-		dogProfile02.setWeaponSkill(dogProfile02.getWeaponSkill());
-		dogProfile02.setBallisticSkill(dogProfile02.getBallisticSkill());
-		dogProfile02.setStrength(dogProfile02.getStrength());
-		dogProfile02.setToughness(dogProfile02.getToughness());
-		dogProfile02.setWounds(dogProfile02.getWounds());
-		dogProfile02.setInitiative(dogProfile02.getInitiative());
-		dogProfile02.setAttacks(dogProfile02.getAttacks());
-		dogProfile02.setLeadership(dogProfile02.getLeadership());
-
-		dogProfile03.setMovement(dogProfile03.getMovement());
-		dogProfile03.setWeaponSkill(dogProfile03.getWeaponSkill());
-		dogProfile03.setBallisticSkill(dogProfile03.getBallisticSkill());
-		dogProfile03.setStrength(dogProfile03.getStrength());
-		dogProfile03.setToughness(dogProfile03.getToughness());
-		dogProfile03.setWounds(dogProfile03.getWounds());
-		dogProfile03.setInitiative(dogProfile03.getInitiative());
-		dogProfile03.setAttacks(dogProfile03.getAttacks());
-		dogProfile03.setLeadership(dogProfile03.getLeadership());
-
-		dog01.setFighterImage(dogImage01);
-		dog02.setFighterImage(dogImage02);
-		dog03.setFighterImage(dogImage03);
-
-		addFighter(dog01);
-		addFighter(dog02);
-		addFighter(dog03);
-	}
-
-	public void generateFourDogs() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage dogImage01 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage02 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage03 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-		BasedModelImage dogImage04 = new BasedModelImage(basePath + "ScavvyDog01.png", 0, 192, House.SCAVVIES,
-				Fighter.Type.SCAVVY_DOG);
-
-		Fighter dog01 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog02 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog03 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-		Fighter dog04 = Fighter.createInstance(Fighter.Type.SCAVVY_DOG, "Scavvy Dog", selectedGang);
-
-		FighterProfile dogProfile01 = dog01.getProfile();
-		FighterProfile dogProfile02 = dog02.getProfile();
-		FighterProfile dogProfile03 = dog03.getProfile();
-		FighterProfile dogProfile04 = dog04.getProfile();
-
-		dogProfile01.setMovement(dogProfile01.getMovement());
-		dogProfile01.setWeaponSkill(dogProfile01.getWeaponSkill());
-		dogProfile01.setBallisticSkill(dogProfile01.getBallisticSkill());
-		dogProfile01.setStrength(dogProfile01.getStrength());
-		dogProfile01.setToughness(dogProfile01.getToughness());
-		dogProfile01.setWounds(dogProfile01.getWounds());
-		dogProfile01.setInitiative(dogProfile01.getInitiative());
-		dogProfile01.setAttacks(dogProfile01.getAttacks());
-		dogProfile01.setLeadership(dogProfile01.getLeadership());
-
-		dogProfile02.setMovement(dogProfile02.getMovement());
-		dogProfile02.setWeaponSkill(dogProfile02.getWeaponSkill());
-		dogProfile02.setBallisticSkill(dogProfile02.getBallisticSkill());
-		dogProfile02.setStrength(dogProfile02.getStrength());
-		dogProfile02.setToughness(dogProfile02.getToughness());
-		dogProfile02.setWounds(dogProfile02.getWounds());
-		dogProfile02.setInitiative(dogProfile02.getInitiative());
-		dogProfile02.setAttacks(dogProfile02.getAttacks());
-		dogProfile02.setLeadership(dogProfile02.getLeadership());
-
-		dogProfile03.setMovement(dogProfile03.getMovement());
-		dogProfile03.setWeaponSkill(dogProfile03.getWeaponSkill());
-		dogProfile03.setBallisticSkill(dogProfile03.getBallisticSkill());
-		dogProfile03.setStrength(dogProfile03.getStrength());
-		dogProfile03.setToughness(dogProfile03.getToughness());
-		dogProfile03.setWounds(dogProfile03.getWounds());
-		dogProfile03.setInitiative(dogProfile03.getInitiative());
-		dogProfile03.setAttacks(dogProfile03.getAttacks());
-		dogProfile03.setLeadership(dogProfile03.getLeadership());
-
-		dogProfile04.setMovement(dogProfile04.getMovement());
-		dogProfile04.setWeaponSkill(dogProfile04.getWeaponSkill());
-		dogProfile04.setBallisticSkill(dogProfile04.getBallisticSkill());
-		dogProfile04.setStrength(dogProfile04.getStrength());
-		dogProfile04.setToughness(dogProfile04.getToughness());
-		dogProfile04.setWounds(dogProfile04.getWounds());
-		dogProfile04.setInitiative(dogProfile04.getInitiative());
-		dogProfile04.setAttacks(dogProfile04.getAttacks());
-		dogProfile04.setLeadership(dogProfile04.getLeadership());
-
-		dog01.setFighterImage(dogImage01);
-		dog02.setFighterImage(dogImage02);
-		dog03.setFighterImage(dogImage03);
-		dog04.setFighterImage(dogImage04);
-
-		addFighter(dog01);
-		addFighter(dog02);
-		addFighter(dog03);
-		addFighter(dog04);
-	}
-
-	// ////Scavvy Ghouls
-
-	public void generateGhoul() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage ghoulImage01 = new BasedModelImage(basePath + "ScavvyGhoul01.png", 17, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-
-		Fighter ghoul01 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-
-		FighterProfile ghoulProfile01 = ghoul01.getProfile();
-
-		ghoulProfile01.setMovement(ghoulProfile01.getMovement());
-		ghoulProfile01.setWeaponSkill(ghoulProfile01.getWeaponSkill());
-		ghoulProfile01.setBallisticSkill(ghoulProfile01.getBallisticSkill());
-		ghoulProfile01.setStrength(ghoulProfile01.getStrength());
-		ghoulProfile01.setToughness(ghoulProfile01.getToughness());
-		ghoulProfile01.setWounds(ghoulProfile01.getWounds());
-		ghoulProfile01.setInitiative(ghoulProfile01.getInitiative());
-		ghoulProfile01.setAttacks(ghoulProfile01.getAttacks());
-		ghoulProfile01.setLeadership(ghoulProfile01.getLeadership());
-
-		ghoul01.setFighterImage(ghoulImage01);
-
-		addFighter(ghoul01);
-	}
-
-	public void generateTwoGhouls() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage ghoulImage01 = new BasedModelImage(basePath + "ScavvyGhoul01.png", 17, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-		BasedModelImage ghoulImage02 = new BasedModelImage(basePath + "ScavvyGhoul02.png", 5, 163, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-
-		Fighter ghoul01 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-		Fighter ghoul02 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-
-		FighterProfile ghoulProfile01 = ghoul01.getProfile();
-		FighterProfile ghoulProfile02 = ghoul02.getProfile();
-
-		ghoulProfile01.setMovement(ghoulProfile01.getMovement());
-		ghoulProfile01.setWeaponSkill(ghoulProfile01.getWeaponSkill());
-		ghoulProfile01.setBallisticSkill(ghoulProfile01.getBallisticSkill());
-		ghoulProfile01.setStrength(ghoulProfile01.getStrength());
-		ghoulProfile01.setToughness(ghoulProfile01.getToughness());
-		ghoulProfile01.setWounds(ghoulProfile01.getWounds());
-		ghoulProfile01.setInitiative(ghoulProfile01.getInitiative());
-		ghoulProfile01.setAttacks(ghoulProfile01.getAttacks());
-		ghoulProfile01.setLeadership(ghoulProfile01.getLeadership());
-
-		ghoulProfile02.setMovement(ghoulProfile02.getMovement());
-		ghoulProfile02.setWeaponSkill(ghoulProfile02.getWeaponSkill());
-		ghoulProfile02.setBallisticSkill(ghoulProfile02.getBallisticSkill());
-		ghoulProfile02.setStrength(ghoulProfile02.getStrength());
-		ghoulProfile02.setToughness(ghoulProfile02.getToughness());
-		ghoulProfile02.setWounds(ghoulProfile02.getWounds());
-		ghoulProfile02.setInitiative(ghoulProfile02.getInitiative());
-		ghoulProfile02.setAttacks(ghoulProfile02.getAttacks());
-		ghoulProfile02.setLeadership(ghoulProfile02.getLeadership());
-
-		ghoul01.setFighterImage(ghoulImage01);
-		ghoul02.setFighterImage(ghoulImage02);
-
-		addFighter(ghoul01);
-		addFighter(ghoul02);
-	}
-
-	public void generateThreeGhouls() {
-
-		String basePath = "/Images/Textures/Fighters/";
-
-		Gang selectedGang = (Gang) gangList.getSelectedValue();
-
-		BasedModelImage ghoulImage01 = new BasedModelImage(basePath + "ScavvyGhoul01.png", 17, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-		BasedModelImage ghoulImage02 = new BasedModelImage(basePath + "ScavvyGhoul02.png", 5, 163, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-		BasedModelImage ghoulImage03 = new BasedModelImage(basePath + "ScavvyGhoul03.png", 0, 160, House.SCAVVIES,
-				Fighter.Type.SCAVVY_GHOUL);
-
-		Fighter ghoul01 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-		Fighter ghoul02 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-		Fighter ghoul03 = Fighter.createInstance(Fighter.Type.SCAVVY_GHOUL, "Scavvy Ghoul", selectedGang);
-
-		FighterProfile ghoulProfile01 = ghoul01.getProfile();
-		FighterProfile ghoulProfile02 = ghoul02.getProfile();
-		FighterProfile ghoulProfile03 = ghoul03.getProfile();
-
-		ghoulProfile01.setMovement(ghoulProfile01.getMovement());
-		ghoulProfile01.setWeaponSkill(ghoulProfile01.getWeaponSkill());
-		ghoulProfile01.setBallisticSkill(ghoulProfile01.getBallisticSkill());
-		ghoulProfile01.setStrength(ghoulProfile01.getStrength());
-		ghoulProfile01.setToughness(ghoulProfile01.getToughness());
-		ghoulProfile01.setWounds(ghoulProfile01.getWounds());
-		ghoulProfile01.setInitiative(ghoulProfile01.getInitiative());
-		ghoulProfile01.setAttacks(ghoulProfile01.getAttacks());
-		ghoulProfile01.setLeadership(ghoulProfile01.getLeadership());
-
-		ghoulProfile02.setMovement(ghoulProfile02.getMovement());
-		ghoulProfile02.setWeaponSkill(ghoulProfile02.getWeaponSkill());
-		ghoulProfile02.setBallisticSkill(ghoulProfile02.getBallisticSkill());
-		ghoulProfile02.setStrength(ghoulProfile02.getStrength());
-		ghoulProfile02.setToughness(ghoulProfile02.getToughness());
-		ghoulProfile02.setWounds(ghoulProfile02.getWounds());
-		ghoulProfile02.setInitiative(ghoulProfile02.getInitiative());
-		ghoulProfile02.setAttacks(ghoulProfile02.getAttacks());
-		ghoulProfile02.setLeadership(ghoulProfile02.getLeadership());
-
-		ghoulProfile03.setMovement(ghoulProfile03.getMovement());
-		ghoulProfile03.setWeaponSkill(ghoulProfile03.getWeaponSkill());
-		ghoulProfile03.setBallisticSkill(ghoulProfile03.getBallisticSkill());
-		ghoulProfile03.setStrength(ghoulProfile03.getStrength());
-		ghoulProfile03.setToughness(ghoulProfile03.getToughness());
-		ghoulProfile03.setWounds(ghoulProfile03.getWounds());
-		ghoulProfile03.setInitiative(ghoulProfile03.getInitiative());
-		ghoulProfile03.setAttacks(ghoulProfile03.getAttacks());
-		ghoulProfile03.setLeadership(ghoulProfile03.getLeadership());
-
-		ghoul01.setFighterImage(ghoulImage01);
-		ghoul02.setFighterImage(ghoulImage02);
-		ghoul03.setFighterImage(ghoulImage03);
-
-		addFighter(ghoul01);
-		addFighter(ghoul02);
-		addFighter(ghoul03);
+	
+	private BasedModelImage getImageByName(String imageName, List<BasedModelImage> basedModelImages) {
+	    BasedModelImage targetBasedModelImage = null;
+	    
+	    for (BasedModelImage basedModelImage : basedModelImages) {
+	        if (basedModelImage.getImageFileName().equals(imageName)) {
+	            targetBasedModelImage = basedModelImage;
+	            break;
+	        }
+	    }
+	    
+	    return targetBasedModelImage;
 	}
 
 	private class FighterListCellRenderer extends DefaultListCellRenderer {
