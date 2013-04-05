@@ -3,10 +3,6 @@ package necromunda;
 import necromunda.Fighter.State;
 
 public class ScavvyZombie extends Fighter {
-	public static FighterProfile getTemplateProfile() {
-		return new ScavvyZombieProfile();
-	}
-	
 	public ScavvyZombie(String name, Gang ownGang) {
 		super(name, new ScavvyZombieProfile(), ownGang);
 		setCost(0);

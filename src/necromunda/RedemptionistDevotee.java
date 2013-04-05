@@ -1,10 +1,6 @@
 package necromunda;
 
 public class RedemptionistDevotee extends Fighter {
-	public static FighterProfile getTemplateProfile() {
-		return new RedemptionistDevoteeProfile();
-	}
-	
 	public RedemptionistDevotee(String name, Gang ownGang) {
 		super(name, new RedemptionistDevoteeProfile(), ownGang);
 		setCost(25);

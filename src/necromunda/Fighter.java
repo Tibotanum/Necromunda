@@ -11,10 +11,6 @@ import weapons.Weapon;
 import weapons.WebPistol;
 
 public abstract class Fighter implements Serializable {
-	public static FighterProfile getTemplateProfile() {
-		return new GangerProfile();
-	}
-
 	public enum State {
 		NORMAL("Normal"),
 		PINNED("Pinned"),
