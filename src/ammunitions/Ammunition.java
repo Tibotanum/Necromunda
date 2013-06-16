@@ -79,7 +79,7 @@ public abstract class Ammunition implements Serializable {
 
 		if (ammoRoll < getAmmoRoll()) {
 			weapon.setBroken(true);
-			Necromunda.appendToStatusMessage("Your weapon sustained a malfunction.");
+			Necromunda.setStatusMessage("Your weapon sustained a malfunction.");
 		}
 
 		if (ammoRoll == 1) {
@@ -101,7 +101,7 @@ public abstract class Ammunition implements Serializable {
 		int explosionRoll = Utils.rollD6();
 
 		if (explosionRoll < getAmmoRoll()) {
-			Necromunda.appendToStatusMessage("Your weapon exploded!");
+			Necromunda.setStatusMessage("Your weapon exploded!");
 			dealDamageTo(getStrength() - 1, weapon.getOwner());
 		}
 	}
@@ -120,7 +120,7 @@ public abstract class Ammunition implements Serializable {
 				int inflictedWounds = getDamage();
 				wounds -= inflictedWounds;
 	
-				Necromunda.appendToStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded. %s wounds were inflicted.", targetWoundRoll,
+				Necromunda.setStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded. %s wounds were inflicted.", targetWoundRoll,
 						woundRoll, inflictedWounds));
 	
 				if (wounds < 1) {
@@ -135,7 +135,7 @@ public abstract class Ammunition implements Serializable {
 				fighter.getProfile().setCurrentWounds(wounds);
 			}
 			else {
-				Necromunda.appendToStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded not.", targetWoundRoll, woundRoll));
+				Necromunda.setStatusMessage(String.format("Target wound roll is %s. Rolled a %s and wounded not.", targetWoundRoll, woundRoll));
 				return !rerollWound;
 			}
 		}

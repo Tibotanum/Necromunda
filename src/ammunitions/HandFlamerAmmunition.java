@@ -27,6 +27,6 @@ public class HandFlamerAmmunition extends FlamerAmmunition {
 	@Override
 	public void trigger() {
 		getWeapon().setBroken(true);
-		Necromunda.appendToStatusMessage(getOutOfFuelMessage());
+		Necromunda.setStatusMessage(getOutOfFuelMessage());
 	}
 }

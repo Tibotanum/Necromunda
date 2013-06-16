@@ -118,13 +118,13 @@ public class TemplateNode extends NecromundaNode {
 			ammunition.explode();
 		}
 		else if (scatterDistance == 0) {
-			Necromunda.appendToStatusMessage("Shot has no effect.");
+			Necromunda.setStatusMessage("Shot has no effect.");
 			hasEffect = false;
 		}
 		else {
 			scatterDistance = ammunition.getEffectiveScatterDistance(shotDistance, scatterDistance);
 			
-			Necromunda.appendToStatusMessage(String.format("Shot scatters by %s.", scatterDistance));
+			Necromunda.setStatusMessage(String.format("Shot scatters by %s.", scatterDistance));
 
 			moveAndCollide(scatterDistance, scatterDiceRollResult.getAngle(), collidables);
 		}

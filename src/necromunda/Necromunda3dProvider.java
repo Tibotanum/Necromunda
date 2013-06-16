@@ -36,6 +36,7 @@ import com.jme3.input.controls.*;
 import com.jme3.light.*;
 import com.jme3.material.Material;
 import com.jme3.math.*;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.renderer.queue.RenderQueue.*;
 import com.jme3.scene.*;
 import com.jme3.scene.Mesh.Mode;
@@ -45,6 +46,13 @@ import com.jme3.shadow.PssmShadowRenderer;
 import com.jme3.system.AppSettings;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
+
+import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.elements.Element;
+import de.lessvoid.nifty.elements.render.TextRenderer;
+import de.lessvoid.nifty.layout.align.*;
+import de.lessvoid.nifty.screen.Screen;
+import de.lessvoid.nifty.tools.SizeValue;
 
 public class Necromunda3dProvider extends SimpleApplication {
     public enum SelectionMode {
@@ -101,6 +109,8 @@ public class Necromunda3dProvider extends SimpleApplication {
     private BaseFactory baseFactory;
 
     private String terrainType;
+    
+    private Nifty nifty;
 
     public Necromunda3dProvider(Necromunda game) {
         super(new StatsAppState(), new DebugKeysAppState());
@@ -261,6 +271,12 @@ public class Necromunda3dProvider extends SimpleApplication {
         stateManager.attach(new DeployFighterAppState(mouseListener, keyboardListener));
         stateManager.attach(new GeneralAppState(mouseListener, keyboardListener));
         stateManager.attach(new RerollAppState(mouseListener, keyboardListener));
+        
+        NiftyJmeDisplay niftyDisplay = new NiftyJmeDisplay(assetManager, inputManager, audioRenderer, guiViewPort);
+        nifty = niftyDisplay.getNifty();
+        nifty.fromXml("Interfaces/nifty.xml", "game");
+        nifty.setDebugOptionPanelColors(true);
+        guiViewPort.addProcessor(niftyDisplay);
     }
 
     private Node createSmallTableNode() {
@@ -423,7 +439,33 @@ public class Necromunda3dProvider extends SimpleApplication {
         }
 
         if (!(selectionMode.equals(SelectionMode.DEPLOY_FIGHTER) || (selectionMode.equals(SelectionMode.DEPLOY_BUILDING)))) {
-            statusMessage.setText(buildStatusText(game));
+            //statusMessage.setText(buildStatusText(game));
+            Screen gameScreen = nifty.getScreen("game");
+            Element statusText = gameScreen.findElementByName("status");
+            TextRenderer textRenderer = statusText.getRenderer(TextRenderer.class);
+            textRenderer.setTextVAlign(VerticalAlign.top);
+            textRenderer.setTextHAlign(HorizontalAlign.left);
+            textRenderer.setText(buildStatusText(game));
+            
+            Element scrollText = gameScreen.findElementByName("scrollText");
+            textRenderer = scrollText.getRenderer(TextRenderer.class);
+            textRenderer.setTextVAlign(VerticalAlign.top);
+            textRenderer.setTextHAlign(HorizontalAlign.left);
+            
+            StringBuilder statusMessagesString = new StringBuilder("");
+            
+            for (int i = 0; i < Necromunda.getStatusMessages().size(); i++) {
+                statusMessagesString.append(Necromunda.getStatusMessages().get(i));
+                
+                if (i < (Necromunda.getStatusMessages().size() - 1)) {
+                    statusMessagesString.append("\n");
+                }
+            }
+            
+            textRenderer.setText(statusMessagesString.toString());
+            
+            Element bottomPanel = gameScreen.findElementByName("bottom_panel");
+            bottomPanel.layoutElements();
         }
 
         if (selectionMode == SelectionMode.MOVE) {
@@ -626,7 +668,7 @@ public class Necromunda3dProvider extends SimpleApplication {
 
     private void onLeftClick(boolean isPressed) {
         if (isPressed) {
-            Necromunda.setStatusMessage("");
+            //Necromunda.setStatusMessage("");
 
             switch (selectionMode) {
                 case SELECT:
@@ -1466,7 +1508,7 @@ public class Necromunda3dProvider extends SimpleApplication {
     }
 
     private void executeKeyboardAction(String name) {
-        Necromunda.setStatusMessage("");
+        //Necromunda.setStatusMessage("");
 
         Fighter selectedFighter = null;
 
@@ -1727,7 +1769,7 @@ public class Necromunda3dProvider extends SimpleApplication {
                     fighter.unpinByInitiative();
                 }
                 else {
-                    Necromunda.appendToStatusMessage(String.format("%s has no reliable mates around.", fighter));
+                    Necromunda.setStatusMessage(String.format("%s has no reliable mates around.", fighter));
                 }
             }
         }
@@ -2145,13 +2187,6 @@ public class Necromunda3dProvider extends SimpleApplication {
         }
         else {
             statusText.append("\n\n");
-        }
-
-        if (Necromunda.getStatusMessage() != null) {
-            statusText.append(String.format("%s\n", Necromunda.getStatusMessage()));
-        }
-        else {
-            statusText.append("\n");
         }
 
         if (game.getPhase() != null) {

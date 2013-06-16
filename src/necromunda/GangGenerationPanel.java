@@ -99,7 +99,7 @@ public class GangGenerationPanel extends JPanel implements ItemListener {
 		setLayout(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 
-		String basePath = "/Images/Textures/Fighters/";
+		String basePath = "/Images/Textures/Fighters";
 
 		basedModelImages = new ArrayList<BasedModelImage>();
 		hiddenBasedModelImages = new ArrayList<BasedModelImage>();

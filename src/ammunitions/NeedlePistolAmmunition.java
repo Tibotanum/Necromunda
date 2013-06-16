@@ -42,7 +42,7 @@ public class NeedlePistolAmmunition extends Ammunition {
 			
 			fighter.getProfile().setCurrentWounds(remainingWounds);
 			
-			Necromunda.appendToStatusMessage(String.format("%s wounded automatically. %s wounds were inflicted.", getWeapon().getName(), inflictedWounds));
+			Necromunda.setStatusMessage(String.format("%s wounded automatically. %s wounds were inflicted.", getWeapon().getName(), inflictedWounds));
 		}
 		
 		return true;

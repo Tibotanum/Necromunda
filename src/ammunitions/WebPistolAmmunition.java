@@ -28,7 +28,7 @@ public class WebPistolAmmunition extends Ammunition {
 	public boolean dealDamageTo(Fighter... fighters) {
 		for (Fighter fighter : fighters) {
 			fighter.setWebbed(true);
-			Necromunda.appendToStatusMessage(String.format("%s has been webbed.", fighter));
+			Necromunda.setStatusMessage(String.format("%s has been webbed.", fighter));
 		}
 		
 		return true;
@@ -37,6 +37,6 @@ public class WebPistolAmmunition extends Ammunition {
 	@Override
 	public void explode() {
 		getWeapon().getOwner().setWebbed(true);
-		Necromunda.appendToStatusMessage(String.format("%s has been webbed by his own weapon.", getWeapon().getOwner()));
+		Necromunda.setStatusMessage(String.format("%s has been webbed by his own weapon.", getWeapon().getOwner()));
 	}
 }

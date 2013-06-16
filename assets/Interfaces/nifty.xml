@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.sourceforge.net/nifty.xsd"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://nifty-gui.sourceforge.net/nifty.xsd http://nifty-gui.sourceforge.net/nifty.xsd">
+    <useControls filename="nifty-default-controls.xml" />
+    <useStyles filename="nifty-default-styles.xml" />
+    <screen id="game">
+        <layer childLayout="horizontal">
+            <panel id="bottom_panel" height="20%" valign="bottom"
+                childLayout="horizontal">
+                <text id="status" font="Interface/Fonts/Default.fnt"
+                    align="left" width="30%" />
+                <control id="messages" name="scrollPanel"
+                    horizontal="false" autoScroll="bottom">
+                    <text id="scrollText" font="Interface/Fonts/Console.fnt"
+                        wrap="true" align="left" height="100%" width="100%" />
+                </control>
+            </panel>
+        </layer>
+    </screen>
+</nifty>

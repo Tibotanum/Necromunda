@@ -38,7 +38,7 @@ public class HeavyPlasmaGunHighEnergyAmmunition extends Ammunition {
 	public void trigger() {
 		getWeapon().setTurnCounter(2);
 		getWeapon().setEnabled(false);
-		Necromunda.appendToStatusMessage(String.format("Your %s cannot be fired for one turn.", getWeapon().getName()));
+		Necromunda.setStatusMessage(String.format("Your %s cannot be fired for one turn.", getWeapon().getName()));
 	}
 	
 	@Override

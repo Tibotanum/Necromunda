@@ -12,6 +12,8 @@ import java.util.Set;
 
 import javax.swing.*;
 
+import util.*;
+
 import necromunda.MaterialFactory.MaterialIdentifier;
 
 import com.jme3.math.FastMath;
@@ -23,6 +25,7 @@ public class Necromunda extends Observable {
 	public static final float SUSTAINED_FIRE_RADIUS = 4;
 	public static final float STRAY_SHOT_RADIUS = 0.5f;
 	public static Necromunda game;
+	private static MessageBuffer<String> statusMessages;
 	private static String statusMessage;
 	
 	private boolean debug;
@@ -72,6 +75,8 @@ public class Necromunda extends Observable {
 		terrainTextureMap = createTerrainTextureMapping();
 		
 		deployQueue = new CyclicList<Fighter>();
+		
+		statusMessages = new MessageBuffer<String>(100);
 		
 		SwingUtilities.invokeLater(new Runnable() {
 
@@ -288,24 +293,28 @@ public class Necromunda extends Observable {
 	public void setPhase(Phase phase) {
 		this.phase = phase;
 	}
-
-	public static String getStatusMessage() {
-		return statusMessage;
+	
+	public static LimitedLinkedList<String> getStatusMessages() {
+	    return statusMessages;
 	}
 
 	public static void setStatusMessage(String statusMessage) {
-		Necromunda.statusMessage = statusMessage;
+		statusMessages.add(statusMessage);
 	}
 	
-	public static void appendToStatusMessage(String statusMessage) {
-		String space = "";
-		
-		if ((Necromunda.statusMessage != null) && (Necromunda.statusMessage.length() > 0)) {
-			space = " ";
-		}
-			
-		Necromunda.statusMessage = String.format("%s%s%s", Necromunda.statusMessage, space, statusMessage);
-	}
+	/*public static void appendToStatusMessage(String statusMessage) {
+	    if (statusMessages.isEmpty()) {
+	        setStatusMessage(statusMessage);
+	    }
+	    else {
+    	    String currentStatusMessage = statusMessages.getLast();
+    			
+    	    currentStatusMessage = String.format("%s%s%s", currentStatusMessage, " ", statusMessage);
+    		
+    		statusMessages.removeLast();
+    		statusMessages.add(currentStatusMessage);
+	    }
+	}*/
 	
 	public List<Fighter> getHostileFighters() {
 		return currentGang.getHostileFighters(gangs);

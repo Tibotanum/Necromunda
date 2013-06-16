@@ -42,6 +42,6 @@ public class SuperKrakMissileAmmunition extends Ammunition {
 	@Override
 	public void sustainMalfunction() {
 		getWeapon().setBroken(true);
-		Necromunda.appendToStatusMessage(String.format("Your %s have run out and your %s cannot be fired anymore.", getName(), getWeapon().getName()));
+		Necromunda.setStatusMessage(String.format("Your %s have run out and your %s cannot be fired anymore.", getName(), getWeapon().getName()));
 	}
 }

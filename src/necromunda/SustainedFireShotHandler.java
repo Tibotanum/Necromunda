@@ -62,7 +62,7 @@ public class SustainedFireShotHandler extends ShotHandler {
 			Necromunda.setStatusMessage(String.format("%s sustained fire shots remaining.", remainingShots));
 		}
 		else {
-			Necromunda.setStatusMessage("");
+			//Necromunda.setStatusMessage("");
 		}
 	}
 	

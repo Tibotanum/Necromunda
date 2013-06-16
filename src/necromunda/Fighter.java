@@ -312,7 +312,7 @@ public abstract class Fighter implements Serializable {
 
 			if ((webRoll + getStrength()) >= 9) {
 				setWebbed(false);
-				Necromunda.appendToStatusMessage("This fighter has broken the web.");
+				Necromunda.setStatusMessage("This fighter has broken the web.");
 			}
 			else {
 				WebPistol.dealWebDamage(this);
@@ -392,10 +392,10 @@ public abstract class Fighter implements Serializable {
 
 		if (initiativeRoll <= profile.getInitiative()) {
 			state = State.NORMAL;
-			Necromunda.appendToStatusMessage(String.format("%s unpins by initiative.", this));
+			Necromunda.setStatusMessage(String.format("%s unpins by initiative.", this));
 		}
 		else {
-			Necromunda.appendToStatusMessage(String.format("%s fails to unpin by initiative.", this));
+			Necromunda.setStatusMessage(String.format("%s fails to unpin by initiative.", this));
 		}
 	}
 

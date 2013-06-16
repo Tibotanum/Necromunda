@@ -45,27 +45,27 @@ public class StandardShotHandler extends ShotHandler {
 
 			float visiblePercentage = visibilityInfo.getVisiblePercentage();
 
-			Necromunda.appendToStatusMessage("Visible percentage: " + (visiblePercentage * 100));
+			Necromunda.setStatusMessage("Visible percentage: " + (visiblePercentage * 100));
 
 			float distance = fighterNode.getLocalTranslation().distance(selectedFighterNode.getLocalTranslation());
 
 			if (distance > weapon.getMaximumRange()) {
-				Necromunda.appendToStatusMessage("Object out of range.");
+				Necromunda.setStatusMessage("Object out of range.");
 				continue;
 			}
 
 			int targetHitRoll = provider.getTargetHitRoll(selectedFighterNode.getFighter(), weapon, distance, provider.getHitModifier(visiblePercentage));
 
 			if (targetHitRoll >= 10) {
-				Necromunda.appendToStatusMessage(String.format("You need a %s to hit - impossible!", targetHitRoll));
+				Necromunda.setStatusMessage(String.format("You need a %s to hit - impossible!", targetHitRoll));
 				continue;
 			}
 
-			Necromunda.appendToStatusMessage(String.format("Target hit roll is %s.", targetHitRoll));
+			Necromunda.setStatusMessage(String.format("Target hit roll is %s.", targetHitRoll));
 
 			int hitRoll = Utils.rollD6();
 
-			Necromunda.appendToStatusMessage(String.format("Rolled a %s.", hitRoll));
+			Necromunda.setStatusMessage(String.format("Rolled a %s.", hitRoll));
 
 			weapon.hitRoll(hitRoll);
 
@@ -75,14 +75,14 @@ public class StandardShotHandler extends ShotHandler {
 			}
 
 			if ((hitRoll < targetHitRoll) || (hitRoll <= 1)) {
-				Necromunda.appendToStatusMessage("Shot missed...");
+				Necromunda.setStatusMessage("Shot missed...");
 
 				if ((hitRoll == 1) && (Utils.rollD6() == 1)) {
 					FighterNode strayShotFighterNode = provider.getStrayShotFighterNode(selectedFighterNode, fighterNode);
 
 					if (strayShotFighterNode != null) {
 						fighterNode = strayShotFighterNode;
-						Necromunda.appendToStatusMessage(String.format("Stray shot hits %s.", fighterNode.getFighter().getName()));
+						Necromunda.setStatusMessage(String.format("Stray shot hits %s.", fighterNode.getFighter().getName()));
 					}
 					else {
 						continue;
@@ -109,7 +109,7 @@ public class StandardShotHandler extends ShotHandler {
 				}
 			}
 			else {
-				Necromunda.appendToStatusMessage("Shot hit!");
+				Necromunda.setStatusMessage("Shot hit!");
 				
 				if (currentTemplateNode == null) {
 					List<FighterNode> affectedFighterNodes = new ArrayList<FighterNode>();
@@ -133,7 +133,7 @@ public class StandardShotHandler extends ShotHandler {
 							provider.setCurrentWeapon(weapon);
 							provider.setCurrentTarget(fighter);
 							provider.setSelectionMode(SelectionMode.REROLL);
-							Necromunda.appendToStatusMessage("Re-roll wound roll?");
+							Necromunda.setStatusMessage("Re-roll wound roll?");
 						}
 					}
 				}
